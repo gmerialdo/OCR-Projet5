@@ -22,13 +22,6 @@ class View
         return file_get_contents("template/$template.html");
     }
 
-    public static function addBackTpl($html){
-        return View::makeHtml([
-                        "{{ path }}" => $GLOBALS["path"],
-                        "{{ content_admin_page }}" => $html
-                    ],"backadmin_template");
-    }
-
     public static function errorDisplayBack(){
         return View::makeHtml([
                         "{{ path }}" => $GLOBALS["path"]

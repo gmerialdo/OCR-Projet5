@@ -1,0 +1,11 @@
+TO DO :
+-ajouter css pour bootstrap in page_template
+
+
+
+Etapes futures:
+
+-rajouter une class Orga qui controlle l'Organisation concernée et peut faire appel au Model pour récupérer par ex le logo, etc.
+-du coup: pour la page, il faut créer une instance de la classe Orga pour récupérer le logo et autres infos
+
+-plus tard: autres langues!!!!
