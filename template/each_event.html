@@ -1,0 +1,45 @@
+<div class="row" id="event{{ event_id }}">
+    <div class="col s12 m6 l4">
+        <figure>
+            <img src="{{ image }}" alt="event">
+            <figcaption>
+                <h4><em>{{ start_weekday }} {{ start_date }} - {{ start_time }}</em></h4> 
+                <h3>{{ name }}</h3>
+                <p>{{ location }}</p>
+            </figcaption>
+        </figure>
+    </div>
+</div>
+
+<script>
+    document.getElementById("event{{ event_id }}").addEventListener("click", function (e){
+        document.location.href="{{ path }}/events/see_event/{{ event_id }}"; 
+    });
+</script>
+
+
+
+
+
+
+                'event_id',
+                'location AS {{ location }}',
+                'name AS {{ name }}',
+                'description AS {{ description }}',
+                'image AS {{ image }}',
+                'DATE_FORMAT(start_datetime, \'%W\') AS {{ start_weekday }}',
+                'DATE_FORMAT(start_datetime, \'%b %D, %Y\') AS {{ start_date }}',
+                'DATE_FORMAT(start_datetime, \'%r\') AS {{ start_time }}',
+                'DATE_FORMAT(finish_datetime, \'%W\') AS {{ finish_weekday }}',
+                'DATE_FORMAT(finish_datetime, \'%b %D, %Y\') AS {{ finish_date }}',
+                'DATE_FORMAT(finish_datetime, \'%r\') AS {{ finish_time }}',
+                'category AS {{ category }}',
+                'max_tickets AS {{ max_tickets }}',
+                'type_tickets',
+                'public',
+                'members_only',
+                'price_adult_member}',
+                'price_adult',
+                'price_child_member',
+                'price_child',
+                'limit_time'

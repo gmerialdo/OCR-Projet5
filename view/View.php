@@ -7,7 +7,7 @@ class View
 
     public static function makeHtml($data, $template){
         //replace in the template the {{ ... }} by the values
-        return str_replace(array_keys($data), $data, file_get_contents("template/$template.html"));
+        return str_replace(array_keys($data), $data, file_get_contents("template/$template"));
     }
 
     public static function makeLoopHtml($data, $template){
@@ -18,9 +18,9 @@ class View
         return $html;
     }
 
-    public static function giveHtml($template){
-        return file_get_contents("template/$template.html");
-    }
+    //public static function giveHtml($template){
+    //    return file_get_contents("template/$template.html");
+    //}
 
     public static function errorDisplayBack(){
         return View::makeHtml([

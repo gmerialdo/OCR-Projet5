@@ -12,12 +12,35 @@ class Event
 
     }
 
-    public static function seeAllEvents(){
-
-    }
 
 
 
+
+
+
+
+$req = [
+            "fields"  => [
+                'event_id',
+                'location',
+                'name',
+                'description',
+                'image',
+                'DATE_FORMAT(start_datetime, \'%W\') AS "start_weekday"',
+                'DATE_FORMAT(start_datetime, \'%b %D, %Y\') AS "start_date"',
+                'DATE_FORMAT(start_datetime, \'%r\') AS "start_time"',
+                'DATE_FORMAT(finish_datetime, \'%W\') AS "finish_weekday"',
+                'DATE_FORMAT(finish_datetime, \'%b %D, %Y\') AS "finish_date"',
+                'DATE_FORMAT(finish_datetime, \'%r\') AS "finish_time"',
+                'type_tickets',
+                'public',
+                'members_only',
+                'LEAST (price_adult_member, price_adult, price_child_member, price_child) AS "smallest_price"'
+            ],
+            "from"  => "evt_events",
+            "where" => [ "active_event = 1" ]
+        ];
+        $data = Model::select($req);
 
 
 

@@ -1,30 +1,19 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-    //logo
-    <a class="navbar-brand" href='{{ orga_link }}'>
-        <img src='{{ orga_logo_src }}' alt=''>
-    </a>
-
-    //for small screens
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    //nav links
-    <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-            {{ navbar_manageeventsoption }}
-            <li class="nav-item active">
-                <a class="nav-link" href="#">See all events<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Help</a>
-            </li>
+{{ navbar_accountdropdown }}
+<nav>
+    <div class="nav-wrapper">
+        <a href="{{ orga_website }}" class="brand-logo">
+            <img src='{{ orga_logo_src }}' alt='logo'>
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            {{ navbar_manageevents }}
+            <li><a href="{{ path }}/events">See all events</a></li>
+            <li><a href="{{ path }}/events/help">Help</a></li>
             {{ navbar_accountoption }}
         </ul>
     </div>
-
 </nav>
+        
+
 
 
 

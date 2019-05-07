@@ -1,9 +1,42 @@
-TO DO :
--ajouter css pour bootstrap in page_template
+﻿--TO DO :--------------------------------------------------------------------------------------------
+
+LUNDI:
+-ajouter class Page in diagrams
+-entrer plusieurs exemples dans bases de données
+-continuer class Page et Event
+-commencer class Location, Account, Ticket
+
+MARDI:
+-Lionel:
+
+MERCREDI:
+-voir avec JMarc: email unique!!!!! (pour lier les tables users/persons/accounts...)
+
+JEUDI:
+-Lionel:
+
+VENDREDI:
+
+
+--INFOS----------------------------------------------------------------------------------------------
+
+-www.kiwiversity.com/nomAF/events/ ...
+see_all_events  : all events (also default page)
+see_event/id	: see event with id
+manage_events   : dashboard events
+modify_event/id	: modify an event
+signin		    : sign in or log in
+logout          : logout
+
+--TO DO + TARD:--------------------------------------------------------------------------------------
+
+-quand qqun se logge: $_SESSION['evt_managing_rights'] true or false!!
+-mettre à jour les diagrammes de classe
 
 
 
-Etapes futures:
+
+--ETAPES FUTURES:------------------------------------------------------------------------------------
 
 -rajouter une class Orga qui controlle l'Organisation concernée et peut faire appel au Model pour récupérer par ex le logo, etc.
 -du coup: pour la page, il faut créer une instance de la classe Orga pour récupérer le logo et autres infos

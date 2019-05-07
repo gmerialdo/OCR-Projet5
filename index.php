@@ -4,7 +4,6 @@ session_start();
 
 require_once "conf.php";
 require_once "model/Model.php";
-require_once "controller/Session.php";
 require_once "controller/Page.php";
 
 Model::init();
@@ -23,4 +22,4 @@ $url = array_slice($url, $GLOBALS["uri_Start"]);
 
 // create and display page
 $page = new Page($url);
-echo $page->_html;
+echo $page->getHtmlPage();
