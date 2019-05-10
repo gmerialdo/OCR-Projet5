@@ -3,9 +3,7 @@
 // www.kiwiversity.com/aftucson/events/... dc uri = /aftucson/events/...
 //nothing (page with all events) or event/id or modify/id or create or login or logout or delete/id or book/id or cancel/id
 
-require_once "model/Model.php";
-require_once "view/View.php";
-
+require_once "controller/Event.php";
 
 class Page
 {
@@ -22,11 +20,11 @@ class Page
 
     //to set the user profile
     public function setRights(){
-        if (isset($_SESSION['user_name'])){
+        if (!isset($_SESSION['user_name'])){
             $this->_rights="visitor";
         }
-        elseif ($_SESSION['evt_managing_rights']==true) {
-            $this->_rights="logged_admin"
+        elseif (isset($_SESSION['evt_managing_rights']) && $_SESSION['evt_managing_rights']==true) {
+            $this->_rights="logged_admin";
         }
         else {
             $this->_rights="logged_visitor";
@@ -45,7 +43,13 @@ class Page
             "{{ orga_name }}" => "Alliance Française de Tucson",
             "{{ orga_logo_src }}" => "layout/images/logo_AFTucson.png",
             "{{ orga_website }}" => "www.aftucson.com",
-            "{{ orga_footer_infos }}" => "<ul><li>2901E River Road</li><li>Tucson, AZ 85718, USA</li><li>+1 520 848 6538</li><li>alliancefrancaisetucson@gmail.com</li></ul>",
+            "{{ orga_address }}" => "2099E. River Road",
+            "{{ orga_city }}" => "Tucson",
+            "{{ orga_state }}" => "AZ",
+            "{{ orga_zipcode }}" => "85718",
+            "{{ orga_country }}" => "USA",
+            "{{ orga_email }}" => "alliancefrancaisetucson@gmail.com",
+            "{{ orga_phone }}" => "+1 520-881-9158",
             "{{ path }}" => $GLOBALS["path"]
         ], "page_template.html");
     }
@@ -96,58 +100,22 @@ class Page
         ];
         $data = Model::select($req);
         //if no events
-        if (!isset($data[0])){
-            //display "no events" TO DO!!!!!!!!!!!!!!!!!!
+        if (!isset($data["data"][0])){
+            $content = View::addTitleHtml(2, "No current event");
         }
         else {
-            $one_event;
-            $content = "";
+            $each_event;
+            $content = View::addTitleHtml(2, "Our events");
+            $content .= View::addDiv("start", "row");
             foreach ($data["data"] as $row){
-                $one_event = new Event($row["event_id"]);
-                $content .= "";
-
-                switch ($row["type_tickets"]){
-                    //case no booking
-                    case 0:
-                        $price = "No reservation";
-                        break;
-                    //case free
-                    case 1:
-                        $price = "Free";
-                        break;
-                    //case paid
-                    case 2:
-                        $price = "From ".$row["smallest_price"];
-                        break;
-                    //case donation
-                    case 3:
-                        $price = "Donations welcome";
-                        break;
-                };
-                switch ($row["public"]){
-                    //case no booking
-                    //case free
-                    case 1:
-                        $public = "all ages";
-                        break;
-                    //case paid
-                    case 2:
-                        $public = "for adults";
-                        break;
-                    //case donation
-                    case 3:
-                        $public = "for children";
-                        break;
-                };
-                $members_only = "";
-                if ($row["members_only"]==1){
-                    $members_only = "members only"
-                }
-
+                $each_event = new Event("read", ["id" => $row["event_id"]]);
+                $content .= $each_event->addEventOnAll();
             }
-
+            $content .= View::addDiv("end");
         }
+        return ["All events", $content];
     }
+
 
     public function see_event(){
 

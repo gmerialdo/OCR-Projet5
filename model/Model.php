@@ -27,8 +27,6 @@ class Model {
             $result->closeCursor();
             //if no result
             if (empty($data)) $data="";
-            ////if only one answer we keep it instead of an array
-            //elseif (!isset($data[1])) $data=$data[0];
             return [
                 "succeed" => TRUE,
                 "data"    => $data

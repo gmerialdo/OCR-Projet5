@@ -1,1 +1,12 @@
-.each_event h4{color: red;}
+.personnalized_color{background-color: darkslateblue!important;}
+
+.brand-logo{margin-left: 30px;}
+
+ul#account_dropdown{top: 64px !important;}
+
+div#page_content{min-height: 53vh; justify-content: center; text-align: center;}
+
+.each_event figure{border: solid 4px darkslateblue; width: 30vw; height: 35vh; line-height: 4px;}
+
+.each_event img{width:50%; height:50%; max-height: 50%; max-width: 50%; margin: auto;}
+

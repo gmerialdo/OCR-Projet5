@@ -1,10 +1,7 @@
 ﻿--TO DO :--------------------------------------------------------------------------------------------
 
 LUNDI:
--ajouter class Page in diagrams
--entrer plusieurs exemples dans bases de données
--continuer class Page et Event
--commencer class Location, Account, Ticket
+
 
 MARDI:
 -Lionel:
@@ -32,6 +29,8 @@ logout          : logout
 
 -quand qqun se logge: $_SESSION['evt_managing_rights'] true or false!!
 -mettre à jour les diagrammes de classe
+-comment les events deviennent inactifs!! (après la date)
+-mettre à jour les relations (foreign keys) dans les tables de la base de données
 
 
 

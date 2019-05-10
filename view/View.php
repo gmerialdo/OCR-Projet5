@@ -1,7 +1,5 @@
 <?php
 
-// class View to return content in html mixed to template
-
 class View
 {
 
@@ -18,9 +16,20 @@ class View
         return $html;
     }
 
-    //public static function giveHtml($template){
-    //    return file_get_contents("template/$template.html");
-    //}
+    public static function addTitleHtml(int $size, $title){
+        if ($size >= 1 && $size <= 6){
+            return "<h".$size.">".$title."</h".$size.">";
+        }
+    }
+
+    public static function addDiv($place, $class=NULL){
+        if ($place == "start"){
+            return "<div class='".$class."'>";
+        }
+        elseif ($place == "end"){
+            return "</div>";
+        }
+    }
 
     public static function errorDisplayBack(){
         return View::makeHtml([

@@ -1,8 +1,7 @@
-{{ navbar_accountdropdown }}
-<nav>
+<nav class="personnalized_color button-collapse">
     <div class="nav-wrapper">
         <a href="{{ orga_website }}" class="brand-logo">
-            <img src='{{ orga_logo_src }}' alt='logo'>
+            <h5>{{ orga_name }}</h5>
         </a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
             {{ navbar_manageevents }}
@@ -11,11 +10,5 @@
             {{ navbar_accountoption }}
         </ul>
     </div>
-</nav>
-        
-
-
-
-
-
-
+</nav> 
+{{ navbar_accountdropdown }}

@@ -4,9 +4,14 @@ session_start();
 
 require_once "conf.php";
 require_once "model/Model.php";
+require_once "view/View.php";
 require_once "controller/Page.php";
 
 Model::init();
+
+//A ENLEVER
+$_SESSION['user_name']='gmerialdo';
+$_SESSION['evt_managing_rights']=true;
 
 // show errors if not in envProd
 if (!$GLOBALS["envProd"]){
