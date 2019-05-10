@@ -25,7 +25,6 @@ class Event
     private $_price_adult;
     private $_price_child_member;
     private $_price_child;
-    private $_smallest_price;
     private $_limit_booking_time;
 
     public function __construct($todo, $args){
@@ -63,7 +62,6 @@ class Event
                 'price_adult',
                 'price_child_member',
                 'price_child',
-                'LEAST (price_adult_member, price_adult, price_child_member, price_child) AS "smallest_price"',
                 'limit_booking_time'],
             "from" => "evt_events",
             "where" => [ "event_id = ".$this->_event_id],
@@ -136,7 +134,8 @@ class Event
                 break;
             //case paid
             case 2:
-                return "from $".$this->_smallest_price;
+                $smallest_price = min(array_filter([$this->_price_child, $this->_price_adult, $this->_price_child_member, $this->_price_adult_member], function ($v){ return !is_null($v); }));
+                return "starts at $".$smallest_price;
                 break;
             //case donation
             case 3:

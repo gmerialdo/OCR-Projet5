@@ -8,5 +8,5 @@ div#page_content{min-height: 53vh; justify-content: center; text-align: center;}
 
 .each_event figure{border: solid 4px darkslateblue; width: 30vw; height: 35vh; line-height: 4px;}
 
-.each_event img{width:50%; height:50%; max-height: 50%; max-width: 50%; margin: auto;}
+.each_event img{height:50%; max-height: 50%; margin: auto;}
 
