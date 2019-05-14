@@ -17,10 +17,13 @@ VENDREDI:
 
 --INFOS----------------------------------------------------------------------------------------------
 
+{{ path }}/events/logged -> logged visitor or admin in user mode
+{{ path }}/events/admin -> admin mode
+
 -www.kiwiversity.com/nomAF/events/ ...
 see_all_events  : all events (also default page)
 see_event/id	: see event with id
-manage_events   : dashboard events
+admin_mode      : dashboard events
 modify_event/id	: modify an event
 signin		    : sign in or log in
 logout          : logout
@@ -28,6 +31,7 @@ logout          : logout
 --TO DO + TARD:--------------------------------------------------------------------------------------
 
 -quand qqun se logge: $_SESSION['evt_managing_rights'] true or false!!
+-pour un admin: $_SESSION['admin_mode'] true de base, mais il peut passer en false si switch to user mode, et repasser en true si switch to admin mode
 -mettre à jour les diagrammes de classe
 -comment les events deviennent inactifs!! (après la date)
 -mettre à jour les relations (foreign keys) dans les tables de la base de données

@@ -9,8 +9,9 @@ class Page
 {
 
     protected $_url;
-    //indicate if logged in and if admin rights: either "visitor" or "logged_visitor" or "logged_admin"
+    //indicate if logged in and if admin rights: either "visitor" or "logged_visitor" or "admin"
     protected $_rights;
+    protected $_defaultPage;
 
 
     public function __construct($url){
@@ -24,7 +25,7 @@ class Page
             $this->_rights="visitor";
         }
         elseif (isset($_SESSION['evt_managing_rights']) && $_SESSION['evt_managing_rights']==true) {
-            $this->_rights="logged_admin";
+            $this->_rights="admin";
         }
         else {
             $this->_rights="logged_visitor";
@@ -54,68 +55,51 @@ class Page
         ], "page_template.html");
     }
 
-    //to add the nav bar depending on visitor's profile (logged or not, admin or not)
+    //to add the nav bar
     public function addNavbar(){
         if ($this->_rights == "visitor"){
+            $navbar_switch = "";
             $navbar_accountoption = file_get_contents("template/navbar_accountoption_signin.html");
-            $navbar_manageevents = "";
             $navbar_accountdropdown = "";
         }
         else {
-            $navbar_accountoption = file_get_contents("template/navbar_accountoption_logged.html");
-            $navbar_accountdropdown = file_get_contents("template/navbar_accountdropdown.html");
-            if ($this->_rights == "logged_admin"){
-                $navbar_manageevents = file_get_contents("template/navbar_manageevents.html");
+            if ($_SESSION["admin_mode"]){
+                $navbar_switch = file_get_contents("template/navbar_switchtoadmin.html");
+                $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
+                $navbar_accountdropdown = file_get_contents("template/navbar_accountdropdown_admin.html");
             }
             else {
-                $navbar_manageevents = "";
+                 // if user with admin rights
+                if ($this->_rights == "admin"){
+                    $navbar_switch = file_get_contents("template/navbar_switchtoadmin.html");
+                }
+                else {
+                    $navbar_switch = "";
+                }
+                $navbar_accountoption = file_get_contents("template/navbar_accountoption_logged.html");
+                $navbar_accountdropdown = file_get_contents("template/navbar_accountdropdown_logged.html");
             }
         }
         return view::makeHtml([
-            "{{ navbar_accountdropdown }}" => $navbar_accountdropdown,
-            "{{ navbar_manageevents }}" => $navbar_manageevents,
-            "{{ navbar_accountoption }}" => $navbar_accountoption
+            "{{ navbar_switch }}" => $navbar_switch,
+            "{{ navbar_accountoption }}" => $navbar_accountoption,
+            "{{ navbar_accountdropdown }}" => $navbar_accountdropdown
         ], "navbar_template.html");
     }
 
-    //function getPage will return an array with $pageTitle and $content
+
     public function getPage(){
         //see first part of the url and call the function
-        $fct_to_call = $this->_url[0];
+        isset($this->_url[0])? $fct_to_call = $this->_url[0] : $fct_to_call = $this->_defaultPage;
         //if empty then default page
-        if ($fct_to_call == "") $fct_to_call = "see_all_events";
+        if ($fct_to_call == "") $fct_to_call = $this->_defaultPage;
         // if not valid name, then go to default page
-        if (!method_exists($this, $fct_to_call)) $fct_to_call = "see_all_events";
+        if (!method_exists($this, $fct_to_call)) $fct_to_call = $this->_defaultPage;
         //else call the function named
         return $this->$fct_to_call();
     }
-//each function called by getPage will return an array with $pageTitle and $content
 
-
-    public function see_all_events(){
-        $req = [
-            "fields" => ['event_id'],
-            "from" => "evt_events",
-            "where" => [ "active_event = 1" ]
-        ];
-        $data = Model::select($req);
-        //if no events
-        if (!isset($data["data"][0])){
-            $content = View::addTitleHtml(2, "No current event");
-        }
-        else {
-            $each_event;
-            $content = View::addTitleHtml(2, "Our events");
-            $content .= View::addDiv("start", "row");
-            foreach ($data["data"] as $row){
-                $each_event = new Event("read", ["id" => $row["event_id"]]);
-                $content .= $each_event->addEventOnAll();
-            }
-            $content .= View::addDiv("end");
-        }
-        return ["All events", $content];
-    }
-
+    //every function will return an array with $pageTitle and $content
 
     public function see_event(){
 
@@ -133,8 +117,19 @@ class Page
 
     }
 
-    public function logout(){
+    public function login(){
+        if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
+            return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
+        }
+        else {
+            $content = file_get_contents("template/content_login_template.html");
+        }
+        return ["login", $content];
+    }
 
+    public function logout(){
+        session_destroy();
+        return $this->see_all_events();
     }
 
     public function help(){

@@ -1,0 +1,12 @@
+<!-- Dropdown Structure if logged and admin mode-->
+<ul id="account_dropdown_admin" class="dropdown-content">
+    <li><a href="{{ path }}/events/account_settings">Account Settings</a></li>
+    <li><a href="{{ path }}/events/account_settings">Manage Events</a></li>
+    <li><a href="{{ path }}/events/my_tickets">My Tickets</a></li>
+    <li class="divider"></li>
+    <li><a href="{{ path }}/events/logout">Log out</a></li>
+</ul>
+
+<script>
+    document.getElementsByClassName("personnalized_color").style.backgroundColor = var(--admin_maincolor);
+</script>

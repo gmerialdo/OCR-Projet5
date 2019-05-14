@@ -49,10 +49,10 @@ class Event
                 'description',
                 'DATE_FORMAT(start_datetime, \'%W\') AS "start_weekday"',
                 'DATE_FORMAT(start_datetime, \'%b %D, %Y\') AS "start_date"',
-                'DATE_FORMAT(start_datetime, \'%r\') AS "start_time"',
+                'DATE_FORMAT(start_datetime, \'%l:%i%p\') AS "start_time"',
                 'DATE_FORMAT(finish_datetime, \'%W\') AS "finish_weekday"',
                 'DATE_FORMAT(finish_datetime, \'%b %D, %Y\') AS "finish_date"',
-                'DATE_FORMAT(finish_datetime, \'%r\') AS "finish_time"',
+                'DATE_FORMAT(finish_datetime, \'%l:%i%p\') AS "finish_time"',
                 'category',
                 'max_tickets',
                 'type_tickets',
@@ -98,7 +98,7 @@ class Event
             "{{ location }}" => ucfirst($where["name"]).", ".ucfirst($where["city"])." ",
             "{{ public }}" => $public,
             "{{ price }}" => $price
-        ], "each_event.html");
+        ], "content_each_event.html");
     }
 
     public function addPublic(){

@@ -10,8 +10,9 @@ require_once "controller/Page.php";
 Model::init();
 
 //A ENLEVER
-$_SESSION['user_name']='gmerialdo';
-$_SESSION['evt_managing_rights']=true;
+$_SESSION['user_name']='gmerialdo';////////////////////////
+$_SESSION['evt_managing_rights']=false;/////////////////
+$_SESSION["admin_mode"]=false;///////////////////////////////
 
 // show errors if not in envProd
 if (!$GLOBALS["envProd"]){
@@ -25,6 +26,21 @@ $url = explode ( "/", filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL, F
 // remove first empty entry
 $url = array_slice($url, $GLOBALS["uri_Start"]);
 
-// create and display page
-$page = new Page($url);
+// decide if it's visitor mode or admin mode and create page
+switch ($url[0]){
+    case 'admin':
+        require_once "controller/PageAdmin.php";
+        $page = new PageAdmin($url);
+        break;
+    case 'logged':
+        require_once "controller/PageLoggedVisitor.php";
+        $page = new PageLoggedVisitor($url);
+        break;
+    default:
+        require_once "controller/PageVisitor.php";
+        $page = new PageVisitor($url);
+        break;
+}
+
+// display page
 echo $page->getHtmlPage();
