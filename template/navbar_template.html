@@ -1,14 +1,25 @@
-<nav class="user_color button-collapse">
+{{ navbar_accountdropdown }}
+
+<nav class="user_color">
     <div class="nav-wrapper">
         <a href="{{ orga_website }}" class="brand-logo">
             <h5>{{ orga_name }}</h5>
         </a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <a href="#" data-target="nav-items-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-items" class="right hide-on-med-and-down">
             {{ navbar_switch }}
-            <li><a href="{{ path }}/events">See all events</a></li>
-            <li><a href="{{ path }}/events/help">Help</a></li>
+            <li><a href="{{ path }}">See all events</a></li>
+            <li><a href="{{ path }}/help">Help</a></li>
             {{ navbar_accountoption }}
         </ul>
     </div>
-</nav> 
-{{ navbar_accountdropdown }}
+</nav>
+
+<ul class="sidenav" id="nav-items-mobile">
+    {{ navbar_switch }}
+    <li><a href="{{ path }}">See all events</a></li>
+    <li><a href="{{ path }}help">Help</a></li>
+    {{ navbar_accountoption }}
+</ul>
+
+

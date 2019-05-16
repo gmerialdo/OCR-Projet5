@@ -1,11 +1,24 @@
 .user_color{background-color: darkslateblue !important;}
 
-.brand-logo{margin-left: 30px;}
+.user_color_txt{color: darkslateblue !important;}
+
+.brand-logo{margin-left: 10px;}
+
+.brand-logo a{max-height: 100vh;}
 
 ul#account_dropdown{top: 64px !important;}
 
-div#page_content{min-height: 53vh; justify-content: center; text-align: center;}
+div#page_content{min-height: 60vh; justify-content: center; text-align: center;}
 
-.each_event figure{border: solid 4px darkslateblue; width: 30vw; height: 35vh; line-height: 4px;}
+div.each_event{padding-left: 15px; margin-top: 15px; border: solid 4px; border-radius: 5px; line-height: 4px;}
 
-.each_event img{height:50%; max-height: 50%; margin: auto;}
+.each_event a{color: none;}
+
+.each_event img{height: 15vh; max-width: 100%;}
+
+form.login_form{margin-top: 20px;}
+
+@media only screen and (max-width: 767px){
+    h5{font-size: 1.2rem;line-height: 90%;}
+}
+

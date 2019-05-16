@@ -23,8 +23,10 @@ class PageVisitor extends Page
         }
         else {
             $each_event;
-            $content = View::addTitleHtml(2, "Our events");
-            $content .= View::addDiv("start", "row");
+            $content = View::addDiv("start", "row");
+            $content .= View::addDiv("start", "center-align");
+            $content .= View::addTitleHtml(2, "Our events");
+            $content .= View::addDiv("end");
             foreach ($data["data"] as $row){
                 $each_event = new Event("read", ["id" => $row["event_id"]]);
                 $content .= $each_event->addEventOnAll();

@@ -15,7 +15,7 @@ class PageAdmin extends Page
     public function getPage(){
         //check if no admin rights
         if ($this->_rights != "admin"){
-            header('Location: {{ path }}');
+            header('Location: see_all_events');
         }
         //else the user is logged in so go to the page in admin interface
         else {

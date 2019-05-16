@@ -1,18 +1,11 @@
-<div class="each_event col s12 m6 l4 " id="event{{ event_id }}">
-    <figure>
-        <img src="{{ path }}/{{ image_src }}" alt="{{ image_alt }}">
-        <figcaption>
+<div class="col s12 m6 l4 " id="event{{ event_id }}">
+    <div class="each_event">
+        <a href="{{ path }}/see_event/{{ event_id }}" class="user_color_txt">
+            <img src="{{ path }}/{{ image_src }}" alt="{{ image_alt }}">
             <p class="red-text"><em>{{ start_weekday }} {{ start_date }} - {{ start_time }}</em></p> 
             <h5>{{ name }}</h5>
             <p>{{ location }}</p>
             <p>{{ public }} - {{ price }}</p>
-        </figcaption>
-    </figure>
+        </a>    
+    </div>
 </div>
-
-
-<script>
-    document.getElementById("event{{ event_id }}").addEventListener("click", function (e){
-        document.location.href="{{ path }}/events/see_event/{{ event_id }}"; 
-    });
-</script>

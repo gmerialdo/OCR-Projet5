@@ -117,19 +117,57 @@ class Page
 
     }
 
-    public function login(){
+    public function login($correct = true){
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
             return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
         }
         else {
             $content = file_get_contents("template/content_login_template.html");
+            if (!$correct) $content.= file_get_contents("template/error_login.html");
         }
         return ["login", $content];
+    }
+
+    public function checklogin(){
+        if (!empty($_POST) && (empty($_SESSION["user_name"]))){
+            $user = filter_input(INPUT_POST, "user", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $pass = filter_input(INPUT_POST, "pw", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $req = [
+            "fields" => ["*"],
+                "from" => "evt_accounts",
+                "where" => [
+                    "user_name ='$user'",
+                    "password ='$pass'"
+                    ]
+            ];
+            $data = Model::select($req);
+            //return true if not empty or false otherwise
+            $logged = !empty($data["data"]);
+            if ($logged){
+                $_SESSION["user_name"]=$user;
+                $_SESSION["evt_managing_rights"]=$data["data"][0]["managing_rights"];
+                $_SESSION["admin_mode"]=false;
+                header('Location: see_all_events');
+            }
+            else {
+                return $this->login(false);
+            }
+        }
+        elseif ($_SESSION["username"]!=null){
+            header('Location: ');
+        }
+        else {
+            return $this->login(false);
+        }
     }
 
     public function logout(){
         session_destroy();
         return $this->see_all_events();
+    }
+
+    public function forgot_password(){
+
     }
 
     public function help(){

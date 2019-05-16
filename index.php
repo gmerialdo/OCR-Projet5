@@ -9,10 +9,12 @@ require_once "controller/Page.php";
 
 Model::init();
 
+/*
 //A ENLEVER
-$_SESSION['user_name']='gmerialdo';////////////////////////
+$_SESSION['user_name']=NULL;////////////////////////
 $_SESSION['evt_managing_rights']=false;/////////////////
 $_SESSION["admin_mode"]=false;///////////////////////////////
+*/
 
 // show errors if not in envProd
 if (!$GLOBALS["envProd"]){
