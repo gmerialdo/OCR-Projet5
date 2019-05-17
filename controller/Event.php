@@ -77,28 +77,34 @@ class Event
         }
     }
 
-    public function addEventOnAll(){
-        $public = $this->addPublic();
-        $price = $this->addPrice();
+    public function getVarEvent($_var){
+        return $this->$_var;
+    }
+
+    public function getEventData(){
         require_once "controller/Image.php";
         $image = new Image("read", ["id" => $this->_image_id]);
         require_once "controller/Location.php";
         $location = new Location("read", ["id" => $this->_location_id]);
-        $where = $location->getLocationInfo(["name", "city"]);
-
-        //TO DO : ADD NEW LOCATION ET NEW IMAGE!!!!!!------------------
-        return View::makeHtml([
+        return [
             "{{ event_id }}" => $this->_event_id,
             "{{ image_src }}" => $image->src(),
             "{{ image_alt }}" => $image->alt(),
             "{{ start_weekday }}" => $this->_start_weekday,
             "{{ start_date }}" => $this->_start_date,
             "{{ start_time }}" => $this->_start_time,
+            "{{ finish_weekday }}" => $this->_finish_weekday,
+            "{{ finish_date }}" => $this->_finish_date,
+            "{{ finish_time }}" => $this->_finish_time,
             "{{ name }}" => $this->_name,
-            "{{ location }}" => ucfirst($where["name"]).", ".ucfirst($where["city"])." ",
-            "{{ public }}" => $public,
-            "{{ price }}" => $price
-        ], "content_each_event.html");
+            "{{ description }}" => $this->_description,
+            "{{ location }}" => ucfirst($location->getVarLocation("_name")),
+            "{{ location_city }}" => ucfirst($location->getVarLocation("_city")),
+            "{{ location_adress }}" => $location->getVarLocation("_address").", ".ucfirst($location->getVarLocation("_city")).", ".ucfirst($location->getVarLocation("_state"))." ".$location->getVarLocation("_zipcode").", ".ucfirst($location->getVarLocation("_country")),
+            "{{ public }}" => $this->addPublic(),
+            "{{ price }}" => $this->addPrice(true),
+            "{{ prices }}" => $this->addPrice()
+        ];
     }
 
     public function addPublic(){
@@ -122,7 +128,7 @@ class Event
         return $public;
     }
 
-    public function addPrice(){
+    public function addPrice($smallestOnly = false){
         switch ($this->_type_tickets){
             //case no booking
             case 0:
@@ -134,9 +140,21 @@ class Event
                 break;
             //case paid
             case 2:
-                $smallest_price = min(array_filter([$this->_price_child, $this->_price_adult, $this->_price_child_member, $this->_price_adult_member], function ($v){ return !is_null($v); }));
-                return "starts at $".$smallest_price;
+                if ($smallestOnly){
+                    $smallest_price = min(array_filter([$this->_price_child, $this->_price_adult, $this->_price_child_member, $this->_price_adult_member], function ($v){ return !is_null($v); }));
+                    return "starts at $".$smallest_price;
                 break;
+                }
+                else {
+                    $prices ="";
+                    if ($this->_price_child) $prices .= "Child : $".$this->_price_child."<br/>";
+                    if ($this->_price_child_member) $prices .= "Child (member): $".$this->_price_child_member."<br/>";
+                    if ($this->_price_adult) $prices .= "Adult : $".$this->_price_adult."<br/>";
+                    if ($this->_price_adult_member) $prices .= "Adult (member): $".$this->_price_adult_member."<br/>";
+                    return $prices;
+                    break;
+                }
+
             //case donation
             case 3:
                 return "donations welcome";

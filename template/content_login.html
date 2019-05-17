@@ -1,15 +1,15 @@
 <div class="container valign-wrapper"> 
     <div class="row">
-        <form class="col s12 login_form" method="post" action="{{ path }}/checklogin">
-            <div class="cl s12">
+        <form class="col s12 login_form" method="post" action="{{ path }}/checklogin{{ may_be_event_id }}">
+            <div class="col s12 user_color_dark_txt">
                 <i class="large material-icons prefix">person</i>
             </div>
             <div class="input-field col l6 offset-l3 m8 offset-m2 s10 offset-s1">
-                <input placeholder="Enter your username" id="user_name" type="text" class="validate" name="user">
+                <input placeholder="Enter your username" id="user_name" type="text" class="validate" name="user" required>
                 <label for="user_name">Username</label>
             </div>
             <div class="input-field col l6 offset-l3 m8 offset-m2 s10 offset-s1">
-                <input placeholder="Enter your password" id="password" type="password" class="validate" name="pw">
+                <input placeholder="Enter your password" id="password" type="password" class="validate" name="pw" required>
                 <label for="password">Password</label>
             </div>
             <div class="col l6 offset-l3 m8 offset-m2 s10 offset-s1 right">
@@ -28,3 +28,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    if (window.localStorage.getItem('user_name')) {
+        document.getElementById("user_name").value = window.localStorage.getItem('user_name');
+    }
+</script>

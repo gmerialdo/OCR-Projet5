@@ -3,8 +3,8 @@
         <a href="{{ path }}/see_event/{{ event_id }}" class="user_color_txt">
             <img src="{{ path }}/{{ image_src }}" alt="{{ image_alt }}">
             <p class="red-text"><em>{{ start_weekday }} {{ start_date }} - {{ start_time }}</em></p> 
-            <h5>{{ name }}</h5>
-            <p>{{ location }}</p>
+            <h5 class="user_color_dark_txt">{{ name }}</h5>
+            <p>{{ location }}, {{ location_city }}</p>
             <p>{{ public }} - {{ price }}</p>
         </a>    
     </div>

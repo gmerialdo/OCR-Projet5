@@ -14,26 +14,51 @@ class PageVisitor extends Page
         $req = [
             "fields" => ['event_id'],
             "from" => "evt_events",
-            "where" => [ "active_event = 1" ]
+            "where" => [ "active_event = 1" ],
+            "order" => "start_datetime"
         ];
         $data = Model::select($req);
         //if no events
         if (!isset($data["data"][0])){
-            $content = View::addTitleHtml(2, "No current event");
+            $title = "No current event";
         }
         else {
+            $title ="Our events";
+            $all_events = "";
             $each_event;
-            $content = View::addDiv("start", "row");
-            $content .= View::addDiv("start", "center-align");
-            $content .= View::addTitleHtml(2, "Our events");
-            $content .= View::addDiv("end");
             foreach ($data["data"] as $row){
                 $each_event = new Event("read", ["id" => $row["event_id"]]);
-                $content .= $each_event->addEventOnAll();
+                $all_events .= View::makeHtml($each_event->getEventData(), "elt_each_event.html");
             }
-            $content .= View::addDiv("end");
+            $content = View::makeHtml([
+                "{{ title }}" => $title,
+                "{{ events }}" => $all_events
+            ], "content_see_all_events.html");
         }
         return ["All events", $content];
+    }
+
+    public function see_event(){
+        $event = new Event("read", ["id" => $this->_url[1]]);
+        $eventData = $event->getEventData();
+        $content = View::makeHtml($eventData, "content_see_event.html");
+        return [$event->getVarEvent("_name"), $content];
+    }
+
+    public function needs_login(){
+        if (isset($_SESSION["user_name"])){
+            if (!isset($this->_url[1]) OR !isset($this->_url[2])) header('Location: ');
+            $link = $this->_url[1]."/".$this->_url[2];
+            echo $link;
+            header('Location: ../../logged/'.$link);
+        }
+        else {
+            return $this->login("booking", $this->_url[2]);
+        }
+
+        //if not logged --> loginpage with message (to book tickets you need to be registered...) keeping in memory the {{ event_id }} even if they go to sign in!!!!!!!!!
+        //if logged --> {{ path }}/logged/book_tickets/{{ event_id }}
+
     }
 
 

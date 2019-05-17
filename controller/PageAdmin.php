@@ -23,6 +23,20 @@ class PageAdmin extends Page
         }
     }
 
+    public function manage_events(){
+
+    }
+
+    public function modify_event(){
+
+    }
+
+
+//RAJOUTER CECI POUR CHANGER DE COULEUR EN MODE ADMIN??
+//<script>
+//     document.getElementsByClassName("user_color").classList.add("admin_color");
+//     document.getElementsByClassName("user_color").classList.remove("user_color");
+// </script>
 
 
 }

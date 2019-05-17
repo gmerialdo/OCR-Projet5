@@ -50,6 +50,10 @@ class Location {
         }
     }
 
+    public function getVarLocation($_var){
+        return $this->$_var;
+    }
+
     public function getLocationInfo($args){
         foreach ($args as $field){
             $newField = "_".$field;

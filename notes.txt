@@ -30,11 +30,13 @@ logout          : logout
 
 --TO DO + TARD:--------------------------------------------------------------------------------------
 
+-rajouter au login: si pas de username ou pas de password: avertissement (materialize peut faire ça?)
 -quand qqun se logge: $_SESSION['evt_managing_rights'] true or false!!
 -pour un admin: $_SESSION['admin_mode'] true de base, mais il peut passer en false si switch to user mode, et repasser en true si switch to admin mode
 -mettre à jour les diagrammes de classe
 -comment les events deviennent inactifs!! (après la date)
 -mettre à jour les relations (foreign keys) dans les tables de la base de données
+-pour les events: add refund policy / add "add to calendar" // add facebook link and other socialnetworks
 
 
 

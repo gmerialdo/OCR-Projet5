@@ -101,29 +101,20 @@ class Page
 
     //every function will return an array with $pageTitle and $content
 
-    public function see_event(){
-
-    }
-
-    public function manage_events(){
-
-    }
-
-    public function modify_event(){
-
-    }
-
-    public function signin(){
-
-    }
-
-    public function login($correct = true){
+    public function login($message = "", $event_id = 0){
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
             return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
         }
         else {
-            $content = file_get_contents("template/content_login_template.html");
-            if (!$correct) $content.= file_get_contents("template/error_login.html");
+            if ($event_id == 0) {
+                $may_be_event_id = "";
+            }
+            else {
+                $may_be_event_id = "/".$event_id;
+            }
+            $content = View::makeHtml(["{{ may_be_event_id }}" => $may_be_event_id], "content_login.html");
+            if ($message == "error") $content.= file_get_contents("template/msg_login_error.html");
+            if ($message == "booking") $content.= file_get_contents("template/msg_login_booking.html");
         }
         return ["login", $content];
     }
@@ -131,9 +122,17 @@ class Page
     public function checklogin(){
         if (!empty($_POST) && (empty($_SESSION["user_name"]))){
             $user = filter_input(INPUT_POST, "user", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            ?>
+            //keep user name in localStorage
+            <script>
+                window.localStorage.clear();
+                var user='<?php echo $user;?>';
+                window.localStorage.setItem('user_name', user);
+            </script>
+            <?php
             $pass = filter_input(INPUT_POST, "pw", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             $req = [
-            "fields" => ["*"],
+                "fields" => ["*"],
                 "from" => "evt_accounts",
                 "where" => [
                     "user_name ='$user'",
@@ -147,26 +146,37 @@ class Page
                 $_SESSION["user_name"]=$user;
                 $_SESSION["evt_managing_rights"]=$data["data"][0]["managing_rights"];
                 $_SESSION["admin_mode"]=false;
-                header('Location: see_all_events');
+                echo $this->_url[1];
+                if (isset($this->_url[1])){
+                    header('Location: ../logged/book_tickets/'.$this->_url[1]);
+                }
+                else{
+                    header('Location: logged/see_all_events');
+                }
             }
             else {
-                return $this->login(false);
+                return $this->login("error");
             }
         }
-        elseif ($_SESSION["username"]!=null){
+        elseif (!empty($_SESSION["user_name"])){
             header('Location: ');
         }
         else {
-            return $this->login(false);
+            return $this->login("error");;
         }
     }
 
     public function logout(){
         session_destroy();
-        return $this->see_all_events();
+        header('Location: see_all_events');
     }
 
+//TO DO LATER -------------------------------------------------------------------------------------------------
     public function forgot_password(){
+
+    }
+
+    public function signin(){
 
     }
 
@@ -182,9 +192,7 @@ class Page
 
     }
 
-    public function book_tickets(){
 
-    }
 
 
 

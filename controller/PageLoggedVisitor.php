@@ -21,4 +21,11 @@ class PageLoggedVisitor extends PageVisitor
         }
     }
 
+    public function book_tickets(){
+        return ["Book tickets", ""];
+        }
+
+        //if not logged --> loginpage with message (to book tickets you need to be registered...) keeping in memory the {{ event_id }} even if they go to sign in!!!!!!!!!
+        //if logged --> {{ path }}/logged/book_tickets/{{ event_id }}
+
 }
