@@ -25,6 +25,7 @@ div.each_event{padding-left: 15px; margin-top: 15px; border: solid 4px; border-r
 
 /*----login page-----*/
 form.login_form{margin-top: 20px;}
+form.signin_form{margin-top: 20px;}
 
 /*----event page-----*/
 div.one_event{border: solid 3px; border-radius: 5px;margin-top: 10px; width: 90vw;}
@@ -37,6 +38,7 @@ a.tickets_btn{margin: 5px;}
 /*----------------------small screens----------------------*/
 
 @media only screen and (max-width: 767px){
+    h3{font-size: 2rem;}
     h5{font-size: 1.2rem;line-height: 90%;}
 }
 

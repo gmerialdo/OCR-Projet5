@@ -114,6 +114,7 @@ class Page
             }
             $content = View::makeHtml(["{{ may_be_event_id }}" => $may_be_event_id], "content_login.html");
             if ($message == "error") $content.= file_get_contents("template/msg_login_error.html");
+            if ($message == "existing_email") $content.= file_get_contents("template/msg_login_existing_email.html");
             if ($message == "booking") $content.= file_get_contents("template/msg_login_booking.html");
         }
         return ["login", $content];
@@ -121,32 +122,22 @@ class Page
 
     public function checklogin(){
         if (!empty($_POST) && (empty($_SESSION["user_name"]))){
-            $user = filter_input(INPUT_POST, "user", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             ?>
-            //keep user name in localStorage
+            <!--keep user name in localStorage-->
             <script>
                 window.localStorage.clear();
-                var user='<?php echo $user;?>';
-                window.localStorage.setItem('user_name', user);
+                var keep_user_name ='<?php echo $user_name;?>';
+                window.localStorage.setItem('user_name', keep_user_name);
             </script>
             <?php
-            $pass = filter_input(INPUT_POST, "pw", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            $req = [
-                "fields" => ["*"],
-                "from" => "evt_accounts",
-                "where" => [
-                    "user_name ='$user'",
-                    "password ='$pass'"
-                    ]
-            ];
-            $data = Model::select($req);
-            //return true if not empty or false otherwise
-            $logged = !empty($data["data"]);
+            $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            require_once "controller/Account.php";
+            $logged = Account::validateLogin($user_name, $password);
             if ($logged){
-                $_SESSION["user_name"]=$user;
+                $_SESSION["user_name"]=$user_name;
                 $_SESSION["evt_managing_rights"]=$data["data"][0]["managing_rights"];
                 $_SESSION["admin_mode"]=false;
-                echo $this->_url[1];
                 if (isset($this->_url[1])){
                     header('Location: ../logged/book_tickets/'.$this->_url[1]);
                 }
@@ -172,12 +163,63 @@ class Page
     }
 
     public function signin(){
-
-
+        if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
+            return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
+        }
+        else {
+            if (isset($this->_url[1])) {
+                $may_be_event_id = "/".$this->_url[1];
+            }
+            else {
+                $may_be_event_id = "";
+            }
+            $content = View::makeHtml(["{{ may_be_event_id }}" => $may_be_event_id], "content_signin.html");
+        }
+        return ["signin", $content];
     }
 
     public function create_account(){
+        if (!empty($_POST) && (empty($_SESSION["user_name"]))){
+            $email = filter_input(INPUT_POST, "new_email", FILTER_VALIDATE_EMAIL);
+            ?>
+            <!--keep email in localStorage-->
+            <script>
+                window.localStorage.clear();
+                var keep_email='<?php echo $email;?>';
+                window.localStorage.setItem('email', keep_email);
+            </script>
+            <?php
+            //check if email not already used
+            require_once "controller/Account.php";
+            $email_exists = Account::emailExists($email);
+            if ($email_exists){
+                return $this->login("existing_email");
+            }
+            else {
+                $data["email"] = $email;
+                $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                $new_account = new Account("create", $data);
+                if ($new_account->getVarAccount("_created") == false){
 
+                }
+                else {
+                    $_SESSION["user_name"]=$data["email"];
+                    $_SESSION["evt_managing_rights"]=0;
+                    $_SESSION["admin_mode"]=false;
+                    if (isset($this->_url[1])){
+                        header('Location: ../logged/book_tickets/'.$this->_url[1]);
+                    }
+                    else{
+                        header('Location: logged/see_all_events');
+                    }
+                }
+            }
+        }
+        else {
+            header('Location: ');
+        }
     }
 
 

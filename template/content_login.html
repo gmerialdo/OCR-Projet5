@@ -5,11 +5,11 @@
                 <i class="large material-icons prefix">person</i>
             </div>
             <div class="input-field col l6 offset-l3 m8 offset-m2 s10 offset-s1">
-                <input placeholder="Enter your username" id="user_name" type="text" class="validate" name="user" required>
+                <input placeholder="Enter your username" id="user_name" type="text" class="validate" name="user_name" required>
                 <label for="user_name">Username</label>
             </div>
             <div class="input-field col l6 offset-l3 m8 offset-m2 s10 offset-s1">
-                <input placeholder="Enter your password" id="password" type="password" class="validate" name="pw" required>
+                <input placeholder="Enter your password" id="password" type="password" class="validate" name="password" required>
                 <label for="password">Password</label>
             </div>
             <div class="col l6 offset-l3 m8 offset-m2 s10 offset-s1 right">
@@ -24,7 +24,7 @@
             </div>
         </form>
         <div class="col s12">
-            <a class="waves-effect waves-light" href="{{ path }}/signin">Create Account</a>
+            <a class="waves-effect waves-light" href="{{ path }}/signin{{ may_be_event_id }}">Create Account</a>
         </div>
     </div>
 </div>
