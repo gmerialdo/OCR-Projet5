@@ -3,6 +3,7 @@
 .user_color_light{background: RGBA(0,151,167,0.2) !important; }
 .user_color_dark{background-color: RGB(0,96,100) !important;}
 .user_color_dark_txt{color: RGB(0,96,100) !important;}
+.admin_color{background-color: rgb(244,81,30) !important;}
 .align_left{text-align: left;}
 .bottom_line{border-bottom: solid 1px RGBA(0,151,167,0.2);}
 
@@ -17,12 +18,10 @@ ul#account_dropdown{top: 64px !important;}
 
 div#page_content{min-height: 60vh; justify-content: center; text-align: center;}
 
-
 /*--all events page--*/
 div.each_event{padding-left: 15px; margin-top: 15px; border: solid 4px; border-radius: 5px; line-height: 4px;}
 .each_event a{color: none;}
 .each_event img{height: 15vh; max-width: 100%;}
-
 
 /*----login page-----*/
 form.login_form{margin-top: 20px;}

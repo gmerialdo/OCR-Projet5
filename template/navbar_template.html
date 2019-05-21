@@ -1,25 +1,23 @@
-{{ navbar_accountdropdown }}
-
 <nav class="user_color">
     <div class="nav-wrapper">
         <a href="{{ orga_website }}" class="brand-logo">
             <h5>{{ orga_name }}</h5>
         </a>
-        <a href="#" data-target="nav-items-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         <ul id="nav-items" class="right hide-on-med-and-down">
             {{ navbar_switch }}
             <li><a href="{{ path }}">See all events</a></li>
             <li><a href="{{ path }}/help">Help</a></li>
             {{ navbar_accountoption }}
         </ul>
+        <a href="#" data-target="nav-items-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
 </nav>
 
-<ul class="sidenav" id="nav-items-mobile">
+<ul class="sidenav center-align user_color white-text" id="nav-items-mobile">
+    {{ navbar_accountoption_mobile }}
     {{ navbar_switch }}
-    <li><a href="{{ path }}">See all events</a></li>
-    <li><a href="{{ path }}help">Help</a></li>
-    {{ navbar_accountoption }}
 </ul>
+
+
 
 

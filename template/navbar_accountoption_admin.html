@@ -1,5 +1,10 @@
 <li>
-    <a class="dropdown-trigger" href="" data-target="account_dropdown_admin">
-        <i class="material-icons">account_circle arrow_drop_down</i>
+    <a class="dropdown-trigger" href="#!" data-target="account_dropdown_admin">
+        <i class="material-icons">settings_applications arrow_drop_down</i>
     </a>
+    <ul id="account_dropdown_admin" class="dropdown-content">
+        <li><a href="{{ path }}/admin/account_settings">Account Settings</a></li>
+        <li class="divider"></li>
+        <li><a href="{{ path }}/logout">Log out</a></li>
+    </ul>
 </li>

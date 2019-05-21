@@ -60,13 +60,13 @@ class Page
         if ($this->_rights == "visitor"){
             $navbar_switch = "";
             $navbar_accountoption = file_get_contents("template/navbar_accountoption_signin.html");
-            $navbar_accountdropdown = "";
+            $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
         }
         else {
             if ($_SESSION["admin_mode"]){
                 $navbar_switch = file_get_contents("template/navbar_switchtoadmin.html");
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
-                $navbar_accountdropdown = file_get_contents("template/navbar_accountdropdown_admin.html");
+                $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_admin_mobile.html");
             }
             else {
                  // if user with admin rights
@@ -77,13 +77,13 @@ class Page
                     $navbar_switch = "";
                 }
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_logged.html");
-                $navbar_accountdropdown = file_get_contents("template/navbar_accountdropdown_logged.html");
+                $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_logged_mobile.html");
             }
         }
         return view::makeHtml([
             "{{ navbar_switch }}" => $navbar_switch,
             "{{ navbar_accountoption }}" => $navbar_accountoption,
-            "{{ navbar_accountdropdown }}" => $navbar_accountdropdown
+            "{{ navbar_accountoption_mobile }}" => $nav_bar_accountoption_mobile
         ], "navbar_template.html");
     }
 
@@ -171,14 +171,23 @@ class Page
         header('Location: see_all_events');
     }
 
+    public function signin(){
+
+
+    }
+
+    public function create_account(){
+
+    }
+
+
+
 //TO DO LATER -------------------------------------------------------------------------------------------------
     public function forgot_password(){
 
     }
 
-    public function signin(){
 
-    }
 
     public function help(){
 
