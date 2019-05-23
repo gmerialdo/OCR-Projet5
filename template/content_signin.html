@@ -19,12 +19,14 @@
                 <label for="new_last_name">Last Name</label>
             </div>
             <div class="input-field col l4 offset-l4 m6 offset-m3 s10 offset-s1">
-                <input placeholder="Choose your password" id="new_password" type="password" class="validate" name="new_password" required>
+                <input placeholder="Choose your password" id="new_password" type="password" class="validate" name="new_password" minlength="6" maxlength="20" oninput="setInterval(checkSecurityPW, 250)" required>
                 <label for="new_password">Password</label>
+                <div id="level_mdp" style="float:right;"></div>
             </div>
             <div class="input-field col l4 offset-l4 m6 offset-m3 s10 offset-s1">
-                <input placeholder="Confirm your password" id="new_password_check" type="password" onblur="verifyPw(this)" class="validate" name="new_password_check" required>
+                <input placeholder="Confirm your password" id="new_password_check" type="password" oninput="verifyPw(this)" class="validate" name="new_password_check" required>
                 <label for="new_password_check">Confirm Password</label>
+                <div id="no_match" class="red-text" style="float:right;"></div>
             </div>
             <div class="col s12">
                 <button class="btn waves-effect waves-light user_color" type="submit" name="submit">
@@ -39,23 +41,5 @@
 <script>
     if (window.localStorage.getItem('user_name')) {
         document.getElementById("user_name").value = window.localStorage.getItem('user_name');
-    }
-    
-    function highlight(field, error){
-        if(error)
-            field.style.backgroundColor = "#FFD9CF";
-        else
-            field.style.backgroundColor = "";
-    }
-    
-    function verifyPw(field){
-        if(field.value != document.getElementById('new_password')){
-            highlight(field, true);
-            return false;
-        }
-        else {
-            highlight(field, false);
-            return true;
-        }
     }
 </script>

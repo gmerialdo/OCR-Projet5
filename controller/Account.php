@@ -17,14 +17,7 @@ class Account
     public function __construct($todo, $args){
         switch ($todo){
             case "create":
-                $done = $this->createAccount($args);
-                print_r($done);
-                if ($done["succeed"]){
-                    $this->_created = true;
-                }
-                else {
-                    $this->_created = false;
-                }
+                $this->createAccount($args);
                 break;
         }
     }
@@ -81,7 +74,8 @@ class Account
                 'orga_id'
             ]
         ];
-        return Model::insert($req, $data);
+        $create = Model::insert($req, $data);
+        $this->_created = $create["succeed"];
     }
 
 

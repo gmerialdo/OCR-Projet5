@@ -202,18 +202,31 @@ class Page
                 $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
                 $new_account = new Account("create", $data);
                 if ($new_account->getVarAccount("_created") == false){
-
+                    header('Location: ../signin');
                 }
                 else {
                     $_SESSION["user_name"]=$data["email"];
                     $_SESSION["evt_managing_rights"]=0;
                     $_SESSION["admin_mode"]=false;
-                    if (isset($this->_url[1])){
-                        header('Location: ../logged/book_tickets/'.$this->_url[1]);
-                    }
-                    else{
-                        header('Location: logged/see_all_events');
-                    }
+                    ?>
+                    <script>
+                        var msg = '<?php echo "You successfully signed in!";?>';
+                        <?php
+                        if (isset($this->_url[1])){
+                        ?>
+                            var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
+                        <?php
+                        }
+                        else {
+                        ?>
+                            var link = '<?php echo "see_all_events";?>';
+                        <?php
+                        }
+                        ?>
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
                 }
             }
         }
@@ -221,7 +234,6 @@ class Page
             header('Location: ');
         }
     }
-
 
 
 //TO DO LATER -------------------------------------------------------------------------------------------------

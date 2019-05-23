@@ -16,25 +16,26 @@ class Model {
         try {
             if ($data == NULL){
                 $result = self::$_db->query($sql);
+                $data = $result->fetchAll();
             }
             else {
                 $result = self::$_db->prepare($sql);
                 $result->execute($data);
+                //store result
             }
-            //store result
-            $data = $result->fetchAll();
             //close request
             $result->closeCursor();
             //if no result
             if (empty($data)) $data="";
             return [
-                "succeed" => TRUE,
+                "succeed" => true,
                 "data"    => $data
             ];
         }
         catch(Exception $e) {
+            print_r($e);
             return [
-                "succeed" => FALSE,
+                "succeed" => false,
                 "data"    => $e
             ];
         }
