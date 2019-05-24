@@ -8,7 +8,7 @@ class PageAdmin extends Page
     public function __construct($url){
         $url = array_slice($url, 1);
         Page::__construct($url);
-        $this->_defaultPage = "see_all_events";/////////TO CHANGE
+        $this->_defaultPage = "dashboard";/////////TO CHANGE
     }
 
     //adds a complement before using parent::getPage() to securize all the admin interface: only connect if logged!
@@ -19,6 +19,7 @@ class PageAdmin extends Page
         }
         //else the user is logged in so go to the page in admin interface
         else {
+            $_SESSION["admin_mode"] = true;
             return Page::getPage();
         }
     }
@@ -28,6 +29,10 @@ class PageAdmin extends Page
     }
 
     public function modify_event(){
+
+    }
+
+    public function dashboard(){
 
     }
 

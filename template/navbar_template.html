@@ -6,7 +6,8 @@
         <ul id="nav-items" class="right hide-on-med-and-down">
             {{ navbar_switch }}
             <li><a href="{{ path }}">See all events</a></li>
-            <li><a href="{{ path }}/help">Help</a></li>
+            <li><a href="{{ path }}/help">Help  </a></li>
+            <li>{{ navbar_account }} </li>
             {{ navbar_accountoption }}
         </ul>
         <a href="#" data-target="nav-items-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
@@ -14,6 +15,7 @@
 </nav>
 
 <ul class="sidenav center-align user_color white-text" id="nav-items-mobile">
+    <li>{{ navbar_account }} </li>
     {{ navbar_accountoption_mobile }}
     {{ navbar_switch }}
 </ul>

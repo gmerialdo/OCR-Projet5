@@ -3,7 +3,6 @@
 class Account
 {
 
-    private $_created;
     private $_evt_account_id;
     private $_tbl_persons_perso_id;
     private $_tbl_users_user_id;
@@ -17,7 +16,7 @@ class Account
     public function __construct($todo, $args){
         switch ($todo){
             case "create":
-                $this->createAccount($args);
+                return $this->createAccount($args);
                 break;
         }
     }
@@ -37,8 +36,20 @@ class Account
                     ]
         ];
         $data = Model::select($req);
+        if (!empty($data["data"])){
+            Account::logSession($user_name, $data["data"][0]["first_name"], $data["data"][0]["last_name"], $data["data"][0]["managing_rights"], false, $data["data"][0]["evt_account_id"]);
+        }
         //return true if not empty or false otherwise
         return !empty($data["data"]);
+    }
+
+    public static function logSession($user, $first_name, $last_name, $rights, $admin_mode, $id){
+        $_SESSION["user_name"]=$user;
+        $_SESSION["first_name"]=$first_name;
+        $_SESSION["last_name"]=$last_name;
+        $_SESSION["evt_managing_rights"]=$rights;
+        $_SESSION["admin_mode"]=$admin_mode;
+        $_SESSION["evt_account_id"]=$id;
     }
 
     public static function emailExists($email){
@@ -57,8 +68,8 @@ class Account
             $args["email"],
             hash("sha256", $args["password"]),
             $args["email"],
-            $args["first_name"],
-            $args["last_name"],
+            ucfirst($args["first_name"]),
+            ucfirst($args["last_name"]),
             0,
             $GLOBALS["orga_id"]
         ];
@@ -75,7 +86,7 @@ class Account
             ]
         ];
         $create = Model::insert($req, $data);
-        $this->_created = $create["succeed"];
+        return $create["succeed"];
     }
 
 

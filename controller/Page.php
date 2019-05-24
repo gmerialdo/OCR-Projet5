@@ -4,6 +4,7 @@
 //nothing (page with all events) or event/id or modify/id or create or login or logout or delete/id or book/id or cancel/id
 
 require_once "controller/Event.php";
+require_once "controller/Account.php";
 
 class Page
 {
@@ -58,13 +59,15 @@ class Page
     //to add the nav bar
     public function addNavbar(){
         if ($this->_rights == "visitor"){
+            $navbar_account = "";
             $navbar_switch = "";
             $navbar_accountoption = file_get_contents("template/navbar_accountoption_signin.html");
             $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
         }
         else {
+            $navbar_account = $_SESSION["first_name"]." ".$_SESSION["last_name"];
             if ($_SESSION["admin_mode"]){
-                $navbar_switch = file_get_contents("template/navbar_switchtoadmin.html");
+                $navbar_switch = file_get_contents("template/navbar_switchtouser.html");
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
                 $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_admin_mobile.html");
             }
@@ -81,6 +84,7 @@ class Page
             }
         }
         return view::makeHtml([
+            "{{ navbar_account }}" => $navbar_account,
             "{{ navbar_switch }}" => $navbar_switch,
             "{{ navbar_accountoption }}" => $navbar_accountoption,
             "{{ navbar_accountoption_mobile }}" => $nav_bar_accountoption_mobile
@@ -99,11 +103,15 @@ class Page
         return $this->$fct_to_call();
     }
 
-    //every function will return an array with $pageTitle and $content
-
+    //to display the login page
     public function login($message = "", $event_id = 0){
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
-            return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
+            if ($_SESSION["admin_mode"] == true){
+                header('Location: admin');
+            }
+            else {
+                header('Location: logged/see_all_events');
+            }
         }
         else {
             if ($event_id == 0) {
@@ -120,6 +128,7 @@ class Page
         return ["login", $content];
     }
 
+    //function that checks if username and pw are ok and logs in if yes
     public function checklogin(){
         if (!empty($_POST) && (empty($_SESSION["user_name"]))){
             $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
@@ -132,18 +141,27 @@ class Page
             </script>
             <?php
             $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            require_once "controller/Account.php";
             $logged = Account::validateLogin($user_name, $password);
             if ($logged){
-                $_SESSION["user_name"]=$user_name;
-                $_SESSION["evt_managing_rights"]=$data["data"][0]["managing_rights"];
-                $_SESSION["admin_mode"]=false;
-                if (isset($this->_url[1])){
-                    header('Location: ../logged/book_tickets/'.$this->_url[1]);
-                }
-                else{
-                    header('Location: logged/see_all_events');
-                }
+                ?>
+                <script>
+                    var msg = '<?php echo "You successfully logged in!";?>';
+                    <?php
+                    if (isset($this->_url[1])){
+                        ?>
+                        var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
+                        <?php
+                    }
+                    else {
+                        ?>
+                        var link = '<?php echo "logged/see_all_events";?>';
+                        <?php
+                    }
+                    ?>
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
             }
             else {
                 return $this->login("error");
@@ -157,11 +175,13 @@ class Page
         }
     }
 
+    //function that logs out and redirect to default page
     public function logout(){
         session_destroy();
         header('Location: see_all_events');
     }
 
+    //to display sign in page
     public function signin(){
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
             return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
@@ -178,6 +198,7 @@ class Page
         return ["signin", $content];
     }
 
+    //funcion that creates an account and logs into session if it worked
     public function create_account(){
         if (!empty($_POST) && (empty($_SESSION["user_name"]))){
             $email = filter_input(INPUT_POST, "new_email", FILTER_VALIDATE_EMAIL);
@@ -190,7 +211,6 @@ class Page
             </script>
             <?php
             //check if email not already used
-            require_once "controller/Account.php";
             $email_exists = Account::emailExists($email);
             if ($email_exists){
                 return $this->login("existing_email");
@@ -201,26 +221,24 @@ class Page
                 $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
                 $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
                 $new_account = new Account("create", $data);
-                if ($new_account->getVarAccount("_created") == false){
+                if (!$new_account){
                     header('Location: ../signin');
                 }
                 else {
-                    $_SESSION["user_name"]=$data["email"];
-                    $_SESSION["evt_managing_rights"]=0;
-                    $_SESSION["admin_mode"]=false;
+                    Account::logSession($data["email"], 0,false, $new_account->_account_id);
                     ?>
                     <script>
                         var msg = '<?php echo "You successfully signed in!";?>';
                         <?php
                         if (isset($this->_url[1])){
-                        ?>
+                            ?>
                             var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
-                        <?php
+                            <?php
                         }
                         else {
-                        ?>
+                            ?>
                             var link = '<?php echo "see_all_events";?>';
-                        <?php
+                            <?php
                         }
                         ?>
                         alert(msg);
@@ -241,23 +259,9 @@ class Page
 
     }
 
-
-
     public function help(){
 
     }
-
-    public function account_settings(){
-
-    }
-
-    public function my_tickets(){
-
-    }
-
-
-
-
 
 
 }

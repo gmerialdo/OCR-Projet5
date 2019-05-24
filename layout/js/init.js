@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     var elemsDropdown = document.querySelectorAll('.dropdown-trigger');
-    var instancesDropdown = M.Dropdown.init(elemsDropdown);
+    var instancesDropdown = M.Dropdown.init(elemsDropdown, {constrainWidth: false, coverTrigger: false, hover:true});
     var elemsSidenav = document.querySelectorAll('.sidenav');
     var instancesSidenav = M.Sidenav.init(elemsSidenav);
+    var elemsSelectNbTickets = document.querySelectorAll('select');
+    var instancesSelectNbTickets = M.FormSelect.init(elemsSelectNbTickets);
 });
 
 function checkSecurityPW(){
@@ -83,3 +85,4 @@ function verifyPw(field){
         return true;
     }
 }
+

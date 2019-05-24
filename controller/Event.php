@@ -132,7 +132,7 @@ class Event
         switch ($this->_type_tickets){
             //case no booking
             case 0:
-                return "no reservation";
+                return "free - no reservation";
                 break;
             //case free
             case 1:
