@@ -53,7 +53,7 @@ class Ticket
                 'donation',
                 'total_to_pay',
                 'payment_time',
-                'cancelled_time'
+                'cancelled_time',
             ],
             "from" => "evt_tickets",
             "where" => [ "ticket_id = ".$this->_ticket_id],
@@ -70,7 +70,38 @@ class Ticket
     }
 
     public function getTicketData(){
-
+        $tickets = "";
+        $total = "";
+        if ($this->_nb_tickets_all != null){
+            $tickets .= "Tickets : ".$this->_nb_tickets_all."<br/>";
+            if ($this->_donation != null){
+                $total .= "Donation welcome. Willing to donate: $".$this->_donation;
+            }
+            else {
+                $total .= "Free event";
+            }
+        }
+        else {
+            if ($this->_nb_tickets_adult_mb != null){
+                $tickets .= "Tickets - adult (member) : ".$this->_nb_tickets_adult_mb." - Price: $".$this->_price_adult_mb_booked."<br/>";
+            }
+            if ($this->_nb_tickets_adult != null){
+                $tickets .= "Tickets - adult : ".$this->_nb_tickets_adult." - Price: $".$this->_price_adult_booked."<br/>";
+            }
+            if ($this->_nb_tickets_child_mb != null){
+                $tickets .= "Tickets - child (member) : ".$this->_nb_tickets_child_mb." - Price: $".$this->_price_child_mb_booked."<br/>";
+            }
+            if ($this->_nb_tickets_child != null){
+                $tickets .= "Tickets - child : ".$this->_nb_tickets_child." - Price: $".$this->_price_child_booked."<br/>";
+            }
+            $total = "You need to pay: $".$this->_total_to_pay;
+        }
+        return [
+            "{{ ticket_id }}" => $this->_ticket_id,
+            "{{ event_id }}" => $this->_event_id,
+            "{{ tickets }}" => $tickets,
+            "{{ total }}" => $total
+        ];
     }
 
     public function createTicket($args){
@@ -139,6 +170,21 @@ class Ticket
             + ($this->_nb_tickets_child * $this->_price_child_booked);
         }
         return $total;
+    }
+
+    public static function alreadyBookedTickets($event_id){
+        $req = [
+                "fields" => ["*"],
+                "from" => "evt_tickets",
+                "where" => [
+                    "event_id ='$event_id'",
+                    "evt_account_id = ".$_SESSION["evt_account_id"],
+                    "cancelled_time is NULL"
+                ]
+        ];
+        $data = Model::select($req);
+        //return true if not empty or false otherwise
+        return !empty($data["data"]);
     }
 
 }

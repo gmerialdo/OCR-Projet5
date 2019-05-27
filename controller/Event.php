@@ -26,6 +26,7 @@ class Event
     private $_price_child_member;
     private $_price_child;
     private $_limit_booking_time;
+    private $_nb_available_tickets;
 
     public function __construct($todo, $args){
         switch ($todo){
@@ -62,7 +63,9 @@ class Event
                 'price_adult',
                 'price_child_member',
                 'price_child',
-                'limit_booking_time'],
+                'limit_booking_time',
+                'nb_available_tickets'
+            ],
             "from" => "evt_events",
             "where" => [ "event_id = ".$this->_event_id],
             "limit" => 1
@@ -160,6 +163,16 @@ class Event
                 return "donations welcome";
                 break;
         }
+    }
+
+    public static function updateEventInDB($fields, $data){
+        $req = [
+            "table"  => "evt_events",
+            "fields" => $fields,
+            "limi" => 1
+        ];
+        $update = Model::update($req, $data);
+        return $update["succeed"];
     }
 
 }

@@ -48,6 +48,8 @@ class Model {
         //add db table
         $req .= ' FROM '.$args["from"];
         //add optional thing
+        if (isset($args["join"])) $req .= ' INNER JOIN ' .$args["join"];
+        if (isset($args["on"])) $req.= ' ON ' .$args["on"];
         if (isset($args["where"])) $req .= ' WHERE ' .implode(" AND ", $args["where"]);
         if (isset($args["order"])) $req .= " ORDER BY ".$args["order"];
         if (isset($args["limit"])) $req .= " LIMIT ".$args["limit"];

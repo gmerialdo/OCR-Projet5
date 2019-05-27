@@ -27,58 +27,73 @@ class PageLoggedVisitor extends PageVisitor
             header('Location: see_all_events');
         }
         else {
-            require_once("controller/event.php");
-            $event = new Event("read", ["id" => $this->_url[1]]);
-            $tickets_choice = "";
-            switch ($event->getVarEvent("_type_tickets")){
-                case 1:
-                    $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "free", "", "");
-                    break;
-                case 2:
-                    switch ($event->getVarEvent("_public")){
-                        case 1:
-                            if (null !== $event->getVarEvent("_price_adult_member")){
-                                $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
-                            }
-                            if (null !== $event->getVarEvent("_price_adult")){
-                                $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
-                            }
-                            if (null !== $event->getVarEvent("_price_child_member")){
-                                $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
-                            }
-                            if (null !== $event->getVarEvent("_price_child")){
-                                $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
-                            }
-                            break;
-                        case 2:
-                            if (null !== $event->getVarEvent("_price_adult_member")){
-                                $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
-                            }
-                            if (null !== $event->getVarEvent("_price_adult")){
-                                $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
-                            }
-                            break;
-                        case 3:
-                            if (null !== $event->getVarEvent("_price_child_member")){
-                                $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
-                            }
-                            if (null !== $event->getVarEvent("_price_child")){
-                                $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
-                            }
-                            break;
-                    }
-                    break;
-                case 3:
-                    $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "donation welcome", "", "");
-                    $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
-                    break;
+            //if user has already tickets booked for this event
+            require_once("controller/Ticket.php");
+            if (Ticket::alreadyBookedTickets($this->_url[1])){
+                ?>
+                <script>
+                    var msg = '<?php echo "You already booked tickets for this event.";?>';
+                    var link = '<?php echo "../my_tickets";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
             }
-            $content = View::makeHtml([
-                "{{ event_id }}" => $event->getVarEvent("_event_id"),
-                "{{ event_name }}" => $event->getVarEvent("_name"),
-                "{{ tickets_choice }}" => $tickets_choice
-            ], "content_book_tickets.html");
-            return ["Book tickets", $content];
+            else {
+                require_once("controller/Event.php");
+                $event = new Event("read", ["id" => $this->_url[1]]);
+                $tickets_choice = "";
+                switch ($event->getVarEvent("_type_tickets")){
+                    case 1:
+                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "free", "", "");
+                        break;
+                    case 2:
+                        switch ($event->getVarEvent("_public")){
+                            case 1:
+                                if (null !== $event->getVarEvent("_price_adult_member")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_adult")){
+                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child_member")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child")){
+                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
+                                }
+                                break;
+                            case 2:
+                                if (null !== $event->getVarEvent("_price_adult_member")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_adult")){
+                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
+                                }
+                                break;
+                            case 3:
+                                if (null !== $event->getVarEvent("_price_child_member")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child")){
+                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
+                                }
+                                break;
+                        }
+                        break;
+                    case 3:
+                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "donation welcome", "", "");
+                        $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
+                        break;
+                }
+                $content = View::makeHtml([
+                    "{{ event_id }}" => $event->getVarEvent("_event_id"),
+                    "{{ event_name }}" => $event->getVarEvent("_name"),
+                    "{{ tickets_choice }}" => $tickets_choice,
+                    "{{ nb_available_tickets }}" => $event->getVarEvent("_nb_available_tickets")
+                ], "content_book_tickets.html");
+                return ["Book tickets", $content];
+            }
         }
     }
 
@@ -98,40 +113,71 @@ class PageLoggedVisitor extends PageVisitor
                 $data[$key] = filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
             }
             $data["evt_account_id"] = $_SESSION["evt_account_id"];
-            // require_once("controller/Event.php"); ---------------- a enlever ou pas???????????????????
-            // $event = new Event("read", ["id" => $data["event_id"]]);
-            // $data["price_adult_mb_booked"] = $event->getVarEvent("_price_adult_member");
-            // $data["price_adult_booked"] = $event->getVarEvent("_price_adult");
-            // $data["price_child_mb_booked"] = $event->getVarEvent("_price_child_member");
-            // $data["price_child_booked"] = $event->getVarEvent("_price_child");
-            require_once("controller/Ticket.php");
-            $new_ticket = new Ticket("create", $data);
-            if ($new_ticket){
-                ?>
-                <script>
-                    var msg = '<?php echo "Your tickets are booked!";?>';
-                    var link = '<?php echo "../logged/my_tickets";?>';
-                    alert(msg);
-                    window.location.href=link;
-                </script>
-                <?php
+            // if not enough tickets left
+            $nb_tickets_wanted = 0;
+            if (isset($data["nb_tickets_adult_mb"])) $nb_tickets_wanted += $data["nb_tickets_adult_mb"];
+            if (isset($data["nb_tickets_adult"])) $nb_tickets_wanted += $data["nb_tickets_adult"];
+            if (isset($data["nb_tickets_child_mb"])) $nb_tickets_wanted += $data["nb_tickets_child_mb"];
+            if (isset($data["nb_tickets_child"])) $nb_tickets_wanted += $data["nb_tickets_child"];
+            if (isset($data["nb_tickets_all"])) $nb_tickets_wanted += $data["nb_tickets_all"];
+            if ($data["nb_available_tickets"] < $nb_tickets_wanted){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Not enough tickets available.";?>';
+                        var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+            }
+            else {
+                $nb_left = $data["nb_available_tickets"] - $nb_tickets_wanted;
+                require_once("controller/Ticket.php");
+                $new_ticket = new Ticket("create", $data);
+                if ($new_ticket){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Your tickets are booked!";?>';
+                        var link = '<?php echo "../logged/my_tickets";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                    Event::setEventDataInDB(["nb_available_tickets"], $nb_left);
+                }
             }
         }
         else {
-
+            header('Location: see_all_events');
         }
     }
+
+       public static function updateEventInDB($fields, $data){
+        $req = [
+            "table"  => "evt_events",
+            "fields" => $fields,
+            "limi" => 1
+        ];
+        $update = Model::update($req, $data);
+        return $update["succeed"];
+   }
 
     public function my_tickets(){
         $req = [
             "fields" => ["*"],
-            "from" => "evt_tickets",
-            "where" => ["evt_account_id = ".$_SESSION["evt_account_id"]],
+            "from" => "evt_tickets AS t",
+            "join" => "evt_events AS e",
+            "on" => "t.event_id = e.event_id",
+            "where" => [
+                "t.evt_account_id = ".$_SESSION["evt_account_id"],
+                "e.finish_datetime > NOW()",
+                "t.cancelled_time is NULL"
+            ],
             "order" => "time_booked"
         ];
         $data = Model::select($req);
-        //if no tickets
         $my_tickets = "";
+        //if no tickets
         if (!isset($data["data"][0])){
             $title = "No tickets booked";
         }
@@ -141,7 +187,9 @@ class PageLoggedVisitor extends PageVisitor
             foreach ($data["data"] as $row){
                 require_once("controller/Ticket.php");
                 $each_ticket = new Ticket("read", ["id" => $row["ticket_id"]]);
-                $my_tickets .= "";//View::makeHtml($each_ticket->getTicketData(), "elt_each_ticket.html");
+                $data = $each_ticket->getTicketData();
+                $data["{{ evt_name }}"] = $row["name"];
+                $my_tickets .= View::makeHtml($data,"elt_each_ticket.html");
             }
         }
         $content = View::makeHtml([

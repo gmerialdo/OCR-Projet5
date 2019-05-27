@@ -31,6 +31,15 @@ class View
         }
     }
 
+    public static function addHtmlTag($tag, $place){
+        if ($place == "start"){
+            return "<".$tag.">";
+        }
+        elseif ($place == "end"){
+            return "</".$tag.">";
+        }
+    }
+
     public static function errorDisplayBack(){
         return View::makeHtml([
                         "{{ path }}" => $GLOBALS["path"]
