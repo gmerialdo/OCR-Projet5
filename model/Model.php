@@ -6,10 +6,11 @@ class Model {
     private static $_db;
 
     public static function init(){
-        self::$_db = new PDO('mysql:host='.$GLOBALS["db"]["host"].';dbname='.$GLOBALS["db"]["database"].';charset=utf8', $GLOBALS["db"]["user"], $GLOBALS["db"]["password"]);
+        global $envProd, $my_db;
+        self::$_db = new PDO('mysql:host='.$my_db["host"].';dbname='.$my_db["database"].';charset=utf8', $my_db["user"], $my_db["password"]);
         self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (!$GLOBALS["envProd"]) self::$_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        unset($GLOBALS["db"]);
+        if (!$envProd) self::$_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        unset($my_db);
     }
 
     public static function request($sql, $data=NULL){

@@ -33,8 +33,14 @@ class Event
             case "read":
                 $this->_event_id = $args["id"];
                 $this->setEventDataFromDB();
+                $this->_nb_available_tickets = $this->calculateAvailableTickets();
                 break;
             case "create":
+                break;
+            case "update":
+            //$args consists of an array with id, array of fields and array of data to update in those fields
+                $this->_event_id = $args["id"];
+                $this->updateEventInDB($args["fields"], $args["data"]);
                 break;
         }
     }
@@ -63,8 +69,7 @@ class Event
                 'price_adult',
                 'price_child_member',
                 'price_child',
-                'limit_booking_time',
-                'nb_available_tickets'
+                'limit_booking_time'
             ],
             "from" => "evt_events",
             "where" => [ "event_id = ".$this->_event_id],
@@ -165,11 +170,38 @@ class Event
         }
     }
 
-    public static function updateEventInDB($fields, $data){
+    public function calculateAvailableTickets(){
+        if (!isset($this->_max_tickets)){
+            return null;
+        }
+        else {
+            $req = [
+                "fields" => ["ticket_id"],
+                "from" => "evt_tickets",
+                "where" => [ "event_id = ".$this->_event_id]
+            ];
+            $data = Model::select($req);
+            if ($data["succeed"]){
+                $booked_tickets = 0;
+                if (isset($data["data"][0])){
+                    $ticket;
+                    foreach ($data["data"] as $row) {
+                        require_once("controller/Ticket.php");
+                        $ticket = new Ticket("read", ["id" => $row["ticket_id"]]);
+                        $booked_tickets += $ticket->getVarTicket("_total_nb_tickets");
+                    }
+                }
+            }
+            return $this->_max_tickets - $booked_tickets;
+        }
+    }
+
+    public function updateEventInDB($fields, $data){
         $req = [
             "table"  => "evt_events",
             "fields" => $fields,
-            "limi" => 1
+            "where" => ["event_id = ".$this->_event_id],
+            "limit" => 1
         ];
         $update = Model::update($req, $data);
         return $update["succeed"];

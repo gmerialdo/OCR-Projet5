@@ -120,7 +120,18 @@ class PageLoggedVisitor extends PageVisitor
             if (isset($data["nb_tickets_child_mb"])) $nb_tickets_wanted += $data["nb_tickets_child_mb"];
             if (isset($data["nb_tickets_child"])) $nb_tickets_wanted += $data["nb_tickets_child"];
             if (isset($data["nb_tickets_all"])) $nb_tickets_wanted += $data["nb_tickets_all"];
-            if ($data["nb_available_tickets"] < $nb_tickets_wanted){
+            if ($nb_tickets_wanted == 0){
+                ?>
+                <script>
+                    var msg = '<?php echo "No tickets selected. Please indicate the number of tickets you want to book.";?>';
+                    var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+            else {
+                if ($data["nb_available_tickets"] < $nb_tickets_wanted){
                     ?>
                     <script>
                         var msg = '<?php echo "Not enough tickets available.";?>';
@@ -129,21 +140,20 @@ class PageLoggedVisitor extends PageVisitor
                         window.location.href=link;
                     </script>
                     <?php
-            }
-            else {
-                $nb_left = $data["nb_available_tickets"] - $nb_tickets_wanted;
-                require_once("controller/Ticket.php");
-                $new_ticket = new Ticket("create", $data);
-                if ($new_ticket){
-                    ?>
-                    <script>
-                        var msg = '<?php echo "Your tickets are booked!";?>';
-                        var link = '<?php echo "../logged/my_tickets";?>';
-                        alert(msg);
-                        window.location.href=link;
-                    </script>
-                    <?php
-                    Event::setEventDataInDB(["nb_available_tickets"], $nb_left);
+                }
+                else {
+                    require_once("controller/Ticket.php");
+                    $new_ticket = new Ticket("create", $data);
+                    if ($new_ticket){
+                        ?>
+                        <script>
+                            var msg = '<?php echo "Your tickets are booked!";?>';
+                            var link = '<?php echo "../logged/my_tickets";?>';
+                            alert(msg);
+                            window.location.href=link;
+                        </script>
+                        <?php
+                    }
                 }
             }
         }
@@ -152,15 +162,6 @@ class PageLoggedVisitor extends PageVisitor
         }
     }
 
-       public static function updateEventInDB($fields, $data){
-        $req = [
-            "table"  => "evt_events",
-            "fields" => $fields,
-            "limi" => 1
-        ];
-        $update = Model::update($req, $data);
-        return $update["succeed"];
-   }
 
     public function my_tickets(){
         $req = [
@@ -173,7 +174,7 @@ class PageLoggedVisitor extends PageVisitor
                 "e.finish_datetime > NOW()",
                 "t.cancelled_time is NULL"
             ],
-            "order" => "time_booked"
+            "order" => "e.start_datetime"
         ];
         $data = Model::select($req);
         $my_tickets = "";

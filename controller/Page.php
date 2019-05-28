@@ -35,6 +35,7 @@ class Page
 
     //to return the html for the page
     public function getHtmlPage(){
+        global $path;
         //function getPage will return an array with $pageTitle and $content
         $getPage = $this->getPage();
         return view::makeHtml([
@@ -52,15 +53,16 @@ class Page
             "{{ orga_country }}" => "USA",
             "{{ orga_email }}" => "alliancefrancaisetucson@gmail.com",
             "{{ orga_phone }}" => "+1 520-881-9158",
-            "{{ path }}" => $GLOBALS["path"]
+            "{{ path }}" => $path
         ], "page_template.html");
     }
 
     //to add the nav bar
     public function addNavbar(){
+        $navbar_account = "";
+        $navbar_switch = "";
+        $navbar_user = file_get_contents("template/navbar_user.html");
         if ($this->_rights == "visitor"){
-            $navbar_account = "";
-            $navbar_switch = "";
             $navbar_accountoption = file_get_contents("template/navbar_accountoption_signin.html");
             $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
         }
@@ -68,6 +70,7 @@ class Page
             $navbar_account = $_SESSION["first_name"]." ".$_SESSION["last_name"];
             if ($_SESSION["admin_mode"]){
                 $navbar_switch = file_get_contents("template/navbar_switchtouser.html");
+                $navbar_user = "";
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
                 $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_admin_mobile.html");
             }
@@ -76,9 +79,6 @@ class Page
                 if ($this->_rights == "admin"){
                     $navbar_switch = file_get_contents("template/navbar_switchtoadmin.html");
                 }
-                else {
-                    $navbar_switch = "";
-                }
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_logged.html");
                 $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_logged_mobile.html");
             }
@@ -86,6 +86,7 @@ class Page
         return view::makeHtml([
             "{{ navbar_account }}" => $navbar_account,
             "{{ navbar_switch }}" => $navbar_switch,
+            "{{ navbar_user }}" => $navbar_user,
             "{{ navbar_accountoption }}" => $navbar_accountoption,
             "{{ navbar_accountoption_mobile }}" => $nav_bar_accountoption_mobile
         ], "navbar_template.html");
@@ -141,8 +142,8 @@ class Page
             </script>
             <?php
             $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            $logged = Account::validateLogin($user_name, $password);
-            if ($logged){
+            $account = new Account("read", ["user_name" => $user_name, "password" => $password]);
+            if ($account->getVarAccount("_valid")){
                 ?>
                 <script>
                     var msg = '<?php echo "You successfully logged in!";?>';
@@ -210,42 +211,37 @@ class Page
                 window.localStorage.setItem('email', keep_email);
             </script>
             <?php
-            //check if email not already used
-            $email_exists = Account::emailExists($email);
-            if ($email_exists){
+            $data["email"] = $email;
+            $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $new_account = new Account("create", $data);
+            if ($new_account->getVarAccount("_valid") == false){
                 return $this->login("existing_email");
             }
+            else if (!$new_account){
+                header('Location: ../signin');
+            }
             else {
-                $data["email"] = $email;
-                $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-                $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-                $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-                $new_account = new Account("create", $data);
-                if (!$new_account){
-                    header('Location: ../signin');
-                }
-                else {
-                    Account::logSession($data["email"], 0,false, $new_account->_account_id);
-                    ?>
-                    <script>
-                        var msg = '<?php echo "You successfully signed in!";?>';
-                        <?php
-                        if (isset($this->_url[1])){
-                            ?>
-                            var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
-                            <?php
-                        }
-                        else {
-                            ?>
-                            var link = '<?php echo "see_all_events";?>';
-                            <?php
-                        }
-                        ?>
-                        alert(msg);
-                        window.location.href=link;
-                    </script>
+                ?>
+                <script>
+                    var msg = '<?php echo "You successfully signed in!";?>';
                     <?php
-                }
+                    if (isset($this->_url[1])){
+                        ?>
+                        var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
+                        <?php
+                    }
+                    else {
+                        ?>
+                        var link = '<?php echo "see_all_events";?>';
+                        <?php
+                    }
+                    ?>
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
             }
         }
         else {

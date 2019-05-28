@@ -1,19 +1,3 @@
---TO DO :--------------------------------------------------------------------------------------------
-
-LUNDI:
-
-
-MARDI:
--Lionel:
-
-MERCREDI:
--voir avec JMarc: email unique!!!!! (pour lier les tables users/persons/accounts...)
-
-JEUDI:
--Lionel:
-
-VENDREDI:
-
 
 --INFOS----------------------------------------------------------------------------------------------
 
@@ -23,26 +7,29 @@ VENDREDI:
 -www.kiwiversity.com/nomAF/events/ ...
 see_all_events  : all events (also default page)
 see_event/id	: see event with id
-admin_mode      : dashboard events
+admin/dashboard : dashboard events
 modify_event/id	: modify an event
 signin		    : sign in or log in
 logout          : logout
 
---TO DO + TARD:--------------------------------------------------------------------------------------
+--TO DO POUR SOUTENANCE:--------------------------------------------------------------------------------------
 
--quand qqun se logge: $_SESSION['evt_managing_rights'] true or false!!
--pour un admin: $_SESSION['admin_mode'] true de base, mais il peut passer en false si switch to user mode, et repasser en true si switch to admin mode
 -mettre à jour les diagrammes de classe
--comment les events deviennent inactifs!! (après la date)
 -mettre à jour les relations (foreign keys) dans les tables de la base de données
--pour les events: add refund policy / add "add to calendar" // add facebook link and other socialnetworks
-
-
+-codacy
+-account settings: changer son mdp
+-donner à l'admin la possibilité de bloquer les réservations
 
 
 --ETAPES FUTURES:------------------------------------------------------------------------------------
 
+-changer $_SESSION et faire une classe Session et une table sessions dans la bdd (modèle Lionel)
+-rajouter manage_locations & manage_images
+-rajouter les catégories
+-rajouter time limit for booking
+-pour les events: add refund policy / add "add to calendar" // add facebook link and other socialnetworks
+-documentation complète
+
 -rajouter une class Orga qui controlle l'Organisation concernée et peut faire appel au Model pour récupérer par ex le logo, etc.
 -du coup: pour la page, il faut créer une instance de la classe Orga pour récupérer le logo et autres infos
-
--plus tard: autres langues!!!!
+-plus tard: autres langues!!!! et du coup autres currency!! (ou alors dépend de orga?)

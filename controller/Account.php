@@ -3,21 +3,65 @@
 class Account
 {
 
+    private $_valid;
     private $_evt_account_id;
-    private $_tbl_persons_perso_id;
-    private $_tbl_users_user_id;
     private $_email;
     private $_user_name;
     private $_password ;
+    private $_first_name;
+    private $_last_name;
     private $_managing_rights;
     private $_orga_id;
 
 
     public function __construct($todo, $args){
         switch ($todo){
-            case "create":
-                return $this->createAccount($args);
+            case "read":
+                $this->_valid = $this->validateLogin($args["user_name"], $args["password"]);
+                if ($this->_valid == false){
+                    return false;
+                }
+                else {
+                    $this->setAccountDataFromDB();
+                    $this->logSession();
+                }
                 break;
+            case "create":
+                $this->_email = $args["email"];
+                $this->_valid = $this->emailFree();
+                if ($this->_valid == false){
+                    return false;
+                }
+                else {
+                    return $this->createAccount($args);
+                }
+                break;
+        }
+    }
+
+    public function setAccountDataFromDB(){
+        $req = [
+            "fields" => [
+                'evt_account_id',
+                'email',
+                'user_name',
+                'password',
+                'first_name',
+                'last_name',
+                'managing_rights',
+                'orga_id'
+            ],
+            "from" => "evt_accounts",
+            "where" => [ "evt_account_id = ".$this->_evt_account_id],
+            "limit" => 1
+        ];
+        $data = Model::select($req);
+        if ($data["succeed"]){
+            $newKey;
+            foreach ($data["data"][0] as $key => $value){
+            $newKey = "_".$key;
+            $this->$newKey = $value;
+            }
         }
     }
 
@@ -25,7 +69,7 @@ class Account
         return $this->$_var;
     }
 
-    public static function validateLogin($user_name, $password){
+    public function validateLogin($user_name, $password){
         $hash = hash("sha256", $password);
         $req = [
                 "fields" => ["*"],
@@ -37,41 +81,43 @@ class Account
         ];
         $data = Model::select($req);
         if (!empty($data["data"])){
-            Account::logSession($user_name, $data["data"][0]["first_name"], $data["data"][0]["last_name"], $data["data"][0]["managing_rights"], false, $data["data"][0]["evt_account_id"]);
+            $this->_evt_account_id = $data["data"][0]["evt_account_id"];
         }
         //return true if not empty or false otherwise
         return !empty($data["data"]);
     }
 
-    public static function logSession($user, $first_name, $last_name, $rights, $admin_mode, $id){
-        $_SESSION["user_name"]=$user;
-        $_SESSION["first_name"]=$first_name;
-        $_SESSION["last_name"]=$last_name;
-        $_SESSION["evt_managing_rights"]=$rights;
-        $_SESSION["admin_mode"]=$admin_mode;
-        $_SESSION["evt_account_id"]=$id;
+    public function logSession(){
+        $_SESSION["user_name"]=$this->_user_name;
+        $_SESSION["first_name"]=$this->_first_name;
+        $_SESSION["last_name"]=$this->_last_name;
+        $_SESSION["evt_managing_rights"]=$this->_managing_rights;
+        $_SESSION["admin_mode"]=false;
+        $_SESSION["evt_account_id"]=$this->_evt_account_id;
     }
 
-    public static function emailExists($email){
+    public function emailFree(){
         $req = [
                 "fields" => ["*"],
                 "from" => "evt_accounts",
-                "where" => ["email ='$email'"]
+                "where" => ["email ='$this->_email'"]
         ];
         $data = Model::select($req);
         //return true if not empty or false otherwise
-        return !empty($data["data"]);
+        return empty($data["data"]);
     }
 
     public function createAccount($args){
+        global $orga_id;
+        $email = $args["email"];
         $data = [
-            $args["email"],
+            $email ,
             hash("sha256", $args["password"]),
             $args["email"],
             ucfirst($args["first_name"]),
             ucfirst($args["last_name"]),
             0,
-            $GLOBALS["orga_id"]
+            $orga_id
         ];
         $req = [
             "table"  => "evt_accounts",
@@ -86,6 +132,17 @@ class Account
             ]
         ];
         $create = Model::insert($req, $data);
+        if ($create["succeed"]){
+            $req2 = [
+                "fields" => ["evt_account_id"],
+                "from" => "evt_accounts",
+                "where" => ["email = '$email'"]
+            ];
+            $getId = Model::select($req2);
+            $this->_evt_account_id = $getId["data"][0]["evt_account_id"];
+            $this->setAccountDataFromDB();
+            $this->logSession();
+        }
         return $create["succeed"];
     }
 

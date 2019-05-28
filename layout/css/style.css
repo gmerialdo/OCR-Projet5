@@ -37,9 +37,12 @@ a.tickets_btn{margin: 5px;}
 /*----booking page---*/
 form.booking_form{margin-top: 20px;}
 
-/*----my tickets-------*/
+/*----my tickets-----*/
 div.each_ticket{padding-left: 15px; margin-top: 15px; border: solid 4px; border-radius: 5px;}
 .tiny-text{font-size: 0.85rem;}
+
+/*--admin dashboard---*/
+div.dashboard_elt{padding-left: 15px; margin-top: 15px; border: solid 4px; border-radius: 5px;}
 
 /*----------------------small screens----------------------*/
 

@@ -1,0 +1,116 @@
+<div class="row">
+    <div class="center-align">
+        <h2>Create a new event</h2>
+    </div>
+    <div class="col s10 offset-s1 m10 offset-m1 l8 offset-l2 new_event">
+        <form class="col s12 create_event_form" method="post" action="{{ path }}/create_event">
+            <div class="col s12 user_color_dark_txt">
+                <i class="large material-icons prefix">add_box</i>
+            </div>
+            
+            <div class="input-field col s12 m10 offset-m1 l8 offset-l2">
+                <input placeholder="Event name" id="evt_name" type="text" class="validate" name="evt_name" required>
+                <label for="evt_name">Event name</label>
+            </div>
+            
+            <div class="input-field col s12 m10 offset-m1 l8 offset-l2">
+                <textarea placeholder="Description" id="evt_description" class="materialize-textarea" name="evt_description" rows="8" required></textarea>
+                <label for="evt_description">Description</label>
+            </div>
+            
+            <div class="switch">
+                <label>
+                    Inactive
+                    <input type="checkbox" name="evt_active" checked>
+                    <span class="lever"></span>
+                    Active
+                </label>
+            </div>
+            
+            <div class="input-field col s12 l2 offset-l2">
+                <input type="text" id ="start_date" placeholder="Event starts on:" class="datepicker" name="start_date" required>
+            </div>
+            
+            <div class="input-field col s12 l2">
+                <input type="text" class="timepicker" id ="start_time" placeholder="Starting time:" class="datepicker" name="start_time" required>
+            </div>
+            
+            <div class="input-field col s12 l2">
+                <input type="text" id ="finish_date" placeholder="Event ends on:" class="datepicker" name="finish_date" required>
+            </div>
+            
+            <div class="input-field col s12 l2">
+                <input type="text" class="timepicker" id ="finish_time" placeholder="Ending time:" class="datepicker" name="finish_time" required>
+            </div>
+            
+            <div class="input-field col s12 l4 offset-l2">
+                <select name="type_tickets" required>
+                    <option value="0">No tickets needed</option>
+                    <option value="1">Free tickets</option>
+                    <option value="2">Paid tickets</option>
+                    <option value="3">Free tickets but donation welcome</option>
+                </select>
+            <label>Select the type of tickets for this event:</label>
+            </div>
+            
+            <div class="input-field col s12 l4">
+                <select name="public" required>
+                    <option value="1">All public</option>
+                    <option value="2">Adults only</option>
+                    <option value="3">Children only</option>
+                </select>
+            <label>Select the public for this event:</label>
+            <p>
+                <label>
+                    <input type="checkbox" name="members_only" />
+                    <span>Members only</span>
+                </label>
+            </p>
+            </div>
+            <div class="col s12 l4 offset-l2">
+                Price per adult (member): $
+                <div class="input-field inline">
+                    <input id="price_adult_mb" name="price_adult_mb" type="number" min="0" max="10000" step="0.01" class="validate">
+                    <label for="price_adult_mb">Price</label>
+                    </div>
+                Price per adult: $
+                <div class="input-field inline">
+                    <input id="price_adult" name="price_adult" type="number" min="0" max="10000" step="0.01" class="validate">
+                    <label for="price_adult">Price</label>
+                </div>
+            </div>
+            <div class="col s12 l4 offset-l2">
+                Price per child (member): $
+                <div class="input-field inline">
+                    <input id="price_child_mb" name="price_child_mb" type="number" min="0" max="10000" step="0.01" class="validate">
+                    <label for="price_child_mb">Price</label>
+                </div>
+                Price per child: $
+                <div class="input-field inline">
+                    <input id="price_child" name="price_child" type="number" min="0" max="10000" step="0.01" class="validate">
+                    <label for="price_child">Price</label>
+                </div>
+            </div>
+            
+
+            
+            <div class="col s12">
+                <button class="btn waves-effect waves-light user_color" type="submit" name="submit">
+                    Create the event<i class="material-icons right">send</i>
+                </button>
+            </div>
+
+                
+        </form>  
+            
+            <!--<form method="post" action="{{ path }}/admin/addChapterPage">
+            <label>Titre:</label>
+            <input type="text" name="title" class="form-control" required="required" placeholder="Titre" />  
+            <label>Contenu du chapitre:</label>
+            <textarea id="mytextarea" name="content" rows="8"></textarea>
+            <br/>
+            <button type="submit" class="btn btn-success">Publier</button>
+            </form>-->
+
+    </div>
+</div>

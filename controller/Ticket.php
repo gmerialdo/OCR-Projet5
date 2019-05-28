@@ -20,18 +20,23 @@ class Ticket
     private $_total_to_pay;
     private $_payment_time;
     private $_cancelled_time;
-
+    private $_total_nb_tickets;
 
     public function __construct($todo, $args){
         switch ($todo){
             case "read":
                 $this->_ticket_id = $args["id"];
                 $this->setTicketDataFromDB();
+                $this->_total_nb_tickets = $this->calculateTotalNbTickets();
                 break;
             case "create":
                 return $this->createTicket($args);
                 break;
         }
+    }
+
+    public function getVarTicket($_var){
+        return $this->$_var;
     }
 
     public function setTicketDataFromDB(){
@@ -82,16 +87,16 @@ class Ticket
             }
         }
         else {
-            if ($this->_nb_tickets_adult_mb != null){
+            if ($this->_nb_tickets_adult_mb != null && $this->_nb_tickets_adult_mb != 0){
                 $tickets .= "Tickets - adult (member) : ".$this->_nb_tickets_adult_mb." - Price: $".$this->_price_adult_mb_booked."<br/>";
             }
-            if ($this->_nb_tickets_adult != null){
+            if ($this->_nb_tickets_adult != null && $this->_nb_tickets_adult != 0){
                 $tickets .= "Tickets - adult : ".$this->_nb_tickets_adult." - Price: $".$this->_price_adult_booked."<br/>";
             }
-            if ($this->_nb_tickets_child_mb != null){
+            if ($this->_nb_tickets_child_mb != null && $this->_nb_tickets_child_mb != 0){
                 $tickets .= "Tickets - child (member) : ".$this->_nb_tickets_child_mb." - Price: $".$this->_price_child_mb_booked."<br/>";
             }
-            if ($this->_nb_tickets_child != null){
+            if ($this->_nb_tickets_child != null && $this->_nb_tickets_child != 0){
                 $tickets .= "Tickets - child : ".$this->_nb_tickets_child." - Price: $".$this->_price_child_booked."<br/>";
             }
             $total = "You need to pay: $".$this->_total_to_pay;
@@ -185,6 +190,16 @@ class Ticket
         $data = Model::select($req);
         //return true if not empty or false otherwise
         return !empty($data["data"]);
+    }
+
+    public function calculateTotalNbTickets(){
+        $total = 0;
+        if (isset($this->_nb_tickets_adult_mb)) $total += $this->_nb_tickets_adult_mb;
+        if (isset($this->_nb_tickets_adult)) $total += $this->_nb_tickets_adult;
+        if (isset($this->_nb_tickets_child_mb)) $total += $this->_nb_tickets_child_mb;
+        if (isset($this->_nb_tickets_child)) $total += $this->_nb_tickets_child;
+        if (isset($this->_nb_tickets_all)) $total += $this->_nb_tickets_all;
+        return $total;
     }
 
 }

@@ -51,7 +51,7 @@ class PageVisitor extends Page
         $event = new Event("read", ["id" => $this->_url[1]]);
         $eventData = $event->getEventData();
         if ($event->getVarEvent("_type_tickets") != 0){
-            if ($event->getVarEvent("_nb_available_tickets") !=0 ){
+            if ($event->getVarEvent("_nb_available_tickets") == 0 ){
                  $eventData["{{ book_tickets }}"] = "Event full! No more tickets available.";
             }
             else {

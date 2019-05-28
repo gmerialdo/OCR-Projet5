@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
+    var today = new Date();
     var elemsDropdown = document.querySelectorAll('.dropdown-trigger');
     var instancesDropdown = M.Dropdown.init(elemsDropdown, {constrainWidth: false, coverTrigger: false, hover:true});
     var elemsSidenav = document.querySelectorAll('.sidenav');
     var instancesSidenav = M.Sidenav.init(elemsSidenav);
     var elemsSelectNbTickets = document.querySelectorAll('select');
     var instancesSelectNbTickets = M.FormSelect.init(elemsSelectNbTickets);
+    var elemsDatepicker = document.querySelectorAll('.datepicker');
+    var instancesDatepicker = M.Datepicker.init(elemsDatepicker, {minDate: today});
+    var elemsTimepicker = document.querySelectorAll('.timepicker');
+    var instancesTimepicker = M.Timepicker.init(elemsTimepicker);
 });
 
 function checkSecurityPW(){
