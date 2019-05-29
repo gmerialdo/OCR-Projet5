@@ -13,13 +13,14 @@ class PageAdmin extends Page
 
     //adds a complement before using parent::getPage() to securize all the admin interface: only connect if logged!
     public function getPage(){
+        global $session;
         //check if no admin rights
         if ($this->_rights != "admin"){
             header('Location: see_all_events');
         }
         //else the user is logged in so go to the page in admin interface
         else {
-            $_SESSION["admin_mode"] = true;
+            $session->add("admin_mode", true);
             return Page::getPage();
         }
     }

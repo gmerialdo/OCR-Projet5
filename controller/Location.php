@@ -18,7 +18,6 @@ class Location {
                 $this->_location_id = $args["id"];
                 $this->setLocationDataFromDB();
                 break;
-            //TO DO LATER -----------------------------------------------------------
             case "create":
                 break;
         }
@@ -61,6 +60,5 @@ class Location {
         }
         return $result;
     }
-
 
 }

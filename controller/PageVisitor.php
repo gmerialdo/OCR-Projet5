@@ -12,7 +12,8 @@ class PageVisitor extends Page
 
     //adds a complement before using parent
     public function getPage(){
-        $_SESSION["admin_mode"] = false;
+        global $session;
+        $session->add("admin_mode", false);
         return Page::getPage();
     }
 
@@ -66,7 +67,8 @@ class PageVisitor extends Page
     }
 
     public function needs_login(){
-        if (isset($_SESSION["user_name"])){
+        global $session;
+        if (null !== $session->get("user_name")){
             if (!isset($this->_url[1]) OR !isset($this->_url[2])) header('Location: ');
             $link = $this->_url[1]."/".$this->_url[2];
             header('Location: ../../logged/'.$link);

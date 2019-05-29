@@ -178,12 +178,14 @@ class Ticket
     }
 
     public static function alreadyBookedTickets($event_id){
+        global $session;
+        $id = $session->get("evt_account_id");
         $req = [
                 "fields" => ["*"],
                 "from" => "evt_tickets",
                 "where" => [
                     "event_id ='$event_id'",
-                    "evt_account_id = ".$_SESSION["evt_account_id"],
+                    "evt_account_id = ".$id,
                     "cancelled_time is NULL"
                 ]
         ];

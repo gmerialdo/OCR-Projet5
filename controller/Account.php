@@ -18,10 +18,7 @@ class Account
         switch ($todo){
             case "read":
                 $this->_valid = $this->validateLogin($args["user_name"], $args["password"]);
-                if ($this->_valid == false){
-                    return false;
-                }
-                else {
+                if ($this->_valid){
                     $this->setAccountDataFromDB();
                     $this->logSession();
                 }
@@ -88,12 +85,13 @@ class Account
     }
 
     public function logSession(){
-        $_SESSION["user_name"]=$this->_user_name;
-        $_SESSION["first_name"]=$this->_first_name;
-        $_SESSION["last_name"]=$this->_last_name;
-        $_SESSION["evt_managing_rights"]=$this->_managing_rights;
-        $_SESSION["admin_mode"]=false;
-        $_SESSION["evt_account_id"]=$this->_evt_account_id;
+        global $session;
+        $session->add("user_name", $this->_user_name);
+        $session->add("first_name", $this->_first_name);
+        $session->add("last_name", $this->_last_name);
+        $session->add("evt_managing_rights", $this->_managing_rights);
+        $session->add("admin_mode", $this->false);
+        $session->add("evt_account_id", $this->_evt_account_id);
     }
 
     public function emailFree(){

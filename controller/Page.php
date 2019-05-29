@@ -3,6 +3,7 @@
 // www.kiwiversity.com/aftucson/events/... dc uri = /aftucson/events/...
 //nothing (page with all events) or event/id or modify/id or create or login or logout or delete/id or book/id or cancel/id
 
+require_once "controller/Session.php";
 require_once "controller/Event.php";
 require_once "controller/Account.php";
 
@@ -22,10 +23,11 @@ class Page
 
     //to set the user profile
     public function setRights(){
-        if (!isset($_SESSION['user_name'])){
+        global $session;
+        if (null === $session->get('user_name')){
             $this->_rights="visitor";
         }
-        elseif (isset($_SESSION['evt_managing_rights']) && $_SESSION['evt_managing_rights']==true) {
+        elseif (null !== $session->get('evt_managing_rights') && $session->get('evt_managing_rights')==true) {
             $this->_rights="admin";
         }
         else {
@@ -59,6 +61,7 @@ class Page
 
     //to add the nav bar
     public function addNavbar(){
+        global $session;
         $navbar_account = "";
         $navbar_switch = "";
         $navbar_user = file_get_contents("template/navbar_user.html");
@@ -67,8 +70,8 @@ class Page
             $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
         }
         else {
-            $navbar_account = $_SESSION["first_name"]." ".$_SESSION["last_name"];
-            if ($_SESSION["admin_mode"]){
+            $navbar_account = $session->get('first_name')." ". $session->get('last_name');
+            if ($session->get('admin_mode')){
                 $navbar_switch = file_get_contents("template/navbar_switchtouser.html");
                 $navbar_user = "";
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
@@ -105,9 +108,10 @@ class Page
     }
 
     //to display the login page
-    public function login($message = "", $event_id = 0){
+    public function login($message="", $event_id=0){
+        global $session;
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
-            if ($_SESSION["admin_mode"] == true){
+            if ($session->get('admin_mode')){
                 header('Location: admin');
             }
             else {
@@ -131,7 +135,8 @@ class Page
 
     //function that checks if username and pw are ok and logs in if yes
     public function checklogin(){
-        if (!empty($_POST) && (empty($_SESSION["user_name"]))){
+        global $session;
+        if (!empty($_POST) && (null === $session->get('user_name'))){
             $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             ?>
             <!--keep user name in localStorage-->
@@ -168,7 +173,7 @@ class Page
                 return $this->login("error");
             }
         }
-        elseif (!empty($_SESSION["user_name"])){
+        elseif (!empty($session->get('user_name'))){
             header('Location: ');
         }
         else {
@@ -178,7 +183,8 @@ class Page
 
     //function that logs out and redirect to default page
     public function logout(){
-        session_destroy();
+        setcookie("PHPSESSID", "", time()-3600);
+        //session_destroy();
         header('Location: see_all_events');
     }
 
@@ -201,7 +207,8 @@ class Page
 
     //funcion that creates an account and logs into session if it worked
     public function create_account(){
-        if (!empty($_POST) && (empty($_SESSION["user_name"]))){
+        global $session;
+        if (!empty($_POST) && (empty($session->get('user_name')))){
             $email = filter_input(INPUT_POST, "new_email", FILTER_VALIDATE_EMAIL);
             ?>
             <!--keep email in localStorage-->

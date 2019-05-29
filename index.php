@@ -1,7 +1,9 @@
 <?php
 
-session_start();
+//session_start();
 
+
+require_once "controller/Session.php";
 require_once "conf.php";
 require_once "model/Model.php";
 require_once "view/View.php";
@@ -9,7 +11,8 @@ require_once "controller/Page.php";
 
 Model::init();
 
-global $envProd, $uri_Start;
+global $session, $envProd, $uri_Start;
+$session = new Session();
 
 // show errors if not in envProd
 if (!$envProd){
@@ -40,5 +43,4 @@ switch ($url[0]){
 }
 
 // display page
-echo $_SESSION["evt_account_id"];
 echo $page->getHtmlPage();

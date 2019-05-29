@@ -82,7 +82,7 @@ class Model {
             $req .= " , ?";
             $i++;
         }
-        $req .= ")";
+        $req .= " )";
         //launch query and return result
         return self::request($req, $data, true);
     }
@@ -94,6 +94,5 @@ class Model {
         //launch query and return result
         return self::request($req);
     }
-
 
 }

@@ -12,9 +12,10 @@ class PageLoggedVisitor extends PageVisitor
 
     //adds a complement before using parent::getPage() to securize the logged_visitor interface: only connect if logged!
     public function getPage(){
+        global $session;
         //check if visitor or admin rights
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
-            $_SESSION["admin_mode"] = false;
+            $session->add("admin_mode", false);
             return Page::getPage();
         }
         else {
@@ -28,7 +29,7 @@ class PageLoggedVisitor extends PageVisitor
         }
         else {
             //if user has already tickets booked for this event
-            require_once("controller/Ticket.php");
+            require_once "controller/Ticket.php";
             if (Ticket::alreadyBookedTickets($this->_url[1])){
                 ?>
                 <script>
@@ -40,7 +41,7 @@ class PageLoggedVisitor extends PageVisitor
                 <?php
             }
             else {
-                require_once("controller/Event.php");
+                require_once "controller/Event.php";
                 $event = new Event("read", ["id" => $this->_url[1]]);
                 $tickets_choice = "";
                 switch ($event->getVarEvent("_type_tickets")){
@@ -108,11 +109,12 @@ class PageLoggedVisitor extends PageVisitor
     }
 
     public function bookingConfirm(){
-        if (!empty($_POST) && (!empty($_SESSION["user_name"]))){
+        global $session;
+        if (!empty($_POST) && (!empty($session->get("user_name")))){
             foreach($_POST as $key => $value) {
                 $data[$key] = filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
             }
-            $data["evt_account_id"] = $_SESSION["evt_account_id"];
+            $data["evt_account_id"] = $session->get("evt_account_id");
             // if not enough tickets left
             $nb_tickets_wanted = 0;
             if (isset($data["nb_tickets_adult_mb"])) $nb_tickets_wanted += $data["nb_tickets_adult_mb"];
@@ -142,7 +144,7 @@ class PageLoggedVisitor extends PageVisitor
                     <?php
                 }
                 else {
-                    require_once("controller/Ticket.php");
+                    require_once "controller/Ticket.php";
                     $new_ticket = new Ticket("create", $data);
                     if ($new_ticket){
                         ?>
@@ -186,7 +188,7 @@ class PageLoggedVisitor extends PageVisitor
             $title ="Your tickets";
             $each_ticket;
             foreach ($data["data"] as $row){
-                require_once("controller/Ticket.php");
+                require_once "controller/Ticket.php";
                 $each_ticket = new Ticket("read", ["id" => $row["ticket_id"]]);
                 $data = $each_ticket->getTicketData();
                 $data["{{ evt_name }}"] = $row["name"];
