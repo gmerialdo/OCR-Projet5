@@ -132,17 +132,9 @@ class Account
             ]
         ];
         $create = Model::insert($req, $data);
-        if ($create["succeed"]){
-            $req2 = [
-                "fields" => ["evt_account_id"],
-                "from" => "evt_accounts",
-                "where" => ["email = '$email'"]
-            ];
-            $getId = Model::select($req2);
-            $this->_evt_account_id = $getId["data"][0]["evt_account_id"];
-            $this->setAccountDataFromDB();
-            $this->logSession();
-        }
+        $this->_evt_account_id = $create["data"];
+        $this->setAccountDataFromDB();
+        $this->logSession();
         return $create["succeed"];
     }
 

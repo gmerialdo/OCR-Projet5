@@ -40,4 +40,5 @@ switch ($url[0]){
 }
 
 // display page
+echo $_SESSION["evt_account_id"];
 echo $page->getHtmlPage();

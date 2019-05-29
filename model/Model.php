@@ -13,7 +13,7 @@ class Model {
         unset($my_db);
     }
 
-    public static function request($sql, $data=NULL){
+    public static function request($sql, $data=NULL, $insert=false){
         try {
             if ($data == NULL){
                 $result = self::$_db->query($sql);
@@ -24,10 +24,14 @@ class Model {
                 $result->execute($data);
                 //store result
             }
+            if ($insert){
+                $data= self::$_db->lastInsertId();
+            }
             //close request
             $result->closeCursor();
             //if no result
             if (empty($data)) $data="";
+
             return [
                 "succeed" => true,
                 "data"    => $data
@@ -80,7 +84,7 @@ class Model {
         }
         $req .= ")";
         //launch query and return result
-        return self::request($req, $data);
+        return self::request($req, $data, true);
     }
 
     // build an sql DELETE query from args array
