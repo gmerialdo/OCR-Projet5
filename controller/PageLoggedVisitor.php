@@ -166,13 +166,14 @@ class PageLoggedVisitor extends PageVisitor
 
 
     public function my_tickets(){
+        global $session;
         $req = [
             "fields" => ["*"],
             "from" => "evt_tickets AS t",
             "join" => "evt_events AS e",
             "on" => "t.event_id = e.event_id",
             "where" => [
-                "t.evt_account_id = ".$_SESSION["evt_account_id"],
+                "t.evt_account_id = ".$session->get("evt_account_id"),
                 "e.finish_datetime > NOW()",
                 "t.cancelled_time is NULL"
             ],

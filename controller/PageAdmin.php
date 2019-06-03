@@ -31,23 +31,52 @@ class PageAdmin extends Page
     }
 
     public function create_event(){
-        $content = file_get_contents("template/content_admin_create_event.html");
-        return ["Ereate event", $content];
+        if (!empty($_POST)){
+            $evt_name = filter_input(INPUT_POST, "evt_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $evt_name = ucfirst($evt_name);
+            $evt_description = filter_input(INPUT_POST, "evt_description", FILTER_SANITIZE_SPECIAL_CHARS);
+            $evt_description = ucfirst($evt_description);
+            if (!$_POST['evt_active']){
+                $evt_active = false;
+            }
+            else {
+                $evt_active = true;
+            }
+            $start_datetime = date("Y-m-d H:i:s", strtotime($_POST["start_date"]." ".$_POST["start_time"]));
+            $finish_datetime = date("Y-m-d H:i:s", strtotime($_POST["finish_date"]." ".$_POST["finish_time"]));
+
+            if ($start_datetime > $finish_datetime){
+                ?>
+                <!--keep entered data in localStorage-->
+                <script>
+                    window.localStorage.clear();
+                    var keep_evt_name ='<?php echo $evt_name;?>';
+                    var keep_evt_description ='<?php echo $evt_description;?>';
+                    window.localStorage.setItem('evt_name', keep_evt_name);
+                    window.localStorage.setItem('evt_description', keep_evt_description);
+                </script>
+                <?php
+                $content = View::makeHtml(["{{ create_evt_error_msg }}" => "Ending date must be after the starting date. Please enter again the information."], "content_admin_create_event.html");
+                return ["Create event", $content];
+            }
+            else{
+                $type_tickets = $_POST["type_tickets"];
+                $public = $_POST["public"];
+                if (!$_POST['members_only']){
+                    $members_only = false;
+                }
+                else {
+                    $members_only = true;
+                }
+            }
+        }
+        else {
+            $content = View::makeHtml(["{{ create_evt_error_msg }}" => ""], "content_admin_create_event.html");
+            return ["Create event", $content];
+        }
 
 
 
-
-        // require_once "controller/Event.php";
-        // $event = new Event("create", $data);
-        // //$html: replace dashboard content ( {{ content_admin_page }} in backadmin_template)
-        // if (isset($_POST["title"]) && isset($_POST["content"])) {
-        //     $title = filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-        //     $title = ucfirst($title);
-        //     $content = filter_input(INPUT_POST, "content", FILTER_SANITIZE_SPECIAL_CHARS);
-        //     $post->cancelFeatured();
-        //     //count how many chapters there are to add the good number
-        //     $nb = $post->countPosts();
-        //     $chapter_nb = $nb["nb"] + 1;
         //     $data = [
         //         $chapter_nb,
         //         date('Y-m-d'),
@@ -70,7 +99,49 @@ class PageAdmin extends Page
         // }
         // else {
         //     $html = View::errorDisplayBack();
-        // }
+
+
+
+ //                <label>
+ //                    <input type="checkbox" name="members_only" />
+ //                    <span>Members only</span>
+ //                </label>
+ //            </p>
+ //            </div>
+ //            <div class="col s12 l4 offset-l2">
+ //                Price per adult (member): $
+ //                <div class="input-field inline">
+ //                    <input id="price_adult_mb" name="price_adult_mb" type="number" min="0" max="10000" step="0.01" class="validate">
+ //                    <label for="price_adult_mb">Price</label>
+ //                </div>
+ //            </div>
+ //            <div class="col s12 l4">
+ //                Price per adult: $
+ //                <div class="input-field inline">
+ //                    <input id="price_adult" name="price_adult" type="number" min="0" max="10000" step="0.01" class="validate">
+ //                    <label for="price_adult">Price</label>
+ //                </div>
+ //            </div>
+ //            <div class="col s12 l4 offset-l2">
+ //                Price per child (member): $
+ //                <div class="input-field inline">
+ //                    <input id="price_child_mb" name="price_child_mb" type="number" min="0" max="10000" step="0.01" class="validate">
+ //                    <label for="price_child_mb">Price</label>
+ //                </div>
+ //            </div>
+ //            <div class="col s12 l4">
+ //                Price per child: $
+ //                <div class="input-field inline">
+ //                    <input id="price_child" name="price_child" type="number" min="0" max="10000" step="0.01" class="validate">
+ //                    <label for="price_child">Price</label>
+ //                </div>
+ //            </div>
+
+ //            <div class="col s12">
+ //                <button class="btn waves-effect waves-light user_color" type="submit" name="submit">
+ //                    Create the event<i class="material-icons right">send</i>
+ //                </button>
+
     }
 
     public function manage_events(){

@@ -136,7 +136,7 @@ class Page
     //function that checks if username and pw are ok and logs in if yes
     public function checklogin(){
         global $session;
-        if (!empty($_POST) && (null === $session->get('user_name'))){
+        if (!empty($_POST)){
             $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             ?>
             <!--keep user name in localStorage-->

@@ -2,7 +2,6 @@
 
 //session_start();
 
-
 require_once "controller/Session.php";
 require_once "conf.php";
 require_once "model/Model.php";

@@ -43,6 +43,12 @@ div.each_ticket{padding-left: 15px; margin-top: 15px; border: solid 4px; border-
 
 /*--admin dashboard---*/
 div.dashboard_elt{padding-left: 15px; margin-top: 15px; border: solid 4px; border-radius: 5px;}
+div#div_max_tickets{display: none;}
+div#div_price_adult_mb{display: none;}
+div#div_price_adult{display: none;}
+div#div_price_child_mb{display: none;}
+div#div_price_child{display: none;}
+
 
 /*----------------------small screens----------------------*/
 
