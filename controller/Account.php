@@ -90,7 +90,7 @@ class Account
         $session->add("first_name", $this->_first_name);
         $session->add("last_name", $this->_last_name);
         $session->add("evt_managing_rights", $this->_managing_rights);
-        $session->add("admin_mode", $this->false);
+        $session->add("admin_mode", false);
         $session->add("evt_account_id", $this->_evt_account_id);
     }
 

@@ -4,28 +4,27 @@ class Event
 {
 
     private $_event_id;
-    private $_location_id;
-    private $_owner_account_id;
-    private $_image_id;
-    private $_active_event;
     private $_name;
     private $_description;
+    private $_location_id;
+    private $_image_id;
+    private $_category;
+    private $_active_event;
     private $_start_weekday;
     private $_start_date;
     private $_start_time;
     private $_finish_weekday;
     private $_finish_date;
     private $_finish_time;
-    private $_category;
     private $_max_tickets;
     private $_type_tickets;
     private $_private;
     private $_members_only;
-    private $_price_adult_member;
+    private $_price_adult_mb;
     private $_price_adult;
-    private $_price_child_member;
+    private $_price_child_mb;
     private $_price_child;
-    private $_limit_booking_time;
+    private $_enable_booking;
     private $_nb_available_tickets;
 
     public function __construct($todo, $args){
@@ -36,6 +35,7 @@ class Event
                 $this->_nb_available_tickets = $this->calculateAvailableTickets();
                 break;
             case "create":
+                return $this->createEvent($args);
                 break;
             case "update":
             //$args consists of an array with id, array of fields and array of data to update in those fields
@@ -48,28 +48,27 @@ class Event
     public function setEventDataFromDB(){
         $req = [
             "fields" => [
-                'location_id',
-                'owner_account_id',
-                'image_id',
-                'active_event',
                 'name',
                 'description',
+                'location_id',
+                'image_id',
+                'category',
+                'active_event',
                 'DATE_FORMAT(start_datetime, \'%W\') AS "start_weekday"',
                 'DATE_FORMAT(start_datetime, \'%b %D, %Y\') AS "start_date"',
                 'DATE_FORMAT(start_datetime, \'%l:%i%p\') AS "start_time"',
                 'DATE_FORMAT(finish_datetime, \'%W\') AS "finish_weekday"',
                 'DATE_FORMAT(finish_datetime, \'%b %D, %Y\') AS "finish_date"',
                 'DATE_FORMAT(finish_datetime, \'%l:%i%p\') AS "finish_time"',
-                'category',
                 'max_tickets',
                 'type_tickets',
                 'public',
                 'members_only',
-                'price_adult_member',
+                'price_adult_mb',
                 'price_adult',
-                'price_child_member',
+                'price_child_mb',
                 'price_child',
-                'limit_booking_time'
+                'enable_booking'
             ],
             "from" => "evt_events",
             "where" => [ "event_id = ".$this->_event_id],
@@ -149,16 +148,16 @@ class Event
             //case paid
             case 2:
                 if ($smallestOnly){
-                    $smallest_price = min(array_filter([$this->_price_child, $this->_price_adult, $this->_price_child_member, $this->_price_adult_member], function ($v){ return !is_null($v); }));
+                    $smallest_price = min(array_filter([$this->_price_child, $this->_price_adult, $this->_price_child_mb, $this->_price_adult_mb], function ($v){ return !is_null($v); }));
                     return "starts at $".$smallest_price;
                 break;
                 }
                 else {
                     $prices ="";
                     if ($this->_price_child) $prices .= "Child : $".$this->_price_child."<br/>";
-                    if ($this->_price_child_member) $prices .= "Child (member): $".$this->_price_child_member."<br/>";
+                    if ($this->_price_child_mb) $prices .= "Child (member): $".$this->_price_child_mb."<br/>";
                     if ($this->_price_adult) $prices .= "Adult : $".$this->_price_adult."<br/>";
-                    if ($this->_price_adult_member) $prices .= "Adult (member): $".$this->_price_adult_member."<br/>";
+                    if ($this->_price_adult_mb) $prices .= "Adult (member): $".$this->_price_adult_mb."<br/>";
                     return $prices;
                     break;
                 }
@@ -207,4 +206,31 @@ class Event
         return $update["succeed"];
     }
 
+    public function createEvent($data){
+        $req = [
+            "table"  => "evt_events",
+            "fields" => [
+                'name',
+                'description',
+                'location_id',
+                'image_id',
+                'category',
+                'active_event',
+                'start_datetime',
+                'finish_datetime',
+                'max_tickets',
+                'type_tickets',
+                'public',
+                'members_only',
+                'price_adult_mb',
+                'price_adult',
+                'price_child_mb',
+                'price_child',
+                'enable_booking'
+            ]
+        ];
+        $create = Model::insert($req, $data);
+        $this->_event_id = $create["data"];
+        return $create["succeed"];
+    }
 }

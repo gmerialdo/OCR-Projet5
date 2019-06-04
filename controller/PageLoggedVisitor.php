@@ -51,30 +51,30 @@ class PageLoggedVisitor extends PageVisitor
                     case 2:
                         switch ($event->getVarEvent("_public")){
                             case 1:
-                                if (null !== $event->getVarEvent("_price_adult_member")){
-                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
+                                if (null !== $event->getVarEvent("_price_adult_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
                                 }
                                 if (null !== $event->getVarEvent("_price_adult")){
                                     $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
                                 }
-                                if (null !== $event->getVarEvent("_price_child_member")){
-                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
+                                if (null !== $event->getVarEvent("_price_child_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
                                 }
                                 if (null !== $event->getVarEvent("_price_child")){
                                     $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
                                 }
                                 break;
                             case 2:
-                                if (null !== $event->getVarEvent("_price_adult_member")){
-                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_member"), "$", "price_adult_mb_booked");
+                                if (null !== $event->getVarEvent("_price_adult_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
                                 }
                                 if (null !== $event->getVarEvent("_price_adult")){
                                     $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
                                 }
                                 break;
                             case 3:
-                                if (null !== $event->getVarEvent("_price_child_member")){
-                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_member"), "$", "price_child_mb_booked");
+                                if (null !== $event->getVarEvent("_price_child_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
                                 }
                                 if (null !== $event->getVarEvent("_price_child")){
                                     $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");

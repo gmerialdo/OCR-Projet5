@@ -64,7 +64,7 @@ class Page
         global $session;
         $navbar_account = "";
         $navbar_switch = "";
-        $navbar_user = file_get_contents("template/navbar_user.html");
+        $navbar_link = file_get_contents("template/navbar_user.html");
         if ($this->_rights == "visitor"){
             $navbar_accountoption = file_get_contents("template/navbar_accountoption_signin.html");
             $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
@@ -73,7 +73,7 @@ class Page
             $navbar_account = $session->get('first_name')." ". $session->get('last_name');
             if ($session->get('admin_mode')){
                 $navbar_switch = file_get_contents("template/navbar_switchtouser.html");
-                $navbar_user = "";
+                $navbar_link = file_get_contents("template/navbar_admin.html");
                 $navbar_accountoption = file_get_contents("template/navbar_accountoption_admin.html");
                 $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_admin_mobile.html");
             }
@@ -89,7 +89,7 @@ class Page
         return view::makeHtml([
             "{{ navbar_account }}" => $navbar_account,
             "{{ navbar_switch }}" => $navbar_switch,
-            "{{ navbar_user }}" => $navbar_user,
+            "{{ navbar_link }}" => $navbar_link,
             "{{ navbar_accountoption }}" => $navbar_accountoption,
             "{{ navbar_accountoption_mobile }}" => $nav_bar_accountoption_mobile
         ], "navbar_template.html");

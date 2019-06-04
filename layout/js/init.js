@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var elemsSelectNbTickets = document.querySelectorAll('select');
     var instancesSelectNbTickets = M.FormSelect.init(elemsSelectNbTickets);
     var elemsDatepicker = document.querySelectorAll('.datepicker');
+    var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: today, firstDay: 1, format: 'yyyy-mm-dd'});
     var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, minDate: today, firstDay: 1, format: 'yyyy-mm-dd', onSelect: function(d){
         var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: 'yyyy-mm-dd'})
     }});

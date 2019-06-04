@@ -32,115 +32,129 @@ class PageAdmin extends Page
 
     public function create_event(){
         if (!empty($_POST)){
-            $evt_name = filter_input(INPUT_POST, "evt_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $evt_name = filter_input(INPUT_POST, "evt_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $evt_name = ucfirst($evt_name);
-            $evt_description = filter_input(INPUT_POST, "evt_description", FILTER_SANITIZE_SPECIAL_CHARS);
+            $evt_description = filter_input(INPUT_POST, "evt_description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $evt_description = ucfirst($evt_description);
-            if (!$_POST['evt_active']){
-                $evt_active = false;
-            }
-            else {
-                $evt_active = true;
-            }
+            $location_id = $_POST["location_id"];
+            $image_id = $_POST["image_id"];
+            $category = $_POST["category"];
+            if (empty($_POST['evt_active'])){$evt_active = 0;} else {$evt_active = 1;}
             $start_datetime = date("Y-m-d H:i:s", strtotime($_POST["start_date"]." ".$_POST["start_time"]));
             $finish_datetime = date("Y-m-d H:i:s", strtotime($_POST["finish_date"]." ".$_POST["finish_time"]));
-
+            if (empty($_POST['type_tickets'])){$type_tickets = 0;} else {$type_tickets = $_POST['type_tickets'];}
+            if (empty($_POST['public'])){$public = 1;} else {$public = $_POST['public'];}
+            if (empty($_POST['members_only'])){$members_only = 0;} else {$members_only = 1;}
+            if (empty($_POST['max_tickets'])){$max_tickets = null;} else {$max_tickets = $_POST['max_tickets'];}
+            if (empty($_POST['price_adult_mb'])){$price_adult_mb = null;} else {$price_adult_mb = $_POST['price_adult_mb'];}
+            if (empty($_POST['price_adult'])){$price_adult = null;} else {$price_adult = $_POST['price_adult'];}
+            if (empty($_POST['price_child_mb'])){$price_child_mb = null;} else {$price_child_mb = $_POST['price_child_mb'];}
+            if (empty($_POST['price_child'])){$price_child = null;} else {$price_child = $_POST['price_child'];}
+            if (empty($_POST['enable_booking'])){$enable_booking = 0;} else {$enable_booking = 1;}
+            //if pb with the date
             if ($start_datetime > $finish_datetime){
-                ?>
-                <!--keep entered data in localStorage-->
-                <script>
-                    window.localStorage.clear();
-                    var keep_evt_name ='<?php echo $evt_name;?>';
-                    var keep_evt_description ='<?php echo $evt_description;?>';
-                    window.localStorage.setItem('evt_name', keep_evt_name);
-                    window.localStorage.setItem('evt_description', keep_evt_description);
-                </script>
-                <?php
-                $content = View::makeHtml(["{{ create_evt_error_msg }}" => "Ending date must be after the starting date. Please enter again the information."], "content_admin_create_event.html");
+                $content = View::makeHtml([
+                    "{{ evt_name }}" => $evt_name,
+                    "{{ evt_description }}" => $evt_description,
+                    "{{ location_id }}" => $location_id-1,
+                    "{{ image_id }}" => $image_id-1,
+                    "{{ category }}" => $category,
+                    "{{ evt_active }}" => $evt_active,
+                    "{{ start_date }}" => $_POST["start_date"],
+                    "{{ start_time }}" => $_POST["start_time"],
+                    "{{ finish_date }}" => $_POST["finish_date"],
+                    "{{ finish_time }}" => $_POST["finish_time"],
+                    "{{ create_evt_error_msg }}" => "Ending date must be after the starting date.",
+                    "{{ type_tickets }}" => $type_tickets,
+                    "{{ public }}" => $public-1,
+                    "{{ members_only }}" => $members_only,
+                    "{{ max_tickets }}" => $max_tickets,
+                    "{{ price_adult_mb }}" => $price_adult_mb,
+                    "{{ price_adult }}" => $price_adult,
+                    "{{ price_child_mb }}" => $price_child_mb,
+                    "{{ price_child }}" => $price_child,
+                    "{{ enable_booking }}" => $enable_booking,
+                ], "content_admin_create_event.html");
                 return ["Create event", $content];
             }
             else{
-                $type_tickets = $_POST["type_tickets"];
-                $public = $_POST["public"];
-                if (!$_POST['members_only']){
-                    $members_only = false;
+                switch ($category) {
+                    case 1:
+                        $category = "social";
+                        break;
+                    case 2:
+                        $category = "culture";
+                        break;
+                    case 3:
+                        $category = "workshop";
+                        break;
+                    case 4:
+                        $category = "children";
+                        break;
+                    default:
+                        $category = null;
+                        break;
                 }
-                else {
-                    $members_only = true;
+                $data = [
+                    $evt_name,
+                    $evt_description,
+                    $location_id,
+                    $image_id,
+                    $category,
+                    $evt_active,
+                    $start_datetime,
+                    $finish_datetime,
+                    $max_tickets,
+                    $type_tickets,
+                    $public,
+                    $members_only,
+                    $price_adult_mb,
+                    $price_adult,
+                    $price_child_mb,
+                    $price_child,
+                    $enable_booking
+                ];
+                $new_event = new Event("create", $data);
+                if ($new_event){
+                ?>
+                <script>
+                    var msg = '<?php echo "The event has been created.";?>';
+                    var link = '<?php echo "admin/manage_events";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
                 }
             }
         }
+        //case where no $_POST: send to create page
         else {
-            $content = View::makeHtml(["{{ create_evt_error_msg }}" => ""], "content_admin_create_event.html");
+            $content = View::makeHtml([
+                "{{ evt_name }}" => "",
+                "{{ evt_description }}" => "",
+                "{{ location_id }}" => 0,
+                "{{ image_id }}" => 0,
+                "{{ category }}" => 0,
+                "{{ evt_active }}" => 1,
+                "{{ start_date }}" => "",
+                "{{ start_time }}" => "",
+                "{{ finish_date }}" => "",
+                "{{ finish_time }}" => "",
+                "{{ create_evt_error_msg }}" => "",
+                "{{ type_tickets }}" => 0,
+                "{{ public }}" => 0,
+                "{{ members_only }}" => 0,
+                "{{ max_tickets }}" => "",
+                "{{ price_adult_mb }}" => "",
+                "{{ price_adult }}" => "",
+                "{{ price_child_mb }}" => "",
+                "{{ price_child }}" => "",
+                "{{ enable_booking }}" => 1,
+            ], "content_admin_create_event.html");
             return ["Create event", $content];
         }
 
 
-
-        //     $data = [
-        //         $chapter_nb,
-        //         date('Y-m-d'),
-        //         $title,
-        //         htmlspecialchars_decode($content),
-        //         1
-        //     ];
-        //     $post_added = $post->addPost($data);
-        //     if ($post_added){
-        //         $html = View::makeHtml([
-        //             "{{ path }}" => $GLOBALS["path"]
-        //                 ], "add_post_message");
-        //     }
-        //     else{
-        //         $html = View::errorDisplayBack();
-        //     }
-
-        // require_once "controller/Event.php";
-        // $event = new Event("create", $data);
-        // }
-        // else {
-        //     $html = View::errorDisplayBack();
-
-
-
- //                <label>
- //                    <input type="checkbox" name="members_only" />
- //                    <span>Members only</span>
- //                </label>
- //            </p>
- //            </div>
- //            <div class="col s12 l4 offset-l2">
- //                Price per adult (member): $
- //                <div class="input-field inline">
- //                    <input id="price_adult_mb" name="price_adult_mb" type="number" min="0" max="10000" step="0.01" class="validate">
- //                    <label for="price_adult_mb">Price</label>
- //                </div>
- //            </div>
- //            <div class="col s12 l4">
- //                Price per adult: $
- //                <div class="input-field inline">
- //                    <input id="price_adult" name="price_adult" type="number" min="0" max="10000" step="0.01" class="validate">
- //                    <label for="price_adult">Price</label>
- //                </div>
- //            </div>
- //            <div class="col s12 l4 offset-l2">
- //                Price per child (member): $
- //                <div class="input-field inline">
- //                    <input id="price_child_mb" name="price_child_mb" type="number" min="0" max="10000" step="0.01" class="validate">
- //                    <label for="price_child_mb">Price</label>
- //                </div>
- //            </div>
- //            <div class="col s12 l4">
- //                Price per child: $
- //                <div class="input-field inline">
- //                    <input id="price_child" name="price_child" type="number" min="0" max="10000" step="0.01" class="validate">
- //                    <label for="price_child">Price</label>
- //                </div>
- //            </div>
-
- //            <div class="col s12">
- //                <button class="btn waves-effect waves-light user_color" type="submit" name="submit">
- //                    Create the event<i class="material-icons right">send</i>
- //                </button>
 
     }
 
