@@ -87,11 +87,17 @@ class PageLoggedVisitor extends PageVisitor
                         $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
                         break;
                 }
+                if (null !== $event->getVarEvent("_nb_available_tickets")){
+                    $nb_available_tickets = $event->getVarEvent("_nb_available_tickets");
+                }
+                else {
+                    $nb_available_tickets = "";
+                }
                 $content = View::makeHtml([
                     "{{ event_id }}" => $event->getVarEvent("_event_id"),
                     "{{ event_name }}" => $event->getVarEvent("_name"),
                     "{{ tickets_choice }}" => $tickets_choice,
-                    "{{ nb_available_tickets }}" => $event->getVarEvent("_nb_available_tickets")
+                    "{{ nb_available_tickets }}" => $nb_available_tickets
                 ], "content_book_tickets.html");
                 return ["Book tickets", $content];
             }
@@ -133,29 +139,30 @@ class PageLoggedVisitor extends PageVisitor
                 <?php
             }
             else {
-                if ($data["nb_available_tickets"] < $nb_tickets_wanted){
-                    ?>
-                    <script>
-                        var msg = '<?php echo "Not enough tickets available.";?>';
-                        var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
-                        alert(msg);
-                        window.location.href=link;
-                    </script>
-                    <?php
-                }
-                else {
-                    require_once "controller/Ticket.php";
-                    $new_ticket = new Ticket("create", $data);
-                    if ($new_ticket){
+                if (!empty($data["nb_available_tickets"])){
+                    if ($data["nb_available_tickets"] < $nb_tickets_wanted){
+                        echo "data=".$data["nb_available_tickets"];
                         ?>
                         <script>
-                            var msg = '<?php echo "Your tickets are booked!";?>';
-                            var link = '<?php echo "../logged/my_tickets";?>';
+                            var msg = '<?php echo "Not enough tickets available.";?>';
+                            var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
                             alert(msg);
                             window.location.href=link;
                         </script>
                         <?php
                     }
+                }
+                require_once "controller/Ticket.php";
+                $new_ticket = new Ticket("create", $data);
+                if ($new_ticket){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Your tickets are booked!";?>';
+                        var link = '<?php echo "../logged/my_tickets";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
                 }
             }
         }

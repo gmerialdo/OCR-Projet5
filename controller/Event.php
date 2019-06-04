@@ -164,7 +164,7 @@ class Event
 
             //case donation
             case 3:
-                return "donations welcome";
+                return "free - donations welcome";
                 break;
         }
     }

@@ -79,7 +79,7 @@ class Ticket
         $total = "";
         if ($this->_nb_tickets_all != null){
             $tickets .= "Tickets : ".$this->_nb_tickets_all."<br/>";
-            if ($this->_donation != null){
+            if ($this->_donation != 0){
                 $total .= "Donation welcome. Willing to donate: $".$this->_donation;
             }
             else {
@@ -110,16 +110,16 @@ class Ticket
     }
 
     public function createTicket($args){
-        if (!isset($args["nb_tickets_adult_mb"])) $args["nb_tickets_adult_mb"] = NULL;
-        if (!isset($args["nb_tickets_adult"])) $args["nb_tickets_adult"] = NULL;
-        if (!isset($args["nb_tickets_child_mb"])) $args["nb_tickets_child_mb"] = NULL;
-        if (!isset($args["nb_tickets_child"])) $args["nb_tickets_child"] = NULL;
-        if (!isset($args["nb_tickets_all"])) $args["nb_tickets_all"] = NULL;
-        if (!isset($args["price_adult_mb_booked"])) $args["price_adult_mb_booked"] = NULL;
-        if (!isset($args["price_adult_booked"])) $args["price_adult_booked"] = NULL;
-        if (!isset($args["price_child_mb_booked"])) $args["price_child_mb_booked"] = NULL;
-        if (!isset($args["price_child_booked"])) $args["price_child_booked"] = NULL;
-        if (!isset($args["donation"])) $args["donation"] = NULL;
+        if (empty($args["nb_tickets_adult_mb"])) $args["nb_tickets_adult_mb"] = NULL;
+        if (empty($args["nb_tickets_adult"])) $args["nb_tickets_adult"] = NULL;
+        if (empty($args["nb_tickets_child_mb"])) $args["nb_tickets_child_mb"] = NULL;
+        if (empty($args["nb_tickets_child"])) $args["nb_tickets_child"] = NULL;
+        if (empty($args["nb_tickets_all"])) $args["nb_tickets_all"] = NULL;
+        if (empty($args["price_adult_mb_booked"])) $args["price_adult_mb_booked"] = NULL;
+        if (empty($args["price_adult_booked"])) $args["price_adult_booked"] = NULL;
+        if (empty($args["price_child_mb_booked"])) $args["price_child_mb_booked"] = NULL;
+        if (empty($args["price_child_booked"])) $args["price_child_booked"] = NULL;
+        if (empty($args["donation"])) $args["donation"] = 0;
         foreach ($args as $key => $value){
             $newKey = "_".$key;
             $this->$newKey = $value;
@@ -162,11 +162,9 @@ class Ticket
     }
 
     public function calculateTotal(){
-        if ($this->_nb_tickets_all != NULL){
-            $total = 0;
-        }
-        if ($this->_donation != NULL){
-            $total = $this->_donation;
+        $total = 0;
+        if ($this->_donation != 0){
+            $total += $this->_donation;
         }
         else {
         $total = ($this->_nb_tickets_adult_mb * $this->_price_adult_mb_booked)
