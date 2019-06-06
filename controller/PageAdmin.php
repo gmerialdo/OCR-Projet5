@@ -55,9 +55,9 @@ class PageAdmin extends Page
             if (empty($_POST['price_child_mb'])){$price_child_mb = null;} else {$price_child_mb = $_POST['price_child_mb'];}
             if (empty($_POST['price_child'])){$price_child = null;} else {$price_child = $_POST['price_child'];}
             if (empty($_POST['enable_booking'])){$enable_booking = 0;} else {$enable_booking = 1;}
-
+            //check if date is correct
             if ($start_datetime > $finish_datetime){
-                $content = View::makeHtml([
+                $args = [
                     "{{ name }}" => $name,
                     "{{ description }}" => $description,
                     "{{ location_id }}" => $location_id,
@@ -77,37 +77,54 @@ class PageAdmin extends Page
                     "{{ price_child_mb }}" => $price_child_mb,
                     "{{ price_child }}" => $price_child,
                     "{{ enable_booking }}" => $enable_booking,
-                    "{{ create_evt_error_msg }}" => "Ending date must be after the starting date.",
-                    "{{ title }}" => "Create an event",
-                    "{{ action }}" => "create_event",
-                    "{{ button }}" => "Create the event"
-                ], "content_admin_create_event.html");
-                return ["Create event", $content];
-            }
-            else {
-                $data = [
-                    $name,
-                    $description,
-                    $location_id,
-                    $image_id,
-                    $category,
-                    $active_event,
-                    $start_datetime,
-                    $finish_datetime,
-                    $max_tickets,
-                    $type_tickets,
-                    $public,
-                    $members_only,
-                    $price_adult_mb,
-                    $price_adult,
-                    $price_child_mb,
-                    $price_child,
-                    $enable_booking,
-                    $start_date,
-                    $start_time,
-                    $finish_date,
-                    $finish_time
+                    "{{ create_evt_error_msg }}" => "Ending date must be after the starting date."
                 ];
+                if (isset($this->_url[1])){
+                    $args["{{ title }}"] = "Modify the event";
+                    $args["{{ action }}"] = "create_event/".$this->_url[1];
+                    $args["{{ button }}"] = "Modify the event";
+                }
+                else{
+                    $args["{{ title }}"] = "Create an event";
+                    $args["{{ action }}"] = "create_event";
+                    $args["{{ button }}"] = "Create the event";
+                }
+                $content = View::makeHtml($args, "content_admin_create_event.html");
+                return ["Event", $content];
+            }
+            $data = [
+                $name,
+                $description,
+                $location_id,
+                $image_id,
+                $category,
+                $active_event,
+                $start_datetime,
+                $finish_datetime,
+                $max_tickets,
+                $type_tickets,
+                $public,
+                $members_only,
+                $price_adult_mb,
+                $price_adult,
+                $price_child_mb,
+                $price_child,
+                $enable_booking
+            ];
+            //if modifying event
+            if (isset($this->_url[1])){
+                $event = new Event("update", ["id" => $this->_url[1], "data" => $data]);
+                ?>
+                <script>
+                    var msg = '<?php echo "Your changes have been updated.";?>';
+                    var link = '<?php echo "../manage_events";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+            //if creating new event
+            else {
                 $new_event = new Event("create", $data);
                 ?>
                 <script>
@@ -154,19 +171,18 @@ class PageAdmin extends Page
         //get active current events
         $current_events = $this->getSelectedEvents(1, 1);
         $draft_events = $this->getSelectedEvents(0);
-        $past_events = $this->getSelectedEvents(1, 0);
-        $trash_events = $this->getSelectedEvents(2);
+        $past_events = $this->getSelectedEvents(1, 0, false);
+        //$trash_events = $this->getSelectedEvents(2);
         $content = View::makeHtml([
             "{{ current_events }}" => $current_events,
             "{{ draft_events }}" => $draft_events,
             "{{ past_events }}" => $past_events,
-            "{{ trash_events }}" => $trash_events
+            //"{{ trash_events }}" => $trash_events
         ], "content_admin_manage_events.html");
         return ["Manage events", $content];
     }
 
-
-    public function getSelectedEvents($active, $current = 2){
+    public function getSelectedEvents($active, $current = 2, $modify = true){
         $where[0] = "active_event = ".$active;
         if ($current == 0){$where[1] = "finish_datetime < NOW()";}
         else if ($current == 1){$where[1] = "finish_datetime >= NOW()";}
@@ -186,7 +202,10 @@ class PageAdmin extends Page
             $admin_each_event;
             foreach ($data["data"] as $row){
                 $admin_each_event = new Event("read", ["id" => $row["event_id"]]);
-                $events .= View::makeHtml($admin_each_event->getEventData(), "elt_admin_each_event.html");
+                $args = $admin_each_event->getEventData();
+                if ($modify == true){$args["{{ modify }}"] = file_get_contents("template/elt_admin_each_event_modify.html");}
+                else {$args["{{ modify }}"] = "";}
+                $events .= View::makeHtml($args, "elt_admin_each_event.html");
             }
         }
         return $events;
@@ -197,10 +216,29 @@ class PageAdmin extends Page
         $data = $event->getEventData();
         $data["{{ create_evt_error_msg }}"] = "";
         $data["{{ title }}"] = "Modify the event";
-        $data["{{ action }}"] = "modify_event/".$this->_url[1];
+        $data["{{ action }}"] = "create_event/".$this->_url[1];
         $data["{{ button }}"] = "Modify the event";
         $content = View::makeHtml($data, "content_admin_create_event.html");
         return ["Create event", $content];
+    }
+
+    public function delete_event(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_events');
+        }
+        else {
+            $event = new Event("delete", ["id" => $this->_url[1]]);
+            if ($event){
+                ?>
+                <script>
+                    var msg = '<?php echo "The event has been deleted.";?>';
+                    var link = '<?php echo "../manage_events";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
     }
 
 }

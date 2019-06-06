@@ -48,8 +48,12 @@ div#div_price_adult_mb{display: none;}
 div#div_price_adult{display: none;}
 div#div_price_child_mb{display: none;}
 div#div_price_child{display: none;}
-.tiny_img img{height: 50px; max-width: 100px;}
+div.admin_events{margin-top: 10px;}
+div.admin_each_event{margin-top: 20px;}
 .admin_each_event_text{text-align: left;}
+.tiny_img img{height: 50px; max-width: 100px;}
+
+
 
 
 /*----------------------small screens----------------------*/

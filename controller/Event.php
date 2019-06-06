@@ -30,12 +30,15 @@ class Event
     private $_nb_available_tickets;
     private $_error;
 
+    CONST fields_to_set = ['name','description','location_id','image_id','category','active_event','start_datetime','finish_datetime','max_tickets','type_tickets','public','members_only','price_adult_mb','price_adult','price_child_mb','price_child','enable_booking'];
+
     public function __construct($todo, $args){
         switch ($todo){
             case "read":
                 $this->_event_id = $args["id"];
                 $this->setEventDataFromDB();
                 $this->_nb_available_tickets = $this->calculateAvailableTickets();
+                return true;
                 break;
             case "create":
                 return $this->createEvent($args);
@@ -43,7 +46,11 @@ class Event
             case "update":
             //$args consists of an array with id, array of fields and array of data to update in those fields
                 $this->_event_id = $args["id"];
-                $this->updateEventInDB($args["fields"], $args["data"]);
+                return $this->updateEventInDB(Event::fields_to_set, $args["data"]);
+                break;
+            case "delete":
+                $this->_event_id = $args["id"];
+                return $this->updateEventInDB(["active_event"], [2]);
                 break;
         }
     }
@@ -229,28 +236,9 @@ class Event
     }
 
     public function createEvent($data){
-        $data = array_slice($data, 0, 17);
         $req = [
             "table"  => "evt_events",
-            "fields" => [
-                'name',
-                'description',
-                'location_id',
-                'image_id',
-                'category',
-                'active_event',
-                'start_datetime',
-                'finish_datetime',
-                'max_tickets',
-                'type_tickets',
-                'public',
-                'members_only',
-                'price_adult_mb',
-                'price_adult',
-                'price_child_mb',
-                'price_child',
-                'enable_booking'
-            ]
+            "fields" => Event::fields_to_set
         ];
         $create = Model::insert($req, $data);
         $this->_event_id = $create["data"];
