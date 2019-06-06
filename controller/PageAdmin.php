@@ -32,14 +32,18 @@ class PageAdmin extends Page
 
     public function create_event(){
         if (!empty($_POST)){
-            $evt_name = filter_input(INPUT_POST, "evt_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            $evt_name = ucfirst($evt_name);
-            $evt_description = filter_input(INPUT_POST, "evt_description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            $evt_description = ucfirst($evt_description);
+            $name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+            $name = ucfirst($name);
+            $description = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+            $description = ucfirst($description);
             $location_id = $_POST["location_id"];
             $image_id = $_POST["image_id"];
             $category = $_POST["category"];
-            if (empty($_POST['evt_active'])){$evt_active = 0;} else {$evt_active = 1;}
+            if (empty($_POST['active_event'])){$active_event = 0;} else {$active_event = 1;}
+            $start_date = $_POST["start_date"];
+            $start_time = $_POST["start_time"];
+            $finish_date = $_POST["finish_date"];
+            $finish_time = $_POST["finish_time"];
             $start_datetime = date("Y-m-d H:i:s", strtotime($_POST["start_date"]." ".$_POST["start_time"]));
             $finish_datetime = date("Y-m-d H:i:s", strtotime($_POST["finish_date"]." ".$_POST["finish_time"]));
             if (empty($_POST['type_tickets'])){$type_tickets = 0;} else {$type_tickets = $_POST['type_tickets'];}
@@ -51,22 +55,21 @@ class PageAdmin extends Page
             if (empty($_POST['price_child_mb'])){$price_child_mb = null;} else {$price_child_mb = $_POST['price_child_mb'];}
             if (empty($_POST['price_child'])){$price_child = null;} else {$price_child = $_POST['price_child'];}
             if (empty($_POST['enable_booking'])){$enable_booking = 0;} else {$enable_booking = 1;}
-            //if pb with the date
+
             if ($start_datetime > $finish_datetime){
                 $content = View::makeHtml([
-                    "{{ evt_name }}" => $evt_name,
-                    "{{ evt_description }}" => $evt_description,
-                    "{{ location_id }}" => $location_id-1,
-                    "{{ image_id }}" => $image_id-1,
+                    "{{ name }}" => $name,
+                    "{{ description }}" => $description,
+                    "{{ location_id }}" => $location_id,
+                    "{{ image_id }}" => $image_id,
                     "{{ category }}" => $category,
-                    "{{ evt_active }}" => $evt_active,
-                    "{{ start_date }}" => $_POST["start_date"],
-                    "{{ start_time }}" => $_POST["start_time"],
-                    "{{ finish_date }}" => $_POST["finish_date"],
-                    "{{ finish_time }}" => $_POST["finish_time"],
-                    "{{ create_evt_error_msg }}" => "Ending date must be after the starting date.",
+                    "{{ active_event }}" => $active_event,
+                    "{{ start_date }}" => $start_date,
+                    "{{ start_time }}" => $start_time,
+                    "{{ finish_date }}" => $finish_date,
+                    "{{ finish_time }}" => $finish_time,
                     "{{ type_tickets }}" => $type_tickets,
-                    "{{ public }}" => $public-1,
+                    "{{ public }}" => $public,
                     "{{ members_only }}" => $members_only,
                     "{{ max_tickets }}" => $max_tickets,
                     "{{ price_adult_mb }}" => $price_adult_mb,
@@ -74,34 +77,21 @@ class PageAdmin extends Page
                     "{{ price_child_mb }}" => $price_child_mb,
                     "{{ price_child }}" => $price_child,
                     "{{ enable_booking }}" => $enable_booking,
+                    "{{ create_evt_error_msg }}" => "Ending date must be after the starting date.",
+                    "{{ title }}" => "Create an event",
+                    "{{ action }}" => "create_event",
+                    "{{ button }}" => "Create the event"
                 ], "content_admin_create_event.html");
                 return ["Create event", $content];
             }
-            else{
-                switch ($category) {
-                    case 1:
-                        $category = "social";
-                        break;
-                    case 2:
-                        $category = "culture";
-                        break;
-                    case 3:
-                        $category = "workshop";
-                        break;
-                    case 4:
-                        $category = "children";
-                        break;
-                    default:
-                        $category = null;
-                        break;
-                }
+            else {
                 $data = [
-                    $evt_name,
-                    $evt_description,
+                    $name,
+                    $description,
                     $location_id,
                     $image_id,
                     $category,
-                    $evt_active,
+                    $active_event,
                     $start_datetime,
                     $finish_datetime,
                     $max_tickets,
@@ -112,37 +102,38 @@ class PageAdmin extends Page
                     $price_adult,
                     $price_child_mb,
                     $price_child,
-                    $enable_booking
+                    $enable_booking,
+                    $start_date,
+                    $start_time,
+                    $finish_date,
+                    $finish_time
                 ];
                 $new_event = new Event("create", $data);
-                if ($new_event){
                 ?>
                 <script>
                     var msg = '<?php echo "The event has been created.";?>';
-                    var link = '<?php echo "admin/manage_events";?>';
+                    var link = '<?php echo "manage_events";?>';
                     alert(msg);
                     window.location.href=link;
                 </script>
                 <?php
-                }
             }
         }
         //case where no $_POST: send to create page
         else {
             $content = View::makeHtml([
-                "{{ evt_name }}" => "",
-                "{{ evt_description }}" => "",
-                "{{ location_id }}" => 0,
-                "{{ image_id }}" => 0,
-                "{{ category }}" => 0,
-                "{{ evt_active }}" => 1,
+                "{{ name }}" => "",
+                "{{ description }}" => "",
+                "{{ location_id }}" => 1,
+                "{{ image_id }}" => 1,
+                "{{ category }}" => "",
+                "{{ active_event }}" => 1,
                 "{{ start_date }}" => "",
                 "{{ start_time }}" => "",
                 "{{ finish_date }}" => "",
                 "{{ finish_time }}" => "",
-                "{{ create_evt_error_msg }}" => "",
                 "{{ type_tickets }}" => 0,
-                "{{ public }}" => 0,
+                "{{ public }}" => 1,
                 "{{ members_only }}" => 0,
                 "{{ max_tickets }}" => "",
                 "{{ price_adult_mb }}" => "",
@@ -150,26 +141,66 @@ class PageAdmin extends Page
                 "{{ price_child_mb }}" => "",
                 "{{ price_child }}" => "",
                 "{{ enable_booking }}" => 1,
+                "{{ create_evt_error_msg }}" => "",
+                "{{ title }}" => "Create an event",
+                "{{ action }}" => "create_event",
+                "{{ button }}" => "Create the event"
             ], "content_admin_create_event.html");
             return ["Create event", $content];
         }
-
-
-
     }
 
     public function manage_events(){
+        //get active current events
+        $current_events = $this->getSelectedEvents(1, 1);
+        $draft_events = $this->getSelectedEvents(0);
+        $past_events = $this->getSelectedEvents(1, 0);
+        $trash_events = $this->getSelectedEvents(2);
+        $content = View::makeHtml([
+            "{{ current_events }}" => $current_events,
+            "{{ draft_events }}" => $draft_events,
+            "{{ past_events }}" => $past_events,
+            "{{ trash_events }}" => $trash_events
+        ], "content_admin_manage_events.html");
+        return ["Manage events", $content];
+    }
 
+
+    public function getSelectedEvents($active, $current = 2){
+        $where[0] = "active_event = ".$active;
+        if ($current == 0){$where[1] = "finish_datetime < NOW()";}
+        else if ($current == 1){$where[1] = "finish_datetime >= NOW()";}
+        $req = [
+            "fields" => ['event_id'],
+            "from" => "evt_events",
+            "where" => $where,
+            "order" => "start_datetime"
+        ];
+        $data = Model::select($req);
+        //if no events
+        $events = "";
+        if (!isset($data["data"][0])){
+            $events = "No event";
+        }
+        else {
+            $admin_each_event;
+            foreach ($data["data"] as $row){
+                $admin_each_event = new Event("read", ["id" => $row["event_id"]]);
+                $events .= View::makeHtml($admin_each_event->getEventData(), "elt_admin_each_event.html");
+            }
+        }
+        return $events;
     }
 
     public function modify_event(){
-
+        $event = new Event("read", ["id" => $this->_url[1]]);
+        $data = $event->getEventData();
+        $data["{{ create_evt_error_msg }}"] = "";
+        $data["{{ title }}"] = "Modify the event";
+        $data["{{ action }}"] = "modify_event/".$this->_url[1];
+        $data["{{ button }}"] = "Modify the event";
+        $content = View::makeHtml($data, "content_admin_create_event.html");
+        return ["Create event", $content];
     }
-//RAJOUTER CECI POUR CHANGER DE COULEUR EN MODE ADMIN??
-//<script>
-//     document.getElementsByClassName("user_color").classList.add("admin_color");
-//     document.getElementsByClassName("user_color").classList.remove("user_color");
-// </script>
-
 
 }

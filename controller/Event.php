@@ -10,15 +10,17 @@ class Event
     private $_image_id;
     private $_category;
     private $_active_event;
+    private $_start_datetime;
     private $_start_weekday;
     private $_start_date;
     private $_start_time;
+    private $_finish_datetime;
     private $_finish_weekday;
     private $_finish_date;
     private $_finish_time;
     private $_max_tickets;
     private $_type_tickets;
-    private $_private;
+    private $_public;
     private $_members_only;
     private $_price_adult_mb;
     private $_price_adult;
@@ -26,6 +28,7 @@ class Event
     private $_price_child;
     private $_enable_booking;
     private $_nb_available_tickets;
+    private $_error;
 
     public function __construct($todo, $args){
         switch ($todo){
@@ -93,8 +96,10 @@ class Event
         $image = new Image("read", ["id" => $this->_image_id]);
         require_once "controller/Location.php";
         $location = new Location("read", ["id" => $this->_location_id]);
+        if ($this->_enable_booking){$enabled = "Open for booking";} else {$enabled = "Booking disabled";}
         return [
             "{{ event_id }}" => $this->_event_id,
+            "{{ image_id }}" => $this->_image_id,
             "{{ image_src }}" => $image->src(),
             "{{ image_alt }}" => $image->alt(),
             "{{ start_weekday }}" => $this->_start_weekday,
@@ -105,12 +110,26 @@ class Event
             "{{ finish_time }}" => $this->_finish_time,
             "{{ name }}" => $this->_name,
             "{{ description }}" => $this->_description,
+            "{{ location_id }}" => $this->_location_id,
             "{{ location }}" => ucfirst($location->getVarLocation("_name")),
             "{{ location_city }}" => ucfirst($location->getVarLocation("_city")),
             "{{ location_adress }}" => $location->getVarLocation("_address").", ".ucfirst($location->getVarLocation("_city")).", ".ucfirst($location->getVarLocation("_state"))." ".$location->getVarLocation("_zipcode").", ".ucfirst($location->getVarLocation("_country")),
-            "{{ public }}" => $this->addPublic(),
-            "{{ price }}" => $this->addPrice(true),
-            "{{ prices }}" => $this->addPrice()
+            "{{ public }}" => $this->_public,
+            "{{ public_txt }}" => $this->addPublic(),
+            "{{ price }}" => $this->addPrice(false, true),
+            "{{ prices }}" => $this->addPrice(false),
+            "{{ prices_inline }}" => $this->addPrice(true, false),
+            "{{ price_adult_mb }}" => $this->_price_adult_mb,
+            "{{ price_adult }}" => $this->_price_adult,
+            "{{ price_child_mb }}" => $this->_price_child_mb,
+            "{{ price_child }}" => $this->_price_child,
+            "{{ enable_booking }}" => $this->_enable_booking,
+            "{{ enabled }}" => $enabled,
+            "{{ active_event }}" => $this->_active_event,
+            "{{ type_tickets }}" => $this->_type_tickets,
+            "{{ members_only }}" => $this->_members_only,
+            "{{ max_tickets }}" => $this->_max_tickets,
+            "{{ category }}" => $this->_category
         ];
     }
 
@@ -135,7 +154,7 @@ class Event
         return $public;
     }
 
-    public function addPrice($smallestOnly = false){
+    public function addPrice($inline, $smallestOnly = false){
         switch ($this->_type_tickets){
             //case no booking
             case 0:
@@ -154,10 +173,13 @@ class Event
                 }
                 else {
                     $prices ="";
-                    if ($this->_price_child) $prices .= "Child : $".$this->_price_child."<br/>";
-                    if ($this->_price_child_mb) $prices .= "Child (member): $".$this->_price_child_mb."<br/>";
-                    if ($this->_price_adult) $prices .= "Adult : $".$this->_price_adult."<br/>";
-                    if ($this->_price_adult_mb) $prices .= "Adult (member): $".$this->_price_adult_mb."<br/>";
+                    if ($this->_price_child) $prices .= "Child : $".$this->_price_child." ";
+                    if (!$inline){$prices .= "<br/>";}
+                    if ($this->_price_child_mb) $prices .= "Child (member): $".$this->_price_child_mb." ";
+                    if (!$inline){$prices .= "<br/>";}
+                    if ($this->_price_adult) $prices .= "Adult : $".$this->_price_adult." ";
+                    if (!$inline){$prices .= "<br/>";}
+                    if ($this->_price_adult_mb) $prices .= "Adult (member): $".$this->_price_adult_mb." ";
                     return $prices;
                     break;
                 }
@@ -207,6 +229,7 @@ class Event
     }
 
     public function createEvent($data){
+        $data = array_slice($data, 0, 17);
         $req = [
             "table"  => "evt_events",
             "fields" => [

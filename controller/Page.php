@@ -70,7 +70,7 @@ class Page
             $nav_bar_accountoption_mobile = file_get_contents("template/navbar_accountoption_signin.html");
         }
         else {
-            $navbar_account = $session->get('first_name')." ". $session->get('last_name');
+            $navbar_account = "- ".$session->get('first_name')." ". $session->get('last_name')." -";
             if ($session->get('admin_mode')){
                 $navbar_switch = file_get_contents("template/navbar_switchtouser.html");
                 $navbar_link = file_get_contents("template/navbar_admin.html");
