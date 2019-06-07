@@ -18,7 +18,8 @@ class Ticket
     private $_price_child_booked;
     private $_donation;
     private $_total_to_pay;
-    private $_payment_time;
+    private $_payment_datetime;
+    private $_total_paid;
     private $_cancelled_time;
     private $_total_nb_tickets;
 
@@ -31,6 +32,10 @@ class Ticket
                 break;
             case "create":
                 return $this->createTicket($args);
+                break;
+            case "update":
+                $this->_ticket_id = $args["id"];
+                return $this->updateTicketInDB($args);
                 break;
         }
     }
@@ -57,7 +62,8 @@ class Ticket
                 'price_child_booked',
                 'donation',
                 'total_to_pay',
-                'payment_time',
+                'payment_datetime',
+                'total_paid',
                 'cancelled_time',
             ],
             "from" => "evt_tickets",
@@ -77,13 +83,16 @@ class Ticket
     public function getTicketData(){
         $tickets = "";
         $total = "";
+        $status = "";
         if ($this->_nb_tickets_all != null){
             $tickets .= "Tickets : ".$this->_nb_tickets_all."<br/>";
             if ($this->_donation != 0){
-                $total .= "Donation welcome. Willing to donate: $".$this->_donation;
+                $total .= "Willing to donate: $".$this->_donation;
+                if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date;}
+                else {$status = "Not paid yet";}
             }
             else {
-                $total .= "Free event";
+                $total .= "Free";
             }
         }
         else {
@@ -99,14 +108,58 @@ class Ticket
             if ($this->_nb_tickets_child != null && $this->_nb_tickets_child != 0){
                 $tickets .= "Tickets - child : ".$this->_nb_tickets_child." - Price: $".$this->_price_child_booked."<br/>";
             }
-            $total = "You need to pay: $".$this->_total_to_pay;
+            $total = "Total: $".$this->_total_to_pay;
+            if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date;}
+            else {$status = "Not paid yet";}
         }
         return [
             "{{ ticket_id }}" => $this->_ticket_id,
             "{{ event_id }}" => $this->_event_id,
             "{{ tickets }}" => $tickets,
-            "{{ total }}" => $total
+            "{{ total }}" => $total,
+            "{{ status }}" => $status
         ];
+    }
+
+    public function calculateTotal(){
+        $total = 0;
+        if ($this->_donation != 0){
+            $total += $this->_donation;
+        }
+        else {
+        $total = ($this->_nb_tickets_adult_mb * $this->_price_adult_mb_booked)
+            + ($this->_nb_tickets_adult * $this->_price_adult_booked)
+            + ($this->_nb_tickets_child_mb * $this->_price_child_mb_booked)
+            + ($this->_nb_tickets_child * $this->_price_child_booked);
+        }
+        return $total;
+    }
+
+    public static function alreadyBookedTickets($event_id){
+        global $session;
+        $id = $session->get("evt_account_id");
+        $req = [
+                "fields" => ["*"],
+                "from" => "evt_tickets",
+                "where" => [
+                    "event_id ='$event_id'",
+                    "evt_account_id = ".$id,
+                    "cancelled_time is NULL"
+                ]
+        ];
+        $data = Model::select($req);
+        //return true if not empty or false otherwise
+        return !empty($data["data"]);
+    }
+
+    public function calculateTotalNbTickets(){
+        $total = 0;
+        if (isset($this->_nb_tickets_adult_mb)) $total += $this->_nb_tickets_adult_mb;
+        if (isset($this->_nb_tickets_adult)) $total += $this->_nb_tickets_adult;
+        if (isset($this->_nb_tickets_child_mb)) $total += $this->_nb_tickets_child_mb;
+        if (isset($this->_nb_tickets_child)) $total += $this->_nb_tickets_child;
+        if (isset($this->_nb_tickets_all)) $total += $this->_nb_tickets_all;
+        return $total;
     }
 
     public function createTicket($args){
@@ -161,45 +214,54 @@ class Ticket
         return $create["succeed"];
     }
 
-    public function calculateTotal(){
-        $total = 0;
-        if ($this->_donation != 0){
-            $total += $this->_donation;
+    public function updateTicketInDB($args){
+        if (empty($args["nb_tickets_adult_mb"])) $args["nb_tickets_adult_mb"] = NULL;
+        if (empty($args["nb_tickets_adult"])) $args["nb_tickets_adult"] = NULL;
+        if (empty($args["nb_tickets_child_mb"])) $args["nb_tickets_child_mb"] = NULL;
+        if (empty($args["nb_tickets_child"])) $args["nb_tickets_child"] = NULL;
+        if (empty($args["nb_tickets_all"])) $args["nb_tickets_all"] = NULL;
+        if (empty($args["price_adult_mb_booked"])) $args["price_adult_mb_booked"] = NULL;
+        if (empty($args["price_adult_booked"])) $args["price_adult_booked"] = NULL;
+        if (empty($args["price_child_mb_booked"])) $args["price_child_mb_booked"] = NULL;
+        if (empty($args["price_child_booked"])) $args["price_child_booked"] = NULL;
+        if (empty($args["donation"])) $args["donation"] = 0;
+        foreach ($args as $key => $value){
+            $newKey = "_".$key;
+            $this->$newKey = $value;
         }
-        else {
-        $total = ($this->_nb_tickets_adult_mb * $this->_price_adult_mb_booked)
-            + ($this->_nb_tickets_adult * $this->_price_adult_booked)
-            + ($this->_nb_tickets_child_mb * $this->_price_child_mb_booked)
-            + ($this->_nb_tickets_child * $this->_price_child_booked);
-        }
-        return $total;
-    }
-
-    public static function alreadyBookedTickets($event_id){
-        global $session;
-        $id = $session->get("evt_account_id");
-        $req = [
-                "fields" => ["*"],
-                "from" => "evt_tickets",
-                "where" => [
-                    "event_id ='$event_id'",
-                    "evt_account_id = ".$id,
-                    "cancelled_time is NULL"
-                ]
+        $data = [
+            $this->_nb_tickets_adult_mb,
+            $this->_nb_tickets_adult,
+            $this->_nb_tickets_child_mb,
+            $this->_nb_tickets_child,
+            $this->_nb_tickets_all,
+            $this->_price_adult_mb_booked,
+            $this->_price_adult_booked,
+            $this->_price_child_mb_booked,
+            $this->_price_child_booked,
+            $this->_donation,
+            $this->calculateTotal()
         ];
-        $data = Model::select($req);
-        //return true if not empty or false otherwise
-        return !empty($data["data"]);
-    }
-
-    public function calculateTotalNbTickets(){
-        $total = 0;
-        if (isset($this->_nb_tickets_adult_mb)) $total += $this->_nb_tickets_adult_mb;
-        if (isset($this->_nb_tickets_adult)) $total += $this->_nb_tickets_adult;
-        if (isset($this->_nb_tickets_child_mb)) $total += $this->_nb_tickets_child_mb;
-        if (isset($this->_nb_tickets_child)) $total += $this->_nb_tickets_child;
-        if (isset($this->_nb_tickets_all)) $total += $this->_nb_tickets_all;
-        return $total;
+        $req = [
+            "table"  => "evt_tickets",
+            "fields" => [
+                'nb_tickets_adult_mb',
+                'nb_tickets_adult',
+                'nb_tickets_child_mb',
+                'nb_tickets_child',
+                'nb_tickets_all',
+                'price_adult_mb_booked',
+                'price_adult_booked',
+                'price_child_mb_booked',
+                'price_child_booked',
+                'donation',
+                'total_to_pay'
+            ],
+            "where" => ["ticket_id = ".$this->_ticket_id],
+            "limit" => 1
+        ];
+        $update = Model::update($req, $data);
+        return $update["succeed"];
     }
 
 }

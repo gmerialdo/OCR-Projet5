@@ -14,7 +14,6 @@ class Image {
                 $this->_image_id = $args["id"];
                 $this->setImageDataFromDB();
                 break;
-            //TO DO LATER -----------------------------------------------------------
             case "create":
                 break;
         }
@@ -37,7 +36,6 @@ class Image {
                 $this->$newKey = $value;
             }
         }
-
     }
 
     public function src(){
@@ -47,6 +45,5 @@ class Image {
     public function alt(){
         return $this->_alt;
     }
-
 
 }

@@ -78,4 +78,5 @@ class Session
         ];
         return Model::update($req, [json_encode($this->_data)]);;
     }
+
 }

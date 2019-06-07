@@ -107,6 +107,8 @@ class Page
         return $this->$fct_to_call();
     }
 
+    /*-------------------------------------------MANAGING LOGIN----------------------------------------------*/
+
     //to display the login page
     public function login($message="", $event_id=0){
         global $session;
@@ -147,7 +149,7 @@ class Page
             </script>
             <?php
             $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            $account = new Account("read", ["user_name" => $user_name, "password" => $password]);
+            $account = new Account("login", ["user_name" => $user_name, "password" => $password]);
             if ($account->getVarAccount("_valid")){
                 ?>
                 <script>
@@ -205,6 +207,8 @@ class Page
         return ["signin", $content];
     }
 
+    /*-------------------------------------------MANAGING SIGNIN-------------------------------------------------*/
+
     //funcion that creates an account and logs into session if it worked
     public function create_account(){
         global $session;
@@ -257,15 +261,10 @@ class Page
     }
 
 
-//TO DO LATER -------------------------------------------------------------------------------------------------
+    /*-------------------------------------------TO DO LATER----------------------------------------------*/
+    /*-------------------------------------------MANAGING PASSWORDS----------------------------------------*/
     public function forgot_password(){
 
     }
 
-    public function help(){
-
-    }
-
-
 }
-

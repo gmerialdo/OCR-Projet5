@@ -11,17 +11,21 @@ class Account
     private $_first_name;
     private $_last_name;
     private $_managing_rights;
-    private $_orga_id;
+    private $_active_account;
 
 
     public function __construct($todo, $args){
         switch ($todo){
-            case "read":
+            case "login":
                 $this->_valid = $this->validateLogin($args["user_name"], $args["password"]);
                 if ($this->_valid){
                     $this->setAccountDataFromDB();
                     $this->logSession();
                 }
+                break;
+            case "read":
+                $this->_evt_account_id = $args["id"];
+                $this->setAccountDataFromDB();
                 break;
             case "create":
                 $this->_email = $args["email"];
@@ -32,6 +36,11 @@ class Account
                 else {
                     return $this->createAccount($args);
                 }
+                break;
+            case "update":
+                $this->_evt_account_id = $args["id"];
+                print_r(array_slice($args, 1));
+                $this->updateAccountInDB(array_slice($args, 1));
                 break;
         }
     }
@@ -46,7 +55,7 @@ class Account
                 'first_name',
                 'last_name',
                 'managing_rights',
-                'orga_id'
+                'active_account'
             ],
             "from" => "evt_accounts",
             "where" => [ "evt_account_id = ".$this->_evt_account_id],
@@ -66,6 +75,20 @@ class Account
         return $this->$_var;
     }
 
+    public function getAccountData(){
+        if ($this->_managing_rights == 0){$status = "User";} else {$status = "Admin";}
+        return [
+            "{{ evt_account_id }}" => $this->_evt_account_id,
+            "{{ first_name }}" => $this->_first_name,
+            "{{ last_name }}" => $this->_last_name,
+            "{{ user_name }}" => $this->_user_name,
+            "{{ email }}" => $this->_email,
+            "{{ active_account }}" => $this->_active_account,
+            "{{ managing_rights }}" => $this->_managing_rights,
+            "{{ status }}" => $status
+        ];
+    }
+
     public function validateLogin($user_name, $password){
         $hash = hash("sha256", $password);
         $req = [
@@ -73,7 +96,8 @@ class Account
                 "from" => "evt_accounts",
                 "where" => [
                     "user_name ='$user_name'",
-                    "password ='$hash'"
+                    "password ='$hash'",
+                    "active_account = 1"
                     ]
         ];
         $data = Model::select($req);
@@ -106,7 +130,6 @@ class Account
     }
 
     public function createAccount($args){
-        global $orga_id;
         $email = $args["email"];
         $data = [
             $email ,
@@ -115,7 +138,7 @@ class Account
             ucfirst($args["first_name"]),
             ucfirst($args["last_name"]),
             0,
-            $orga_id
+            1
         ];
         $req = [
             "table"  => "evt_accounts",
@@ -126,7 +149,7 @@ class Account
                 'first_name',
                 'last_name',
                 'managing_rights',
-                'orga_id'
+                'active_account'
             ]
         ];
         $create = Model::insert($req, $data);
@@ -136,5 +159,23 @@ class Account
         return $create["succeed"];
     }
 
+    public function updateAccountInDB($args){
+        $fields = [];
+        $data = [];
+        foreach ($args as $key => $value) {
+            $fields[] = $key;
+            $data[] = $value;
+        }
+        print_r($fields);
+        print_r($data);
+        $req = [
+            "table"  => "evt_accounts",
+            "fields" => $fields,
+            "where" => ["evt_account_id = ".$this->_evt_account_id],
+            "limit" => 1
+        ];
+        $update = Model::update($req, $data);
+        return $update["succeed"];
+    }
 
 }

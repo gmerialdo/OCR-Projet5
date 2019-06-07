@@ -30,6 +30,9 @@ class PageAdmin extends Page
         return ["dashboard", $content];
     }
 
+
+    /*-------------------------------------------MANAGING EVENTS----------------------------------------------------*/
+
     public function create_event(){
         if (!empty($_POST)){
             $name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
@@ -159,7 +162,7 @@ class PageAdmin extends Page
                 "{{ price_child }}" => "",
                 "{{ enable_booking }}" => 1,
                 "{{ create_evt_error_msg }}" => "",
-                "{{ title }}" => "Create an event",
+                "{{ title }}" => "Create a new event",
                 "{{ action }}" => "create_event",
                 "{{ button }}" => "Create the event"
             ], "content_admin_create_event.html");
@@ -203,7 +206,7 @@ class PageAdmin extends Page
             foreach ($data["data"] as $row){
                 $admin_each_event = new Event("read", ["id" => $row["event_id"]]);
                 $args = $admin_each_event->getEventData();
-                if ($modify == true){$args["{{ modify }}"] = file_get_contents("template/elt_admin_each_event_modify.html");}
+                if ($modify == true){$args["{{ modify }}"] = View::makeHtml($args, "elt_admin_each_event_modify.html");}
                 else {$args["{{ modify }}"] = "";}
                 $events .= View::makeHtml($args, "elt_admin_each_event.html");
             }
@@ -240,5 +243,375 @@ class PageAdmin extends Page
             }
         }
     }
+
+    public function duplicate_event(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_events');
+        }
+        else {
+            $event = new Event("read", ["id" => $this->_url[1]]);
+            if ($event){
+                $data = $event->getEventData();
+                $data["{{ name }}"] = "Copy of ".$data["{{ name }}"];
+                $data["{{ enable_booking }}"] = "1";
+                $data["{{ active_event }}"] = "1";
+                $data["{{ create_evt_error_msg }}"] = "";
+                $data["{{ title }}"] = "Create a new event";
+                $data["{{ action }}"] = "create_event";
+                $data["{{ button }}"] = "Create the event";
+                $content = View::makeHtml($data, "content_admin_create_event.html");
+                return ["Create event", $content];
+            }
+        }
+    }
+
+    /*-------------------------------------------MANAGING ACCOUNTS--------------------------------------------------*/
+
+    public function manage_accounts(){
+        //get active accounts
+        $active_accounts = $this->getSelectedAccounts(1);
+        $inactive_accounts = $this->getSelectedAccounts(0);
+        $content = View::makeHtml([
+            "{{ active_accounts }}" => $active_accounts,
+            "{{ inactive_accounts }}" => $inactive_accounts,
+        ], "content_admin_manage_accounts.html");
+        return ["Manage accounts", $content];
+    }
+
+    public function getSelectedAccounts($active){
+        $req = [
+            "fields" => ['evt_account_id'],
+            "from" => "evt_accounts",
+            "where" => ["active_account = ".$active]
+        ];
+        $data = Model::select($req);
+        //if no accounts
+        $accounts = "";
+        if (!isset($data["data"][0])){
+            $accounts = "No account";
+        }
+        else {
+            $admin_each_account;
+            foreach ($data["data"] as $row){
+                $admin_each_account = new Account("read", ["id" => $row["evt_account_id"]]);
+                $args = $admin_each_account->getAccountData();
+                if ($args["{{ managing_rights }}"] == 1){$args["{{ btn_admin_rights }}"] = View::makeHtml($args, "elt_admin_each_account_remove_rights.html");}
+                else {$args["{{ btn_admin_rights }}"] = View::makeHtml($args, "elt_admin_each_account_give_rights.html");}
+                if ($args["{{ active_account }}"] == 1){$args["{{ btn_activate }}"] = View::makeHtml($args, "elt_admin_each_account_deactivate.html");}
+                else {$args["{{ btn_activate }}"] = View::makeHtml($args, "elt_admin_each_account_activate.html"); $args["{{ btn_admin_rights }}"] = "";}
+                $accounts .= View::makeHtml($args, "elt_admin_each_account.html");
+            }
+        }
+        return $accounts;
+    }
+
+    public function give_rights(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_accounts');
+        }
+        else {
+            $account = new Account("update", ["id" => $this->_url[1], "managing_rights" => 1]);
+            if ($account){
+                ?>
+                <script>
+                    var msg = '<?php echo "Your changes have been updated.";?>';
+                    var link = '<?php echo "../manage_accounts";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    public function remove_rights(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_accounts');
+        }
+        else {
+          $account = new Account("update", ["id" => $this->_url[1], "managing_rights" => 0]);
+            if ($account){
+                ?>
+                <script>
+                    var msg = '<?php echo "Your changes have been updated.";?>';
+                    var link = '<?php echo "../manage_accounts";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    public function activate(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_accounts');
+        }
+        else {
+          $account = new Account("update", ["id" => $this->_url[1], "active_account" => 1]);
+            if ($account){
+                ?>
+                <script>
+                    var msg = '<?php echo "Your changes have been updated.";?>';
+                    var link = '<?php echo "../manage_accounts";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    public function deactivate(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_accounts');
+        }
+        else {
+          $account = new Account("update", ["id" => $this->_url[1], "active_account" => 0]);
+            if ($account){
+                ?>
+                <script>
+                    var msg = '<?php echo "Your changes have been updated.";?>';
+                    var link = '<?php echo "../manage_accounts";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    /*-------------------------------------------MANAGING TICKETS---------------------------------------------------*/
+
+    public function manage_tickets(){
+        $req = [
+            "fields" => ['event_id'],
+            "from" => "evt_events",
+            "where" => [
+                "active_event = 1",
+                "finish_datetime >= NOW()"
+            ],
+            "order" => "start_datetime"
+        ];
+        $data = Model::select($req);
+        //if no events
+        $events_tickets = "";
+        if (!isset($data["data"][0])){
+            $events_tickets = "No event";
+        }
+        else {
+            $admin_each_event;
+            $nb_tickets;
+            foreach ($data["data"] as $row){
+                $admin_each_event = new Event("read", ["id" => $row["event_id"]]);
+                $args = $admin_each_event->getEventData();
+                if ( $admin_each_event->getVarEvent("_nb_booked_tickets") == 0 ){$args["{{ tickets }}"] = "No ticket booked";}
+                else {$args["{{ tickets }}"] = "Tickets booked: ".$admin_each_event->getVarEvent("_nb_booked_tickets");}
+                if ($admin_each_event->getVarEvent("_max_tickets") !== null){$args["{{ available_tickets }}"] = $admin_each_event->getVarEvent("_nb_available_tickets");}
+                else {$args["{{ available_tickets }}"] = "illimited"; $args["{{ max_tickets }}"] = "undefined";}
+                $events_tickets .= View::makeHtml($args, "elt_admin_each_event_tickets.html");
+            }
+        }
+        $content = View::makeHtml(["{{ events_tickets }}" => $events_tickets], "content_admin_manage_tickets.html");
+        return ["Manage tickets", $content];
+    }
+
+    public function see_tickets(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_tickets');
+        }
+        else {
+            $event = new Event("read", ["id" => $this->_url[1]]);
+            $req = [
+                "fields" => ['ticket_id'],
+                "from" => "evt_tickets",
+                "where" => ["event_id = ".$this->_url[1], "cancelled_time IS NULL"]
+            ];
+            $data = Model::select($req);
+            $tickets = "";
+            //if no tickets
+            if (!isset($data["data"][0])){
+                $tickets = "No ticket";
+            }
+            else {
+                $admin_each_ticket;
+                foreach ($data["data"] as $row){
+                    $admin_each_ticket = new ticket("read", ["id" => $row["ticket_id"]]);
+                    $args = $admin_each_ticket->getticketData();
+                    $name = new Account("read", ["id" =>  $admin_each_ticket->getVarTicket("_evt_account_id")]);
+                    $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
+                    $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
+                    $tickets .= View::makeHtml($args, "elt_admin_each_ticket.html");
+                }
+            }
+            $content = View::makeHtml(["{{ tickets }}" => $tickets, "{{ event_name }}" => $event->getVarEvent("_name"), "{{ start_weekday }}" => $event->getVarEvent("_start_weekday"),"{{ start_date }}" =>$event->getVarEvent("_start_date")], "content_admin_see_tickets.html");
+            return ["See tickets", $content];
+        }
+    }
+
+    public function modify_tickets(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_tickets');
+        }
+        else {
+            if (!empty($_POST)){
+                foreach($_POST as $key => $value) {
+                    $data[$key] = filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
+                }
+                $data["id"] = $this->_url[1];
+                // if not enough tickets left
+                $nb_tickets_wanted = 0;
+                if (isset($data["nb_tickets_adult_mb"])) $nb_tickets_wanted += $data["nb_tickets_adult_mb"];
+                if (isset($data["nb_tickets_adult"])) $nb_tickets_wanted += $data["nb_tickets_adult"];
+                if (isset($data["nb_tickets_child_mb"])) $nb_tickets_wanted += $data["nb_tickets_child_mb"];
+                if (isset($data["nb_tickets_child"])) $nb_tickets_wanted += $data["nb_tickets_child"];
+                if (isset($data["nb_tickets_all"])) $nb_tickets_wanted += $data["nb_tickets_all"];
+                if ($nb_tickets_wanted == 0){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "No tickets selected. Please indicate the number of tickets you want to book.";?>';
+                        var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
+                else {
+                    if (!empty($data["nb_available_tickets"])){
+                        if ($data["nb_available_tickets"] < $nb_tickets_wanted){
+                            echo "data=".$data["nb_available_tickets"];
+                            ?>
+                            <script>
+                                var msg = '<?php echo "Not enough tickets available.";?>';
+                                var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
+                                alert(msg);
+                                window.location.href=link;
+                            </script>
+                            <?php
+                        }
+                    }
+                    require_once "controller/Ticket.php";
+                    $ticket = new Ticket("update", $data);
+                    if ($ticket){
+                        $event_id = $data["event_id"];
+                        ?>
+                        <script>
+                            var msg = '<?php echo "Your changes have been updated!";?>';
+                            var link = '<?php echo "../../admin/see_tickets/".$event_id;?>';
+                            alert(msg);
+                            window.location.href=link;
+                        </script>
+                        <?php
+                    }
+                }
+            }
+            else {
+                require_once "controller/Ticket.php";
+                $ticket = new Ticket("read", ["id" => $this->_url[1]]);
+                $event = new Event("read", ["id" => $ticket->getVarTicket("_event_id")]);
+                $tickets_choice = "";
+                switch ($event->getVarEvent("_type_tickets")){
+                    case 1:
+                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "free", "", "");
+                        break;
+                    case 2:
+                        switch ($event->getVarEvent("_public")){
+                            case 1:
+                                if (null !== $event->getVarEvent("_price_adult_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_adult")){
+                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child")){
+                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
+                                }
+                                break;
+                            case 2:
+                                if (null !== $event->getVarEvent("_price_adult_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_adult")){
+                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
+                                }
+                                break;
+                            case 3:
+                                if (null !== $event->getVarEvent("_price_child_mb")){
+                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
+                                }
+                                if (null !== $event->getVarEvent("_price_child")){
+                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
+                                }
+                                break;
+                        }
+                        break;
+                    case 3:
+                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "donation welcome", "", "");
+                        $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
+                        break;
+                }
+                if (null !== $event->getVarEvent("_nb_available_tickets")){
+                    $nb_available_tickets = $event->getVarEvent("_nb_available_tickets");
+                }
+                else {
+                    $nb_available_tickets = "";
+                }
+                $content = View::makeHtml([
+                    "{{ event_id }}" => $event->getVarEvent("_event_id"),
+                    "{{ event_name }}" => $event->getVarEvent("_name"),
+                    "{{ tickets_choice }}" => $tickets_choice,
+                    "{{ action }}" => "admin/modify_tickets/{{ ticket_id }}",
+                    "{{ title }}" => "Modify those tickets",
+                    "{{ btn_action }}" => "Modify tickets",
+                    "{{ ticket_id }}" => $this->_url[1],
+                    "{{ nb_available_tickets }}" => $nb_available_tickets,
+                    "{{ nb_tickets_adult_mb }}" => $ticket->getVarTicket("_nb_tickets_adult_mb"),
+                    "{{ nb_tickets_adult }}" => $ticket->getVarTicket("_nb_tickets_adult"),
+                    "{{ nb_tickets_child_mb }}" => $ticket->getVarTicket("_nb_tickets_child_mb"),
+                    "{{ nb_tickets_child }}" => $ticket->getVarTicket("_nb_tickets_child"),
+                    "{{ nb_tickets_all }}" => $ticket->getVarTicket("_nb_tickets_all"),
+                    "{{ donation }}" => $ticket->getVarTicket("_donation")
+                ], "content_book_tickets.html");
+                return ["Modify tickets", $content];
+            }
+        }
+    }
+
+    public function addOptionTickets($type, $name, $price, $sign, $price_booked){
+        return View::makeHtml([
+            "{{ type_ticket }}" => $type,
+            "{{ name_ticket }}" => $name,
+            "{{ price_ticket }}" => $price,
+            "{{ dollar_sign }}" => $sign,
+            "{{ price_booked }}" => $price_booked
+        ],"elt_nb_tickets.html");
+    }
+
+    public function modify_payment(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_tickets');
+        }
+        else {
+            if (!empty($_POST)){
+
+            }
+            else {
+                require_once "controller/Ticket.php";
+                $ticket = new Ticket("read", ["id" => $this->_url[1]]);
+                $args = $ticket->getTicketData();
+                $name = new Account("read", ["id" =>  $ticket->getVarTicket("_evt_account_id")]);
+                $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
+                $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
+                $args["{{ total_paid }}"] = $ticket->getVarTicket("_total_paid");
+                $args["{{ payment_date }}"] = Date("Y-m-d", strtotime($ticket->getVarTicket("_payment_datetime")));
+                $content = View::makeHtml($args, "content_admin_modify_payment.html");
+                return ["Modify payment", $content];
+            }
+        }
+    }
+
 
 }

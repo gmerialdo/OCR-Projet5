@@ -23,6 +23,9 @@ class PageLoggedVisitor extends PageVisitor
         }
     }
 
+
+    /*-------------------------------------------BOOK TICKETS------------------------------------------------*/
+
     public function book_tickets(){
         if (!isset($this->_url[1])){
             header('Location: see_all_events');
@@ -97,7 +100,16 @@ class PageLoggedVisitor extends PageVisitor
                     "{{ event_id }}" => $event->getVarEvent("_event_id"),
                     "{{ event_name }}" => $event->getVarEvent("_name"),
                     "{{ tickets_choice }}" => $tickets_choice,
-                    "{{ nb_available_tickets }}" => $nb_available_tickets
+                    "{{ action }}" => "logged/bookingConfirm",
+                    "{{ title }}" => "Book your tickets",
+                    "{{ btn_action }}" => "Book tickets",
+                    "{{ nb_available_tickets }}" => $nb_available_tickets,
+                    "{{ nb_tickets_adult_mb }}" => 0,
+                    "{{ nb_tickets_adult }}" => 0,
+                    "{{ nb_tickets_culid_mb }}" => 0,
+                    "{{ nb_tickets_child }}" => 0,
+                    "{{ nb_tickets_all }}" => 0,
+                    "{{ donation }}" => ""
                 ], "content_book_tickets.html");
                 return ["Book tickets", $content];
             }
@@ -172,6 +184,8 @@ class PageLoggedVisitor extends PageVisitor
     }
 
 
+    /*-------------------------------------------SEE TICKETS------------------------------------------------*/
+
     public function my_tickets(){
         global $session;
         $req = [
@@ -211,9 +225,12 @@ class PageLoggedVisitor extends PageVisitor
         return ["My tickets", $content];
     }
 
+
+    /*-------------------------------------------TO DO LATER-----------------------------------------------------*/
+    /*-------------------------------------------MANAGE ACCOUNT SETTINGS--------------------------------------------*/
+
     public function account_settings(){
 
     }
-
 
 }

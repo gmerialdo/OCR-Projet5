@@ -17,13 +17,28 @@ class PageVisitor extends Page
         return Page::getPage();
     }
 
+    public function needs_login(){
+        global $session;
+        if (null !== $session->get("user_name")){
+            if (!isset($this->_url[1]) OR !isset($this->_url[2])) header('Location: ');
+            $link = $this->_url[1]."/".$this->_url[2];
+            header('Location: ../../logged/'.$link);
+        }
+        else {
+            return $this->login("booking", $this->_url[2]);
+        }
+    }
+
+
+    /*-------------------------------------------SEE EVENTS----------------------------------------------*/
+
     public function see_all_events(){
         $req = [
             "fields" => ['event_id'],
             "from" => "evt_events",
             "where" => [
                 "active_event = 1",
-                "finish_datetime > NOW()"
+                "finish_datetime >= NOW()"
             ],
             "order" => "start_datetime"
         ];
@@ -65,18 +80,5 @@ class PageVisitor extends Page
         $content = View::makeHtml($eventData, "content_see_event.html");
         return [$event->getVarEvent("_name"), $content];
     }
-
-    public function needs_login(){
-        global $session;
-        if (null !== $session->get("user_name")){
-            if (!isset($this->_url[1]) OR !isset($this->_url[2])) header('Location: ');
-            $link = $this->_url[1]."/".$this->_url[2];
-            header('Location: ../../logged/'.$link);
-        }
-        else {
-            return $this->login("booking", $this->_url[2]);
-        }
-    }
-
 
 }
