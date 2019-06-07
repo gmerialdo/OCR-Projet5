@@ -21,11 +21,11 @@
         
         <div class="row">
             <form class="col s12 modify_payment_form" method="post" action="{{ path }}/admin/modify_payment/{{ ticket_id }}">
-                <div class="input-field col s3 offset-s3">
-                    Payment in $<input placeholder="total_paid" id="total_paid" type="text" class="validate" name="total_paid" value="{{ total_paid }}" required>
+                <div class="input-field col s1 offset-s5">
+                    Payment in $<input placeholder="total_paid" id="total_paid" type="number" min="0" max="10000" step="0.5" class="validate" name="total_paid" value="{{ total_paid }}" required>
                     <label for="total_paid"></label>
                 </div>
-                <div class="input-field col s3">
+                <div class="input-field col s1">
                     Payment date:
                     <input type="text" id ="payment_date" placeholder="Payment date:" class="datepicker" value="{{ payment_date }}" name="payment_date" required>
                 </div>
