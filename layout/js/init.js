@@ -1,22 +1,22 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function() {
     var today = new Date();
-    var elemsDropdown = document.querySelectorAll('.dropdown-trigger');
+    var elemsDropdown = document.querySelectorAll(".dropdown-trigger");
     var instancesDropdown = M.Dropdown.init(elemsDropdown, {constrainWidth: false, coverTrigger: false, hover:true});
-    var elemsSidenav = document.querySelectorAll('.sidenav');
+    var elemsSidenav = document.querySelectorAll(".sidenav");
     var instancesSidenav = M.Sidenav.init(elemsSidenav);
-    var elemsSelectNbTickets = document.querySelectorAll('select');
+    var elemsSelectNbTickets = document.querySelectorAll("select");
     var instancesSelectNbTickets = M.FormSelect.init(elemsSelectNbTickets);
-    var elemsDatepicker = document.querySelectorAll('.datepicker');
-    var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: today, firstDay: 1, format: 'yyyy-mm-dd'});
-    var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, minDate: today, firstDay: 1, format: 'yyyy-mm-dd', onSelect: function(d){
-        var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: 'yyyy-mm-dd'})
+    var elemsDatepicker = document.querySelectorAll(".datepicker");
+    var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: today, firstDay: 1, format: "yyyy-mm-dd"});
+    var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, minDate: today, firstDay: 1, format: "yyyy-mm-dd", onSelect: function(d){
+        var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: "yyyy-mm-dd"})
     }});
-    var elemsTimepicker = document.querySelectorAll('.timepicker');
+    var elemsTimepicker = document.querySelectorAll(".timepicker");
     var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true});
 });
 
 function checkSecurityPW(){
-    document.getElementById('level_mdp').innerHTML=test_pass();
+    document.getElementById("level_mdp").innerHTML=test_pass();
 }
 
 function test_pass() {
@@ -26,7 +26,7 @@ function test_pass() {
         var size = mdp.length;
         if (size < 6) {
             level="Password too short"; 
-            document.getElementById('level_mdp').classList.add("red-text");
+            document.getElementById("level_mdp").classList.add("red-text");
             return level;
         }
         var security = 0;
@@ -56,15 +56,15 @@ function test_pass() {
         }
         if (security >= 13){
             level="Level of security: High";
-            document.getElementById('level_mdp').classList.add("green-text");
+            document.getElementById("level_mdp").classList.add("green-text");
         }
         else if (security >= 9){
             level="Level of security: Average";
-            document.getElementById('level_mdp').classList.add("green-text");
+            document.getElementById("level_mdp").classList.add("green-text");
         }
         else {
             level="Level of security: Low";
-            document.getElementById('level_mdp').classList.add("red-text");
+            document.getElementById("level_mdp").classList.add("red-text");
         }
     }
     finally {
@@ -75,16 +75,16 @@ function test_pass() {
 function highlight(field, error){
     if(error){
         field.style.backgroundColor = "#FFD9CF";
-        document.getElementById('no_match').innerHTML="Password doesn't match";
+        document.getElementById("no_match").innerHTML="Password doesn"t match";
     }
     else {
         field.style.backgroundColor = "";
-        document.getElementById('no_match').innerHTML="";
+        document.getElementById("no_match").innerHTML="";
     }
 }
 
 function verifyPw(field){
-    if(field.value != document.getElementById('new_password').value){
+    if(field.value != document.getElementById("new_password").value){
         highlight(field, true);
         return false;
     }
