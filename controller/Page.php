@@ -135,7 +135,7 @@ class Page
     //function that checks if username and pw are ok and logs in if yes
     public function checklogin(){
         global $session;
-        if (!empty($_POST)){
+        if (!$this->postEmpty()){
             $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             ?>
             <!--keep user name in localStorage-->
@@ -209,7 +209,7 @@ class Page
     //funcion that creates an account and logs into session if it worked
     public function create_account(){
         global $session;
-        if (!empty($_POST) && (empty($session->get('user_name')))){
+        if (!$this->postEmpty() && (empty($session->get('user_name')))){
             $email = filter_input(INPUT_POST, "new_email", FILTER_VALIDATE_EMAIL);
             ?>
             <!--keep email in localStorage-->
@@ -270,6 +270,24 @@ class Page
         }
         $content = View::makeHtml(["{{ link }}" => $link, "{{ link_txt }}" => $link_txt], "content_display_error.html");
         return ["Error", $content];
+    }
+
+    /*-------------------------------------------MANAGING ERRORS---------------------------------------------------*/
+
+    public function postEmpty(){
+        return empty($_POST);
+    }
+
+    public function postEmptyKey($key){
+        return empty($_POST[$key]);
+    }
+
+    public function getPost($key){
+        return $_POST[$key];
+    }
+
+    public function getPostSanitizeInt($key){
+        return filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
     }
 
 }

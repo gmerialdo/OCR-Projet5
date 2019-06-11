@@ -34,30 +34,30 @@ class PageAdmin extends Page
     /*-------------------------------------------MANAGING EVENTS----------------------------------------------------*/
 
     public function create_event(){
-        if (!empty($_POST)){
+        if (!$this->postEmpty()){
             $name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $name = ucfirst($name);
             $description = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $description = ucfirst($description);
-            $location_id = filter_input(INPUT_POST, "location_id", FILTER_VALIDATE_INT);
-            $image_id = filter_input(INPUT_POST, "image_id", FILTER_VALIDATE_INT);
+            $location_id = $this->getPostSanitizeInt("location_id";
+            $image_id = $this->getPostSanitizeInt("image_id");
             $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            if (empty(filter_input(INPUT_POST, "active_event", FILTER_VALIDATE_INT))){$active_event = 0;} else {$active_event = 1;}
-            $start_date = $_POST["start_date"];
-            $start_time = $_POST["start_time"];
-            $finish_date = $_POST["finish_date"];
-            $finish_time = $_POST["finish_time"];
+            if ($this->postEmptyKey("active_event")){$active_event = 0;} else {$active_event = 1;}
+            $start_date = $this->getPost("start_date");
+            $start_time = $this->getPost("start_time");
+            $finish_date = $this->getPost("finish_date");
+            $finish_time = $this->getPost("finish_time");
             $start_datetime = date("Y-m-d H:i:s", strtotime($start_date." ".$start_time));
             $finish_datetime = date("Y-m-d H:i:s", strtotime($finish_date." ".$finish_time));
-            if (empty(filter_input(INPUT_POST, "type_tickets", FILTER_VALIDATE_INT))){$type_tickets = 0;} else {$type_tickets = filter_input(INPUT_POST, "type_tickets", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "public", FILTER_VALIDATE_INT))){$public = 1;} else {$public = filter_input(INPUT_POST, "public", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "members_only", FILTER_VALIDATE_INT))){$members_only = 0;} else {$members_only = 1;}
-            if (empty(filter_input(INPUT_POST, "max_tickets", FILTER_VALIDATE_INT))){$max_tickets = null;} else {$max_tickets = filter_input(INPUT_POST, "max_tickets", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "price_adult_mb", FILTER_VALIDATE_INT))){$price_adult_mb = null;} else {$price_adult_mb = filter_input(INPUT_POST, "price_adult_mb", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "price_adult", FILTER_VALIDATE_INT))){$price_adult = null;} else {$price_adult =filter_input(INPUT_POST, "price_adult", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "price_child_mb", FILTER_VALIDATE_INT))){$price_child_mb = null;} else {$price_child_mb = filter_input(INPUT_POST, "price_child_mb", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "price_child", FILTER_VALIDATE_INT))){$price_child = null;} else {$price_child = filter_input(INPUT_POST, "price_child", FILTER_VALIDATE_INT);}
-            if (empty(filter_input(INPUT_POST, "enable_booking", FILTER_VALIDATE_INT))){$enable_booking = 0;} else {$enable_booking = 1;}
+            if ($this->postEmptyKey("type_tickets")){$type_tickets = 0;} else {$type_tickets = $this->getPostSanitizeInt("type_tickets");}
+            if ($this->postEmptyKey("public")){$public = 1;} else {$public = $this->getPostSanitizeInt("public");}
+            if ($this->postEmptyKey("members_only")){$members_only = 0;} else {$members_only = 1;}
+            if ($this->postEmptyKey("max_tickets")){$max_tickets = null;} else {$max_tickets = $this->getPostSanitizeInt("max_tickets");}
+            if ($this->postEmptyKey("price_adult_mb")){$price_adult_mb = null;} else {$price_adult_mb = $this->getPostSanitizeInt("price_adult_mb");}
+            if ($this->postEmptyKey("price_adult")){$price_adult = null;} else {$price_adult =$this->getPostSanitizeInt("price_adult");}
+            if ($this->postEmptyKey("price_child_mb")){$price_child_mb = null;} else {$price_child_mb = $this->getPostSanitizeInt("price_child_mb");}
+            if ($this->postEmptyKey("price_child")){$price_child = null;} else {$price_child = $this->getPostSanitizeInt("price_child");}
+            if ($this->postEmptyKey("enable_booking")){$enable_booking = 0;} else {$enable_booking = 1;}
             //check if date is correct
             if ($start_datetime > $finish_datetime){
                 $args = [
@@ -494,9 +494,9 @@ class PageAdmin extends Page
             header('Location: manage_tickets');
         }
         else {
-            if (!empty($_POST)){
+            if (!$this->postEmpty()){
                 foreach($_POST as $key => $value) {
-                    $data[$key] = $_POST[$key];
+                    $data[$key] = $this->getPost($key);
                 }
                 $data["id"] = $this->_url[1];
                 // if not enough tickets left
@@ -631,7 +631,7 @@ class PageAdmin extends Page
             header('Location: manage_tickets');
         }
         else {
-            if (!empty($_POST)){
+            if (!$this->postEmpty()){
                 require_once "controller/Ticket.php";
                 $ticket = new Ticket("read", ["id" => $this->_url[1]]);
                 $payment_datetime = FILTER_INPUT(INPUT_POST, "payment_datetime", FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^(\d{4})-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/")));

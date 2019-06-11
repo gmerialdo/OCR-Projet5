@@ -128,9 +128,9 @@ class PageLoggedVisitor extends PageVisitor
 
     public function bookingConfirm(){
         global $session;
-        if (!empty($_POST) && (!empty($session->get("user_name")))){
+        if (!$this->postEmpty() && (!empty($session->get("user_name")))){
             foreach($_POST as $key => $value) {
-                $data[$key] = filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
+                $data[$key] = $this->getPostSanitizeInt($key);
             }
             $data["evt_account_id"] = $session->get("evt_account_id");
             // if not enough tickets left
@@ -228,7 +228,7 @@ class PageLoggedVisitor extends PageVisitor
 
     public function account_settings(){
         global $session;
-        if (!empty($_POST)){
+        if (!$this->postEmpty()){
             $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             $account = new Account("read", ["id" => $session->get("evt_account_id")]);
             $hash = hash("sha256", $password);
