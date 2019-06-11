@@ -6,7 +6,7 @@ class Ticket
     private $_ticket_id;
     private $_event_id;
     private $_evt_account_id;
-    private $_time_booked;
+    // private $_time_booked;
     private $_nb_tickets_adult_mb;
     private $_nb_tickets_adult;
     private $_nb_tickets_child_mb;

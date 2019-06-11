@@ -261,14 +261,10 @@ class Page
 
     public function display_error(){
         if (isset($this->_url[1])){
-            $link = "{{ path }}/admin";
-            $link_txt = "Go back to dashboard";
+            $content = View::makeHtml(["{{ link }}" => "{{ path }}/admin", "{{ link_txt }}" => "Go back to dashboard"], "content_display_error.html");
+            return ["Error", $content];
         }
-        else {
-            $link = "{{ path }}/see_all_events";
-            $link_txt = "Go back to events";
-        }
-        $content = View::makeHtml(["{{ link }}" => $link, "{{ link_txt }}" => $link_txt], "content_display_error.html");
+        $content = View::makeHtml(["{{ link }}" => "{{ path }}/see_all_events", "{{ link_txt }}" => "Go back to events"], "content_display_error.html");
         return ["Error", $content];
     }
 

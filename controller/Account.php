@@ -33,8 +33,7 @@ class Account
                 if ($this->_valid == false){
                     return false;
                 }
-                else {
-                    return $this->createAccount($args);
+                return $this->createAccount($args);
                 }
                 break;
             case "update":

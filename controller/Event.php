@@ -29,9 +29,8 @@ class Event
     private $_enable_booking;
     private $_nb_booked_tickets;
     private $_nb_available_tickets;
-    private $_error;
 
-    CONST fields_to_set = ['name','description','location_id','image_id','category','active_event','start_datetime','finish_datetime','max_tickets','type_tickets','public','members_only','price_adult_mb','price_adult','price_child_mb','price_child','enable_booking'];
+    CONST FIELDS_TO_SET = ['name','description','location_id','image_id','category','active_event','start_datetime','finish_datetime','max_tickets','type_tickets','public','members_only','price_adult_mb','price_adult','price_child_mb','price_child','enable_booking'];
 
     public function __construct($todo, $args){
         switch ($todo){
@@ -48,7 +47,7 @@ class Event
             case "update":
             //$args consists of an array with id, array of fields and array of data to update in those fields
                 $this->_event_id = $args["id"];
-                return $this->updateEventInDB(Event::fields_to_set, $args["data"]);
+                return $this->updateEventInDB(Event::FIELDS_TO_SET, $args["data"]);
                 break;
             case "delete":
                 $this->_event_id = $args["id"];
@@ -244,7 +243,7 @@ class Event
     public function createEvent($data){
         $req = [
             "table"  => "evt_events",
-            "fields" => Event::fields_to_set
+            "fields" => Event::FIELDS_TO_SET
         ];
         $create = Model::insert($req, $data);
         $this->_event_id = $create["data"];
