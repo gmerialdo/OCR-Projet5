@@ -84,12 +84,13 @@ class Ticket
         $tickets = "";
         $total = "";
         $status = "";
+        $status_cancelled = "";
         if ($this->_nb_tickets_all != null){
             $tickets .= "Tickets : ".$this->_nb_tickets_all."<br/>";
             if ($this->_donation != 0){
                 $total .= "Willing to donate: $".$this->_donation;
-                if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date;}
-                else {$status = "Not paid yet";}
+                if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date; $status_cancelled = $status;}
+                else {$status = "Not paid yet"; $status_cancelled = "No payment";}
             }
             else {
                 $total .= "Free";
@@ -109,15 +110,30 @@ class Ticket
                 $tickets .= "Tickets - child : ".$this->_nb_tickets_child." - Price: $".$this->_price_child_booked."<br/>";
             }
             $total = "Total: $".$this->_total_to_pay;
-            if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date;}
-            else {$status = "Not paid yet";}
+            if ($this->_payment_datetime != null){$payment_date = Date("Y-m-d", strtotime($this->_payment_datetime)); $status = "Paid $".$this->_total_paid."<br/>on ".$payment_date; $status_cancelled = $status;}
+            else {$status = "Not paid yet"; $status_cancelled = "No payment";}
         }
         return [
             "{{ ticket_id }}" => $this->_ticket_id,
             "{{ event_id }}" => $this->_event_id,
             "{{ tickets }}" => $tickets,
             "{{ total }}" => $total,
-            "{{ status }}" => $status
+            "{{ status }}" => $status,
+            "{{ nb_tickets_adult_mb }}" => $this->_nb_tickets_adult_mb,
+            "{{ nb_tickets_adult }}" => $this->_nb_tickets_adult,
+            "{{ nb_tickets_child_mb }}" => $this->_nb_tickets_child_mb,
+            "{{ nb_tickets_child }}" => $this->_nb_tickets_child,
+            "{{ nb_tickets_all }}" => $this->_nb_tickets_all,
+            "{{ price_adult_mb_booked }}" => $this->_price_adult_mb_booked,
+            "{{ price_adult_booked }}" => $this->_price_adult_booked,
+            "{{ price_child_mb_booked }}" => $this->_price_child_mb_booked,
+            "{{ price_child_booked }}" => $this->_price_child_booked,
+            "{{ donation }}" => $this->_donation,
+            "{{ total_to_pay }}" => $this->_total_to_pay,
+            "{{ payment_datetime }}" => $this->_payment_datetime,
+            "{{ total_paid }}" => $this->_total_paid,
+            "{{ cancelled }}" => "Cancelled on ".$this->_cancelled_time,
+            "{{ status_cancelled }}" => $status_cancelled
         ];
     }
 
@@ -225,6 +241,8 @@ class Ticket
         if (empty($args["price_child_mb_booked"])) $args["price_child_mb_booked"] = NULL;
         if (empty($args["price_child_booked"])) $args["price_child_booked"] = NULL;
         if (empty($args["donation"])) $args["donation"] = 0;
+        if (empty($args["total_paid"])) $args["total_paid"] = NULL;
+        if (empty($args["payment_datetime"])) $args["payment_datetime"] = NULL;
         foreach ($args as $key => $value){
             $newKey = "_".$key;
             $this->$newKey = $value;
@@ -240,7 +258,9 @@ class Ticket
             $this->_price_child_mb_booked,
             $this->_price_child_booked,
             $this->_donation,
-            $this->calculateTotal()
+            $this->calculateTotal(),
+            $this->_payment_datetime,
+            $this->_total_paid
         ];
         $req = [
             "table"  => "evt_tickets",
@@ -255,8 +275,21 @@ class Ticket
                 'price_child_mb_booked',
                 'price_child_booked',
                 'donation',
-                'total_to_pay'
+                'total_to_pay',
+                'payment_datetime',
+                'total_paid'
             ],
+            "where" => ["ticket_id = ".$this->_ticket_id],
+            "limit" => 1
+        ];
+        $update = Model::update($req, $data);
+        return $update["succeed"];
+    }
+
+    public function updateInDB($fields, $data){
+        $req = [
+            "table"  => "evt_tickets",
+            "fields" => $fields,
             "where" => ["ticket_id = ".$this->_ticket_id],
             "limit" => 1
         ];

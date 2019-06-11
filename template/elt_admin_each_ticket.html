@@ -15,7 +15,7 @@
         <div class="col s10 offset-s1 l4">
             <a href="{{ path }}/admin/modify_tickets/{{ ticket_id }}">Modify tickets</a> /   
             <a href="{{ path }}/admin/modify_payment/{{ ticket_id }}">Modify payment</a> / 
-            <a href="{{ path }}/admin/delete_tickets/{{ ticket_id }}">Delete tickets</a> 
+            <a href="{{ path }}/admin/cancel_tickets/{{ ticket_id }}" onclick="return confirm('Are you sure you want to cancel these tickets?');">Cancel tickets</a> 
         </div>
     </div>
 </div>

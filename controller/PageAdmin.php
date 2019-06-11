@@ -171,18 +171,26 @@ class PageAdmin extends Page
     }
 
     public function manage_events(){
+        $msg = "";
+        if (isset($this->_url[1])){
+            if ($this->_url[1] = "no"){
+                $msg = "Some tickets are booked for this event. You can't delete it without cancelling the tickets first.";
+            }
+        }
         //get active current events
         $current_events = $this->getSelectedEvents(1, 1);
         $draft_events = $this->getSelectedEvents(0);
         $past_events = $this->getSelectedEvents(1, 0, false);
         //$trash_events = $this->getSelectedEvents(2);
         $content = View::makeHtml([
+            "{{ msg }}" => $msg,
             "{{ current_events }}" => $current_events,
             "{{ draft_events }}" => $draft_events,
             "{{ past_events }}" => $past_events,
             //"{{ trash_events }}" => $trash_events
         ], "content_admin_manage_events.html");
         return ["Manage events", $content];
+
     }
 
     public function getSelectedEvents($active, $current = 2, $modify = true){
@@ -230,17 +238,24 @@ class PageAdmin extends Page
             header('Location: manage_events');
         }
         else {
-            $event = new Event("delete", ["id" => $this->_url[1]]);
-            if ($event){
-                ?>
-                <script>
-                    var msg = '<?php echo "The event has been deleted.";?>';
-                    var link = '<?php echo "../manage_events";?>';
-                    alert(msg);
-                    window.location.href=link;
-                </script>
-                <?php
+            $this_event = new Event("read", ["id" => $this->_url[1]]);
+            if ($this_event->getVarEvent("_nb_booked_tickets") != 0){
+                header('Location: ../manage_events/delete_no');
             }
+            else {
+                $event = new Event("delete", ["id" => $this->_url[1]]);
+                if ($event){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "The event has been deleted.";?>';
+                        var link = '<?php echo "../manage_events";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
+            }
+
         }
     }
 
@@ -456,7 +471,7 @@ class PageAdmin extends Page
         else {
             if (!empty($_POST)){
                 foreach($_POST as $key => $value) {
-                    $data[$key] = filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
+                    $data[$key] = $_POST[$key];
                 }
                 $data["id"] = $this->_url[1];
                 // if not enough tickets left
@@ -559,22 +574,16 @@ class PageAdmin extends Page
                 else {
                     $nb_available_tickets = "";
                 }
-                $content = View::makeHtml([
-                    "{{ event_id }}" => $event->getVarEvent("_event_id"),
-                    "{{ event_name }}" => $event->getVarEvent("_name"),
-                    "{{ tickets_choice }}" => $tickets_choice,
-                    "{{ action }}" => "admin/modify_tickets/{{ ticket_id }}",
-                    "{{ title }}" => "Modify those tickets",
-                    "{{ btn_action }}" => "Modify tickets",
-                    "{{ ticket_id }}" => $this->_url[1],
-                    "{{ nb_available_tickets }}" => $nb_available_tickets,
-                    "{{ nb_tickets_adult_mb }}" => $ticket->getVarTicket("_nb_tickets_adult_mb"),
-                    "{{ nb_tickets_adult }}" => $ticket->getVarTicket("_nb_tickets_adult"),
-                    "{{ nb_tickets_child_mb }}" => $ticket->getVarTicket("_nb_tickets_child_mb"),
-                    "{{ nb_tickets_child }}" => $ticket->getVarTicket("_nb_tickets_child"),
-                    "{{ nb_tickets_all }}" => $ticket->getVarTicket("_nb_tickets_all"),
-                    "{{ donation }}" => $ticket->getVarTicket("_donation")
-                ], "content_book_tickets.html");
+                $data["{{ event_id }}"] = $event->getVarEvent("_event_id");
+                $data["{{ event_name }}"] = $event->getVarEvent("_name");
+                $data["{{ tickets_choice }}"] = $tickets_choice;
+                $data["{{ action }}"] = "admin/modify_tickets/{{ ticket_id }}";
+                $data["{{ title }}"] = "Modify those tickets";
+                $data["{{ btn_action }}"] = "Modify tickets";
+                $data["{{ ticket_id }}"] = $this->_url[1];
+                $data["{{ nb_available_tickets }}"] = $nb_available_tickets;
+                $data = array_merge($data, $ticket->getTicketData());
+                $content = View::makeHtml($data, "content_book_tickets.html");
                 return ["Modify tickets", $content];
             }
         }
@@ -596,22 +605,114 @@ class PageAdmin extends Page
         }
         else {
             if (!empty($_POST)){
-
+                require_once "controller/Ticket.php";
+                $ticket = new Ticket("read", ["id" => $this->_url[1]]);
+                $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [$_POST["payment_datetime"], $_POST["total_paid"]]);
+                if ($update){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Your changes have been updated!";?>';
+                        var link = '<?php echo "../modify_payment/".$this->_url[1];?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
             }
             else {
                 require_once "controller/Ticket.php";
                 $ticket = new Ticket("read", ["id" => $this->_url[1]]);
-                $args = $ticket->getTicketData();
                 $name = new Account("read", ["id" =>  $ticket->getVarTicket("_evt_account_id")]);
                 $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
                 $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
-                $args["{{ total_paid }}"] = $ticket->getVarTicket("_total_paid");
-                $args["{{ payment_date }}"] = Date("Y-m-d", strtotime($ticket->getVarTicket("_payment_datetime")));
+                if ($ticket->getVarTicket("_payment_datetime") != null){
+                    $args["{{ cancel_payment_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn.html");
+                }
+                else {
+                    $args["{{ cancel_payment_btn }}"] = "";
+                }
+                $args = array_merge($args, $args = $ticket->getTicketData());
                 $content = View::makeHtml($args, "content_admin_modify_payment.html");
                 return ["Modify payment", $content];
             }
         }
     }
 
+    public function cancel_payment(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_tickets');
+        }
+        else {
+            require_once "controller/Ticket.php";
+            $ticket = new Ticket("read", ["id" => $this->_url[1]]);
+            $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [null, null]);
+            if ($update){
+                if (!isset($this->_url[2])){$msg = "../modify_payment/".$this->_url[1];}
+                else {$msg = "../../".$this->_url[2];}
+                ?>
+                <script>
+                    var msg = '<?php echo "The payment has been cancelled.";?>';
+                    var link = '<?php echo $msg;?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    public function cancel_tickets(){
+        if (!isset($this->_url[1])){
+            header('Location: manage_tickets');
+        }
+        else {
+            require_once "controller/Ticket.php";
+            $ticket = new Ticket("read", ["id" => $this->_url[1]]);
+            $event_id = $ticket->getVarTicket("_event_id");
+            $cancelled = $ticket->updateInDB(["cancelled_time"], [date("Y-m-d H:i:s")]);
+            if ($cancelled){
+                ?>
+                <script>
+                    var msg = '<?php echo "Those tickets have been cancelled.";?>';
+                    var link = '<?php echo "../see_tickets/".$event_id;?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+    }
+
+    public function see_cancelled_tickets(){
+        $req = [
+            "fields" => ['ticket_id'],
+            "from" => "evt_tickets",
+            "where" => ["cancelled_time IS NOT NULL"]
+        ];
+        $data = Model::select($req);
+        $tickets = "";
+        //if no tickets
+        if (!isset($data["data"][0])){
+            $tickets = "No cancelled ticket";
+        }
+        else {
+            $admin_each_ticket;
+            foreach ($data["data"] as $row){
+                require_once "controller/Ticket.php";
+                $admin_each_ticket = new ticket("read", ["id" => $row["ticket_id"]]);
+                if ($admin_each_ticket->getVarTicket("_payment_datetime") != null){$args["{{ cancel_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn_cancelled.html");}
+                else {$args["{{ cancel_btn }}"] = "";}
+                $name = new Account("read", ["id" =>  $admin_each_ticket->getVarTicket("_evt_account_id")]);
+                $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
+                $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
+                $event = new Event("read", ["id" => $admin_each_ticket->getVarTicket("_event_id")]);
+                $args["{{ event_name }}"] = $event->getVarEvent("_name");
+                $args = array_merge($args, $admin_each_ticket->getticketData());
+                $tickets .= View::makeHtml($args, "elt_admin_each_cancelled_ticket.html");
+            }
+        }
+        $content = View::makeHtml(["{{ cancelled_tickets }}" => $tickets], "content_admin_see_cancelled_tickets.html");
+        return ["See cancelled tickets", $content];
+    }
 
 }

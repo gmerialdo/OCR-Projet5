@@ -204,7 +204,7 @@ class Event
         $req = [
             "fields" => ["ticket_id"],
             "from" => "evt_tickets",
-            "where" => [ "event_id = ".$this->_event_id]
+            "where" => [ "event_id = ".$this->_event_id, "cancelled_time IS NULL"]
         ];
         $data = Model::select($req);
         if ($data["succeed"]){
