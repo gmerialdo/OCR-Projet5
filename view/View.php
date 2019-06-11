@@ -40,10 +40,4 @@ class View
         }
     }
 
-    public static function errorDisplayBack(){
-        return View::makeHtml([
-                        "{{ path }}" => $GLOBALS["path"]
-                        ], "back_message_error");
-    }
-
 }

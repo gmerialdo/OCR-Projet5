@@ -1,8 +1,5 @@
 <?php
 
-// www.kiwiversity.com/aftucson/events/... dc uri = /aftucson/events/...
-//nothing (page with all events) or event/id or modify/id or create or login or logout or delete/id or book/id or cancel/id
-
 require_once "controller/Session.php";
 require_once "controller/Event.php";
 require_once "controller/Account.php";
@@ -260,11 +257,19 @@ class Page
         }
     }
 
+    /*-------------------------------------------MANAGING ERRORS---------------------------------------------------*/
 
-    /*-------------------------------------------TO DO LATER----------------------------------------------*/
-    /*-------------------------------------------MANAGING PASSWORDS----------------------------------------*/
-    public function forgot_password(){
-
+    public function display_error(){
+        if (isset($this->_url[1])){
+            $link = "{{ path }}/admin";
+            $link_txt = "Go back to dashboard";
+        }
+        else {
+            $link = "{{ path }}/see_all_events";
+            $link_txt = "Go back to events";
+        }
+        $content = View::makeHtml(["{{ link }}" => $link, "{{ link_txt }}" => $link_txt], "content_display_error.html");
+        return ["Error", $content];
     }
 
 }

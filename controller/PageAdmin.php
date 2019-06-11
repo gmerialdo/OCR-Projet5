@@ -117,26 +117,36 @@ class PageAdmin extends Page
             //if modifying event
             if (isset($this->_url[1])){
                 $event = new Event("update", ["id" => $this->_url[1], "data" => $data]);
-                ?>
-                <script>
-                    var msg = '<?php echo "Your changes have been updated.";?>';
-                    var link = '<?php echo "../manage_events";?>';
-                    alert(msg);
-                    window.location.href=link;
-                </script>
-                <?php
+                if ($event){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Your changes have been updated.";?>';
+                        var link = '<?php echo "../manage_events";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
+                else {
+                    header('Location: ../../display_error/admin');
+                }
             }
             //if creating new event
             else {
                 $new_event = new Event("create", $data);
-                ?>
-                <script>
-                    var msg = '<?php echo "The event has been created.";?>';
-                    var link = '<?php echo "manage_events";?>';
-                    alert(msg);
-                    window.location.href=link;
-                </script>
-                <?php
+                if ($new_event){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "The event has been created.";?>';
+                        var link = '<?php echo "manage_events";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
+                else {
+                    header('Location: ../display_error/admin');
+                }
             }
         }
         //case where no $_POST: send to create page
@@ -254,6 +264,9 @@ class PageAdmin extends Page
                     </script>
                     <?php
                 }
+                else {
+                    header('Location: ../../display_error/admin');
+                }
             }
 
         }
@@ -276,6 +289,9 @@ class PageAdmin extends Page
                 $data["{{ button }}"] = "Create the event";
                 $content = View::makeHtml($data, "content_admin_create_event.html");
                 return ["Create event", $content];
+            }
+            else {
+                header('Location: ../../display_error/admin');
             }
         }
     }
@@ -336,6 +352,9 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
+            else {
+                header('Location: ../../display_error/admin');
+            }
         }
     }
 
@@ -355,6 +374,9 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
+            else {
+                header('Location: ../../display_error/admin');
+            }
         }
     }
 
@@ -373,6 +395,9 @@ class PageAdmin extends Page
                     window.location.href=link;
                 </script>
                 <?php
+            }
+            else {
+                header('Location: ../../display_error/admin');
             }
         }
     }
@@ -518,6 +543,9 @@ class PageAdmin extends Page
                         </script>
                         <?php
                     }
+                    else {
+                        header('Location: ../../display_error/admin');
+                    }
                 }
             }
             else {
@@ -607,8 +635,11 @@ class PageAdmin extends Page
             if (!empty($_POST)){
                 require_once "controller/Ticket.php";
                 $ticket = new Ticket("read", ["id" => $this->_url[1]]);
-                $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [$_POST["payment_datetime"], $_POST["total_paid"]]);
-                if ($update){
+                $payment_datetime = FILTER_INPUT(INPUT_POST, "payment_datetime", FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^(\d{4})-(0?[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (00|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/")));
+                if ($payment_datetime == null){ header('Location: ../display_error/admin');}
+                $total_paid = FILTER_INPUT(INPUT_POST, "total_paid", FILTER_VALIDATE_INT);
+                $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [$payment_datetime, $total_paid]);
+                if ($updatee){
                     ?>
                     <script>
                         var msg = '<?php echo "Your changes have been updated!";?>';
@@ -617,6 +648,9 @@ class PageAdmin extends Page
                         window.location.href=link;
                     </script>
                     <?php
+                }
+                else {
+                    header('Location: ../display_error/admin');
                 }
             }
             else {
@@ -658,6 +692,9 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
+            else {
+                header('Location: ../../display_error/admin');
+            }
         }
     }
 
@@ -680,6 +717,9 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
+            else {
+                header('Location: ../../display_error/admin');
+            }
         }
     }
 
@@ -700,8 +740,12 @@ class PageAdmin extends Page
             foreach ($data["data"] as $row){
                 require_once "controller/Ticket.php";
                 $admin_each_ticket = new ticket("read", ["id" => $row["ticket_id"]]);
-                if ($admin_each_ticket->getVarTicket("_payment_datetime") != null){$args["{{ cancel_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn_cancelled.html");}
-                else {$args["{{ cancel_btn }}"] = "";}
+                if ($admin_each_ticket->getVarTicket("_payment_datetime") != null){
+                    $args["{{ cancel_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn_cancelled.html");
+                }
+                else {
+                    $args["{{ cancel_btn }}"] = "";
+                }
                 $name = new Account("read", ["id" =>  $admin_each_ticket->getVarTicket("_evt_account_id")]);
                 $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
                 $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
@@ -714,5 +758,6 @@ class PageAdmin extends Page
         $content = View::makeHtml(["{{ cancelled_tickets }}" => $tickets], "content_admin_see_cancelled_tickets.html");
         return ["See cancelled tickets", $content];
     }
+
 
 }
