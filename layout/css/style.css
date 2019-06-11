@@ -133,10 +133,9 @@ div.each_ticket {
 @media only screen and (max-width: 767px) {
 
   h3 { font-size: 2rem; }
-  
+
   h5 {
     font-size: 1.2rem;
     line-height: 90%;
   }
-
 }
