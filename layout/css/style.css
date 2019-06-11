@@ -13,10 +13,11 @@
 ul#account_dropdown { top: 64px !important; }
 
 /* ----------------------page content---------------------- */
-div#page_content { 
-    min-height: 60vh; 
-    justify-content: center; 
-    text-align: center; }
+div#page_content {
+    min-height: 60vh;
+    justify-content: center;
+    text-align: center; 
+}
 
 /* --admin dashboard--- */
 div.dashboard_elt { 
@@ -48,7 +49,6 @@ div.each_event {
     border-radius: 5px; 
     line-height: 4px; 
 }
-.each_event a { color: none; }
 .each_event img { 
     height: 15vh; 
     max-width: 100%; 
