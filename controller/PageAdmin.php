@@ -39,24 +39,24 @@ class PageAdmin extends Page
             $name = ucfirst($name);
             $description = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $description = ucfirst($description);
-            $location_id = $_POST["location_id"];
-            $image_id = $_POST["image_id"];
-            $category = $_POST["category"];
+            $location_id = filter_input(INPUT_POST, "location_id", FILTER_VALIDATE_INT);
+            $image_id = filter_input(INPUT_POST, "image_id", FILTER_VALIDATE_INT);
+            $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             if (empty($_POST['active_event'])){$active_event = 0;} else {$active_event = 1;}
             $start_date = $_POST["start_date"];
             $start_time = $_POST["start_time"];
             $finish_date = $_POST["finish_date"];
             $finish_time = $_POST["finish_time"];
-            $start_datetime = date("Y-m-d H:i:s", strtotime($_POST["start_date"]." ".$_POST["start_time"]));
-            $finish_datetime = date("Y-m-d H:i:s", strtotime($_POST["finish_date"]." ".$_POST["finish_time"]));
-            if (empty($_POST['type_tickets'])){$type_tickets = 0;} else {$type_tickets = $_POST['type_tickets'];}
-            if (empty($_POST['public'])){$public = 1;} else {$public = $_POST['public'];}
+            $start_datetime = date("Y-m-d H:i:s", strtotime($start_date." ".$start_time));
+            $finish_datetime = date("Y-m-d H:i:s", strtotime($finish_date." ".$finish_time));
+            if (empty($_POST['type_tickets'])){$type_tickets = 0;} else {$type_tickets = filter_input(INPUT_POST, "type_tickets", FILTER_VALIDATE_INT);}
+            if (empty($_POST['public'])){$public = 1;} else {$public = filter_input(INPUT_POST, "public", FILTER_VALIDATE_INT);}
             if (empty($_POST['members_only'])){$members_only = 0;} else {$members_only = 1;}
-            if (empty($_POST['max_tickets'])){$max_tickets = null;} else {$max_tickets = $_POST['max_tickets'];}
-            if (empty($_POST['price_adult_mb'])){$price_adult_mb = null;} else {$price_adult_mb = $_POST['price_adult_mb'];}
-            if (empty($_POST['price_adult'])){$price_adult = null;} else {$price_adult = $_POST['price_adult'];}
-            if (empty($_POST['price_child_mb'])){$price_child_mb = null;} else {$price_child_mb = $_POST['price_child_mb'];}
-            if (empty($_POST['price_child'])){$price_child = null;} else {$price_child = $_POST['price_child'];}
+            if (empty($_POST['max_tickets'])){$max_tickets = null;} else {$max_tickets = filter_input(INPUT_POST, "max_tickets", FILTER_VALIDATE_INT);}
+            if (empty($_POST['price_adult_mb'])){$price_adult_mb = null;} else {$price_adult_mb = filter_input(INPUT_POST, "price_adult_mb", FILTER_VALIDATE_INT);}
+            if (empty($_POST['price_adult'])){$price_adult = null;} else {$price_adult =filter_input(INPUT_POST, "price_adult", FILTER_VALIDATE_INT);}
+            if (empty($_POST['price_child_mb'])){$price_child_mb = null;} else {$price_child_mb = filter_input(INPUT_POST, "price_child_mb", FILTER_VALIDATE_INT);}
+            if (empty($_POST['price_child'])){$price_child = null;} else {$price_child = filter_input(INPUT_POST, "price_child", FILTER_VALIDATE_INT);}
             if (empty($_POST['enable_booking'])){$enable_booking = 0;} else {$enable_booking = 1;}
             //check if date is correct
             if ($start_datetime > $finish_datetime){

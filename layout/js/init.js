@@ -75,7 +75,7 @@ function test_pass() {
 function highlight(field, error){
     if(error){
         field.style.backgroundColor = "#FFD9CF";
-        document.getElementById("no_match").innerHTML="Password doesn"t match";
+        document.getElementById("no_match").innerHTML="Password doesn't match";
     }
     else {
         field.style.backgroundColor = "";

@@ -16,28 +16,29 @@ class View
         return $html;
     }
 
-    public static function addTitleHtml(int $size, $title){
-        if ($size >= 1 && $size <= 6){
-            return "<h".$size.">".$title."</h".$size.">";
-        }
-    }
+    // (No need)
+    // public static function addTitleHtml(int $size, $title){
+    //     if ($size >= 1 && $size <= 6){
+    //         return "<h".$size.">".$title."</h".$size.">";
+    //     }
+    // }
 
-    public static function addDiv($place, $class=NULL){
-        if ($place == "start"){
-            return "<div class='".$class."'>";
-        }
-        elseif ($place == "end"){
-            return "</div>";
-        }
-    }
+    // public static function addDiv($place, $class=NULL){
+    //     if ($place == "start"){
+    //         return "<div class='".$class."'>";
+    //     }
+    //     elseif ($place == "end"){
+    //         return "</div>";
+    //     }
+    // }
 
-    public static function addHtmlTag($tag, $place){
-        if ($place == "start"){
-            return "<".$tag.">";
-        }
-        elseif ($place == "end"){
-            return "</".$tag.">";
-        }
-    }
+    // public static function addHtmlTag($tag, $place){
+    //     if ($place == "start"){
+    //         return "<".$tag.">";
+    //     }
+    //     elseif ($place == "end"){
+    //         return "</".$tag.">";
+    //     }
+    // }
 
 }
