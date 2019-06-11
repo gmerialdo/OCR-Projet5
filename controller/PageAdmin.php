@@ -39,7 +39,7 @@ class PageAdmin extends Page
             $name = ucfirst($name);
             $description = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $description = ucfirst($description);
-            $location_id = $this->getPostSanitizeInt("location_id";
+            $location_id = $this->getPostSanitizeInt("location_id");
             $image_id = $this->getPostSanitizeInt("image_id");
             $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             if ($this->postEmptyKey("active_event")){$active_event = 0;} else {$active_event = 1;}

@@ -34,7 +34,6 @@ class Account
                     return false;
                 }
                 return $this->createAccount($args);
-                }
                 break;
             case "update":
                 $this->_evt_account_id = $args["id"];
