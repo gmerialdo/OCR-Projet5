@@ -221,16 +221,58 @@ class PageLoggedVisitor extends PageVisitor
             "{{ title }}" => $title,
             "{{ my_tickets }}" => $my_tickets
         ], "content_see_my_tickets.html");
-
         return ["My tickets", $content];
     }
 
-
-    /*-------------------------------------------TO DO LATER-----------------------------------------------------*/
     /*-------------------------------------------MANAGE ACCOUNT SETTINGS--------------------------------------------*/
 
     public function account_settings(){
+        global $session;
+        if (!empty($_POST)){
+            $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $account = new Account("read", ["id" => $session->get("evt_account_id")]);
+            $hash = hash("sha256", $password);
+            if ($hash == $account->getVarAccount("_password")){
+                $new_pw = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);;
+                $update = $account->updateAccountInDB(["password" => hash("sha256", $new_pw)]);
+                if ($update){
+                    ?>
+                    <script>
+                        var msg = '<?php echo "Your password has been updated.";?>';
+                        var link = '<?php echo "see_all_events";?>';
+                        alert(msg);
+                        window.location.href=link;
+                    </script>
+                    <?php
+                }
+            }
+            else {
+                ?>
+                <script>
+                    var msg = '<?php echo "Wrong password.";?>';
+                    var link = '<?php echo "account_settings";?>';
+                    alert(msg);
+                    window.location.href=link;
+                </script>
+                <?php
+            }
+        }
+        else {
+            $req = [
+                "fields" => ["*"],
+                "from" => "evt_accounts",
+                "where" => ["evt_account_id = ".$session->get("evt_account_id")],
+                "limit" => 1
+            ];
+            $data = Model::select($req);
+            $content = View::makeHtml([
+                "{{ first_name }}" => $data["data"][0]["first_name"],
+                "{{ last_name }}" => $data["data"][0]["last_name"],
+                "{{ email }}" => $data["data"][0]["email"]
+            ], "content_account_settings.html");
+            return ["Account settings", $content];
 
+        }
     }
 
 }

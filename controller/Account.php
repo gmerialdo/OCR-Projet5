@@ -39,7 +39,6 @@ class Account
                 break;
             case "update":
                 $this->_evt_account_id = $args["id"];
-                print_r(array_slice($args, 1));
                 $this->updateAccountInDB(array_slice($args, 1));
                 break;
         }
@@ -166,8 +165,6 @@ class Account
             $fields[] = $key;
             $data[] = $value;
         }
-        print_r($fields);
-        print_r($data);
         $req = [
             "table"  => "evt_accounts",
             "fields" => $fields,
