@@ -519,7 +519,6 @@ class PageAdmin extends Page
                 else {
                     if (!empty($data["nb_available_tickets"])){
                         if ($data["nb_available_tickets"] < $nb_tickets_wanted){
-                            echo "data=".$data["nb_available_tickets"];
                             ?>
                             <script>
                                 var msg = '<?php echo "Not enough tickets available.";?>';
