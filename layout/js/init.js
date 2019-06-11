@@ -15,10 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true});
 });
 
-function checkSecurityPW(){
-    document.getElementById("level_mdp").innerHTML=test_pass();
-}
-
 function test_pass() {
     var level = "";
     try {
@@ -70,6 +66,10 @@ function test_pass() {
     finally {
         return level;
     }
+}
+
+function checkSecurityPW(){
+    document.getElementById("level_mdp").innerHTML=test_pass();
 }
 
 function highlight(field, error){
