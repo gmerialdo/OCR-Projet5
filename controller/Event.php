@@ -108,8 +108,8 @@ class Event
         return [
             "{{ event_id }}" => $this->_event_id,
             "{{ image_id }}" => $this->_image_id,
-            "{{ image_src }}" => $image->src(),
-            "{{ image_alt }}" => $image->alt(),
+            "{{ image_src }}" => $image->getVarImage("_src"),
+            "{{ image_alt }}" => $image->getVarImage("_alt"),
             "{{ start_weekday }}" => $this->_start_weekday,
             "{{ start_date }}" => $this->_start_date,
             "{{ start_time }}" => $this->_start_time,
@@ -198,7 +198,6 @@ class Event
         }
     }
 
-
     public function countTickets(){
         $req = [
             "fields" => ["ticket_id"],
@@ -248,6 +247,64 @@ class Event
         $create = Model::insert($req, $data);
         $this->_event_id = $create["data"];
         return $create["succeed"];
+    }
+
+    public function setTicketChoice(){
+        $tickets_choice = "";
+        switch ($this->_type_tickets){
+            case 1:
+                $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "free", "", "");
+                break;
+            case 2:
+                switch ($this->_public){
+                    case 1:
+                        if (null !== $this->_price_adult_mb){
+                            $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $this->_price_adult_mb, "$", "price_adult_mb_booked");
+                        }
+                        if (null !== $this->_price_adult){
+                            $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $this->_price_adult, "$", "price_adult_booked");
+                        }
+                        if (null !== $this->_price_child_mb){
+                            $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $this->_price_child_mb, "$", "price_child_mb_booked");
+                        }
+                        if (null !== $this->_price_child){
+                            $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $this->_price_child, "$", "price_child_booked");
+                        }
+                        break;
+                    case 2:
+                        if (null !== $this->_price_adult_mb){
+                            $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $this->_price_adult_mb, "$", "price_adult_mb_booked");
+                        }
+                        if (null !== $this->_price_adult){
+                            $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $this->_price_adult, "$", "price_adult_booked");
+                        }
+                        break;
+                    case 3:
+                        if (null !== $this->_price_child_mb){
+                            $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $this->_price_child_mb, "$", "price_child_mb_booked");
+                        }
+                        if (null !== $this->_price_child){
+                            $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $this->_price_child, "$", "price_child_booked");
+                        }
+                        break;
+                }
+                break;
+            case 3:
+                $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "donation welcome", "", "");
+                $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
+                break;
+        }
+        return $tickets_choice;
+    }
+
+    public function addOptionTickets($type, $name, $price, $sign, $price_booked){
+        return View::makeHtml([
+            "{{ type_ticket }}" => $type,
+            "{{ name_ticket }}" => $name,
+            "{{ price_ticket }}" => $price,
+            "{{ dollar_sign }}" => $sign,
+            "{{ price_booked }}" => $price_booked
+        ],"elt_nb_tickets.html");
     }
 
 }

@@ -29,7 +29,6 @@ class PageVisitor extends Page
         }
     }
 
-
     /*-------------------------------------------SEE EVENTS----------------------------------------------*/
 
     public function see_all_events(){

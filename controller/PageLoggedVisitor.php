@@ -23,7 +23,6 @@ class PageLoggedVisitor extends PageVisitor
         }
     }
 
-
     /*-------------------------------------------BOOK TICKETS------------------------------------------------*/
 
     public function book_tickets(){
@@ -46,50 +45,7 @@ class PageLoggedVisitor extends PageVisitor
             else {
                 require_once "controller/Event.php";
                 $event = new Event("read", ["id" => $this->_url[1]]);
-                $tickets_choice = "";
-                switch ($event->getVarEvent("_type_tickets")){
-                    case 1:
-                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "free", "", "");
-                        break;
-                    case 2:
-                        switch ($event->getVarEvent("_public")){
-                            case 1:
-                                if (null !== $event->getVarEvent("_price_adult_mb")){
-                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
-                                }
-                                if (null !== $event->getVarEvent("_price_adult")){
-                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
-                                }
-                                if (null !== $event->getVarEvent("_price_child_mb")){
-                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
-                                }
-                                if (null !== $event->getVarEvent("_price_child")){
-                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
-                                }
-                                break;
-                            case 2:
-                                if (null !== $event->getVarEvent("_price_adult_mb")){
-                                    $tickets_choice .= $this->addOptionTickets("adult (member)", "nb_tickets_adult_mb", $event->getVarEvent("_price_adult_mb"), "$", "price_adult_mb_booked");
-                                }
-                                if (null !== $event->getVarEvent("_price_adult")){
-                                    $tickets_choice .= $this->addOptionTickets("adult", "nb_tickets_adult", $event->getVarEvent("_price_adult"), "$", "price_adult_booked");
-                                }
-                                break;
-                            case 3:
-                                if (null !== $event->getVarEvent("_price_child_mb")){
-                                    $tickets_choice .= $this->addOptionTickets("child (member)", "nb_tickets_child_mb", $event->getVarEvent("_price_child_mb"), "$", "price_child_mb_booked");
-                                }
-                                if (null !== $event->getVarEvent("_price_child")){
-                                    $tickets_choice .= $this->addOptionTickets("child", "nb_tickets_child", $event->getVarEvent("_price_child"), "$", "price_child_booked");
-                                }
-                                break;
-                        }
-                        break;
-                    case 3:
-                        $tickets_choice .= $this->addOptionTickets("quantity", "nb_tickets_all", "donation welcome", "", "");
-                        $tickets_choice .= file_get_contents("template/elt_nb_tickets_donation.html");
-                        break;
-                }
+                $tickets_choice = $event->setTicketChoice();
                 if (null !== $event->getVarEvent("_nb_available_tickets")){
                     $nb_available_tickets = $event->getVarEvent("_nb_available_tickets");
                 }
@@ -100,7 +56,7 @@ class PageLoggedVisitor extends PageVisitor
                     "{{ event_id }}" => $event->getVarEvent("_event_id"),
                     "{{ event_name }}" => $event->getVarEvent("_name"),
                     "{{ tickets_choice }}" => $tickets_choice,
-                    "{{ action }}" => "logged/bookingConfirm",
+                    "{{ action }}" => "logged/save_tickets",
                     "{{ title }}" => "Book your tickets",
                     "{{ btn_action }}" => "Book tickets",
                     "{{ nb_available_tickets }}" => $nb_available_tickets,
@@ -116,17 +72,7 @@ class PageLoggedVisitor extends PageVisitor
         }
     }
 
-    public function addOptionTickets($type, $name, $price, $sign, $price_booked){
-        return View::makeHtml([
-            "{{ type_ticket }}" => $type,
-            "{{ name_ticket }}" => $name,
-            "{{ price_ticket }}" => $price,
-            "{{ dollar_sign }}" => $sign,
-            "{{ price_booked }}" => $price_booked
-        ],"elt_nb_tickets.html");
-    }
-
-    public function bookingConfirm(){
+    public function save_tickets(){
         global $session;
         if (!$this->postEmpty() && (!empty($session->get("user_name")))){
             foreach($_POST as $key => $value) {
@@ -176,13 +122,15 @@ class PageLoggedVisitor extends PageVisitor
                     </script>
                     <?php
                 }
+                else {
+                    header('Location: ../display_error');
+                }
             }
         }
         else {
             header('Location: see_all_events');
         }
     }
-
 
     /*-------------------------------------------SEE TICKETS------------------------------------------------*/
 
@@ -245,6 +193,9 @@ class PageLoggedVisitor extends PageVisitor
                     </script>
                     <?php
                 }
+                else {
+                    header('Location: ../display_error');
+                }
             }
             else {
                 ?>
@@ -271,7 +222,6 @@ class PageLoggedVisitor extends PageVisitor
                 "{{ email }}" => $data["data"][0]["email"]
             ], "content_account_settings.html");
             return ["Account settings", $content];
-
         }
     }
 

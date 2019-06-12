@@ -92,7 +92,6 @@ class Page
         ], "navbar_template.html");
     }
 
-
     public function getPage(){
         //see first part of the url and call the function
         isset($this->_url[0])? $fct_to_call = $this->_url[0] : $fct_to_call = $this->_defaultPage;
@@ -268,7 +267,7 @@ class Page
         return ["Error", $content];
     }
 
-    /*-------------------------------------------MANAGING ERRORS---------------------------------------------------*/
+    /*-------------------------------------------MANAGING POST----------------------------------------------------*/
 
     public function postEmpty(){
         return empty($_POST);

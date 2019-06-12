@@ -38,12 +38,8 @@ class Image {
         }
     }
 
-    public function src(){
-        return $this->_src;
-    }
-
-    public function alt(){
-        return $this->_alt;
+    public function getVarImage($_var){
+        return $this->$_var;
     }
 
 }

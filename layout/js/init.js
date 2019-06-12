@@ -1,18 +1,10 @@
 document.addEventListener("DOMContentLoaded", function() {
-    var today = new Date();
     var elemsDropdown = document.querySelectorAll(".dropdown-trigger");
     var instancesDropdown = M.Dropdown.init(elemsDropdown, {constrainWidth: false, coverTrigger: false, hover:true});
     var elemsSidenav = document.querySelectorAll(".sidenav");
     var instancesSidenav = M.Sidenav.init(elemsSidenav);
     var elemsSelectNbTickets = document.querySelectorAll("select");
     var instancesSelectNbTickets = M.FormSelect.init(elemsSelectNbTickets);
-    var elemsDatepicker = document.querySelectorAll(".datepicker");
-    var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: today, firstDay: 1, format: "yyyy-mm-dd"});
-    var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, minDate: today, firstDay: 1, format: "yyyy-mm-dd", onSelect: function(d){
-        var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: "yyyy-mm-dd"})
-    }});
-    var elemsTimepicker = document.querySelectorAll(".timepicker");
-    var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true});
 });
 
 function test_pass() {
