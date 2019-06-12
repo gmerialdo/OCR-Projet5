@@ -123,25 +123,7 @@ class PageAdmin extends Page
                 $content = View::makeHtml($args, "content_admin_create_event.html");
                 return ["Event", $content];
             }
-            $data = [
-                $name,
-                $description,
-                $location_id,
-                $image_id,
-                $category,
-                $active_event,
-                $start_datetime,
-                $finish_datetime,
-                $max_tickets,
-                $type_tickets,
-                $public,
-                $members_only,
-                $price_adult_mb,
-                $price_adult,
-                $price_child_mb,
-                $price_child,
-                $enable_booking
-            ];
+            $data = [$name, $description, $location_id, $image_id, $category, $active_event, $start_datetime, $finish_datetime, $max_tickets, $type_tickets, $public, $members_only, $price_adult_mb, $price_adult, $price_child_mb, $price_child, $enable_booking];
             //if modifying event
             if (isset($this->_url[1])){
                 $event = new Event("update", ["id" => $this->_url[1], "data" => $data]);
@@ -155,9 +137,7 @@ class PageAdmin extends Page
                     </script>
                     <?php
                 }
-                else {
-                    header('Location: ../../display_error/admin');
-                }
+                else {header('Location: ../../display_error/admin');}
             }
             //if creating new event
             else {
@@ -172,14 +152,10 @@ class PageAdmin extends Page
                     </script>
                     <?php
                 }
-                else {
-                    header('Location: ../display_error/admin');
-                }
+                else { header('Location: ../display_error/admin');}
             }
         }
-        else {
-            header('Location: ');
-        }
+        else { header('Location: ');}
     }
 
     public function manage_events(){
@@ -266,9 +242,7 @@ class PageAdmin extends Page
                     </script>
                     <?php
                 }
-                else {
-                    header('Location: ../../display_error/admin');
-                }
+                else {header('Location: ../../display_error/admin');}
             }
         }
     }
@@ -291,9 +265,7 @@ class PageAdmin extends Page
                 $content = View::makeHtml($data, "content_admin_create_event.html");
                 return ["Create event", $content];
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -353,9 +325,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -375,9 +345,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -397,9 +365,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -419,6 +385,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -573,9 +540,7 @@ class PageAdmin extends Page
                         </script>
                         <?php
                     }
-                    else {
-                        header('Location: ../../display_error/admin');
-                    }
+                    else {header('Location: ../../display_error/admin');}
                 }
             }
         }
@@ -603,9 +568,7 @@ class PageAdmin extends Page
                     </script>
                     <?php
                 }
-                else {
-                    header('Location: ../display_error/admin');
-                }
+                else {header('Location: ../../display_error/admin');}
             }
             else {
                 require_once "controller/Ticket.php";
@@ -616,9 +579,7 @@ class PageAdmin extends Page
                 if ($ticket->getVarTicket("_payment_datetime") != null){
                     $args["{{ cancel_payment_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn.html");
                 }
-                else {
-                    $args["{{ cancel_payment_btn }}"] = "";
-                }
+                else {$args["{{ cancel_payment_btn }}"] = "";}
                 $args = array_merge($args, $args = $ticket->getTicketData());
                 $content = View::makeHtml($args, "content_admin_modify_payment.html");
                 return ["Modify payment", $content];
@@ -646,9 +607,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -671,9 +630,7 @@ class PageAdmin extends Page
                 </script>
                 <?php
             }
-            else {
-                header('Location: ../../display_error/admin');
-            }
+            else {header('Location: ../../display_error/admin');}
         }
     }
 
@@ -697,9 +654,7 @@ class PageAdmin extends Page
                 if ($admin_each_ticket->getVarTicket("_payment_datetime") != null){
                     $args["{{ cancel_btn }}"] = file_get_contents("template/elt_admin_cancel_payment_btn_cancelled.html");
                 }
-                else {
-                    $args["{{ cancel_btn }}"] = "";
-                }
+                else {$args["{{ cancel_btn }}"] = "";}
                 $name = new Account("read", ["id" =>  $admin_each_ticket->getVarTicket("_evt_account_id")]);
                 $args["{{ first_name }}"] = $name->getVarAccount("_first_name");
                 $args["{{ last_name }}"] = $name->getVarAccount("_last_name");
