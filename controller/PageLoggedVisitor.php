@@ -35,10 +35,8 @@ class PageLoggedVisitor extends PageVisitor
             if (Ticket::alreadyBookedTickets($this->_url[1])){
                 ?>
                 <script>
-                    var msg = '<?php echo "You already booked tickets for this event.";?>';
-                    var link = '<?php echo "../my_tickets";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("You already booked tickets for this event.");
+                    window.location.href="../my_tickets";
                 </script>
                 <?php
             }
@@ -89,9 +87,8 @@ class PageLoggedVisitor extends PageVisitor
             if ($nb_tickets_wanted == 0){
                 ?>
                 <script>
-                    var msg = '<?php echo "No tickets selected. Please indicate the number of tickets you want to book.";?>';
                     var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
-                    alert(msg);
+                    alert("No tickets selected. Please indicate the number of tickets you want to book.";
                     window.location.href=link;
                 </script>
                 <?php
@@ -102,9 +99,8 @@ class PageLoggedVisitor extends PageVisitor
                         echo "data=".$data["nb_available_tickets"];
                         ?>
                         <script>
-                            var msg = '<?php echo "Not enough tickets available.";?>';
                             var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
-                            alert(msg);
+                            alert("Not enough tickets available.");
                             window.location.href=link;
                         </script>
                         <?php
@@ -115,10 +111,8 @@ class PageLoggedVisitor extends PageVisitor
                 if ($new_ticket){
                     ?>
                     <script>
-                        var msg = '<?php echo "Your tickets are booked!";?>';
-                        var link = '<?php echo "../logged/my_tickets";?>';
-                        alert(msg);
-                        window.location.href=link;
+                        alert("Your tickets are booked!");
+                        window.location.href="../logged/my_tickets";
                     </script>
                     <?php
                 }
@@ -186,10 +180,8 @@ class PageLoggedVisitor extends PageVisitor
                 if ($update){
                     ?>
                     <script>
-                        var msg = '<?php echo "Your password has been updated.";?>';
-                        var link = '<?php echo "see_all_events";?>';
-                        alert(msg);
-                        window.location.href=link;
+                        alert("Your password has been updated.");
+                        window.location.href="see_all_events";
                     </script>
                     <?php
                 }
@@ -200,10 +192,8 @@ class PageLoggedVisitor extends PageVisitor
             else {
                 ?>
                 <script>
-                    var msg = '<?php echo "Wrong password.";?>';
-                    var link = '<?php echo "account_settings";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("Wrong password.");
+                    window.location.href="account_settings";
                 </script>
                 <?php
             }

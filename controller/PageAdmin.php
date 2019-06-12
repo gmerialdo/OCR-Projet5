@@ -130,10 +130,8 @@ class PageAdmin extends Page
                 if ($event){
                     ?>
                     <script>
-                        var msg = '<?php echo "Your changes have been updated.";?>';
-                        var link = '<?php echo "../manage_events";?>';
-                        alert(msg);
-                        window.location.href=link;
+                        alert("Your changes have been updated.");
+                        window.location.href="../manage_events";
                     </script>
                     <?php
                 }
@@ -145,10 +143,8 @@ class PageAdmin extends Page
                 if ($new_event){
                     ?>
                     <script>
-                        var msg = '<?php echo "The event has been created.";?>';
-                        var link = '<?php echo "manage_events";?>';
-                        alert(msg);
-                        window.location.href=link;
+                        alert("The event has been created.");
+                        window.location.href="manage_events";
                     </script>
                     <?php
                 }
@@ -235,10 +231,8 @@ class PageAdmin extends Page
                 if ($event){
                     ?>
                     <script>
-                        var msg = '<?php echo "The event has been deleted.";?>';
-                        var link = '<?php echo "../manage_events";?>';
-                        alert(msg);
-                        window.location.href=link;
+                        alert("The event has been deleted.");
+                        window.location.href="../manage_events";
                     </script>
                     <?php
                 }
@@ -318,10 +312,8 @@ class PageAdmin extends Page
             if ($account){
                 ?>
                 <script>
-                    var msg = '<?php echo "Your changes have been updated.";?>';
-                    var link = '<?php echo "../manage_accounts";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("Your changes have been updated");
+                    window.location.href="../manage_accounts";
                 </script>
                 <?php
             }
@@ -338,10 +330,8 @@ class PageAdmin extends Page
             if ($account){
                 ?>
                 <script>
-                    var msg = '<?php echo "Your changes have been updated.";?>';
-                    var link = '<?php echo "../manage_accounts";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("Your changes have been updated.");
+                    window.location.href="../manage_accounts";
                 </script>
                 <?php
             }
@@ -358,10 +348,8 @@ class PageAdmin extends Page
             if ($account){
                 ?>
                 <script>
-                    var msg = '<?php echo "Your changes have been updated.";?>';
-                    var link = '<?php echo "../manage_accounts";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("Your changes have been updated.");
+                    window.location.href="../manage_accounts";
                 </script>
                 <?php
             }
@@ -378,10 +366,8 @@ class PageAdmin extends Page
             if ($account){
                 ?>
                 <script>
-                    var msg = '<?php echo "Your changes have been updated.";?>';
-                    var link = '<?php echo "../manage_accounts";?>';
-                    alert(msg);
-                    window.location.href=link;
+                    alert("Your changes have been updated.");
+                    window.location.href="../manage_accounts";
                 </script>
                 <?php
             }
@@ -507,9 +493,8 @@ class PageAdmin extends Page
                 if ($nb_tickets_wanted == 0){
                     ?>
                     <script>
-                        var msg = '<?php echo "No tickets selected. Please indicate the number of tickets you want to book.";?>';
                         var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
-                        alert(msg);
+                        alert("No tickets selected. Please indicate the number of tickets you want to book.");
                         window.location.href=link;
                     </script>
                     <?php
@@ -519,9 +504,8 @@ class PageAdmin extends Page
                         if ($data["nb_available_tickets"] < $nb_tickets_wanted){
                             ?>
                             <script>
-                                var msg = '<?php echo "Not enough tickets available.";?>';
                                 var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
-                                alert(msg);
+                                alert("Not enough tickets available.");
                                 window.location.href=link;
                             </script>
                             <?php
@@ -533,9 +517,8 @@ class PageAdmin extends Page
                         $event_id = $data["event_id"];
                         ?>
                         <script>
-                            var msg = '<?php echo "Your changes have been updated!";?>';
                             var link = '<?php echo "../../admin/see_tickets/".$event_id;?>';
-                            alert(msg);
+                            alert("Your changes have been updated.");
                             window.location.href=link;
                         </script>
                         <?php
@@ -561,9 +544,8 @@ class PageAdmin extends Page
                 if ($update){
                     ?>
                     <script>
-                        var msg = '<?php echo "Your changes have been updated!";?>';
                         var link = '<?php echo "../modify_payment/".$this->_url[1];?>';
-                        alert(msg);
+                        alert("Your changes have been updated.");
                         window.location.href=link;
                     </script>
                     <?php
@@ -600,9 +582,8 @@ class PageAdmin extends Page
                 else {$msg = "../../".$this->_url[2];}
                 ?>
                 <script>
-                    var msg = '<?php echo "The payment has been cancelled.";?>';
                     var link = '<?php echo $msg;?>';
-                    alert(msg);
+                    alert("The payment has been cancelled.");
                     window.location.href=link;
                 </script>
                 <?php
@@ -623,9 +604,8 @@ class PageAdmin extends Page
             if ($cancelled){
                 ?>
                 <script>
-                    var msg = '<?php echo "Those tickets have been cancelled.";?>';
                     var link = '<?php echo "../see_tickets/".$event_id;?>';
-                    alert(msg);
+                    alert("Those tickets have been cancelled.");
                     window.location.href=link;
                 </script>
                 <?php

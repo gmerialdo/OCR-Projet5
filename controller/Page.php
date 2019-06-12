@@ -149,7 +149,6 @@ class Page
             if ($account->getVarAccount("_valid")){
                 ?>
                 <script>
-                    var msg = '<?php echo "You successfully logged in!";?>';
                     <?php
                     if (isset($this->_url[1])){
                         ?>
@@ -162,7 +161,7 @@ class Page
                         <?php
                     }
                     ?>
-                    alert(msg);
+                    alert("You successfully logged in!");
                     window.location.href=link;
                 </script>
                 <?php
@@ -232,7 +231,6 @@ class Page
             else {
                 ?>
                 <script>
-                    var msg = '<?php echo "You successfully signed in!";?>';
                     <?php
                     if (isset($this->_url[1])){
                         ?>
@@ -245,7 +243,7 @@ class Page
                         <?php
                     }
                     ?>
-                    alert(msg);
+                    alert("You successfully signed in!");
                     window.location.href=link;
                 </script>
                 <?php
