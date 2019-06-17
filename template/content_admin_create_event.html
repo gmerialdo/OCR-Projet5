@@ -4,7 +4,7 @@
     </div>
     <div class="col s12 m10 offset-m1 l8 offset-l2 new_event">
         <form class="col s12 create_event_form" method="post" action="{{ path }}/admin/{{ action }}">
-            <div class="col s12 user_color_dark_txt">
+            <div class="col s12 main_color_dark_txt">
                 <i class="large material-icons prefix">add_box</i>
             </div>
             
@@ -35,21 +35,23 @@
                 <label>Select the location:</label>
             </div>
             
-           <div class="input-field col s12 m5 l2">
+           <div class="input-field col s12 m5 l3">
                 <select class="icons" id="image_id" name="image_id" required>
                     <option value="" disabled>Image</option>
-                    <option value="1" data-icon="../layout/images/all_default.png">Event</option>
-                    <option value="2" data-icon="../layout/images/all_party.jpg">Party</option>
-                    <option value="3" data-icon="../layout/images/all_social.jpg">Social</option>
-                    <option value="4" data-icon="../layout/images/all_workshop.jpg">Workshop</option>
-                    <option value="5" data-icon="../layout/images/all_balloons.png">Balloons</option>
-                    <option value="6" data-icon="../layout/images/all_litterature.jpg">Litterature</option>
-                    <option value="7" data-icon="../layout/images/all_paris.jpg">Paris</option>
+                    <option value="1" data-icon="{{ path }}/layout/images/all_default.png">Event</option>
+                    <option value="2" data-icon="{{ path }}/layout/images/all_party.jpg">Party</option>
+                    <option value="3" data-icon="{{ path }}/layout/images/all_social.jpg">Social</option>
+                    <option value="4" data-icon="{{ path }}/layout/images/all_workshop.jpg">Workshop</option>
+                    <option value="5" data-icon="{{ path }}/layout/images/all_balloons.png">Balloons</option>
+                    <option value="6" data-icon="{{ path }}/layout/images/all_litterature.jpg">Litterature</option>
+                    <option value="7" data-icon="{{ path }}/layout/images/all_paris.jpg">Paris</option>
+                    <option value="8" data-icon="{{ path }}/layout/images/all_chorus.png">Chorus</option>
+                    <option value="9" data-icon="{{ path }}/layout/images/all_cinema.jpg">Cinema</option>
                 </select>
                 <label>Select the image:</label>
             </div>
             
-            <div class="input-field col s12 m5 l3">
+            <div class="input-field col s12 m5 l2">
                 <input placeholder="Category" id="category" type="text" class="validate" name="category" value="{{ category }}">
                 <label for="category">Category:</label>
             </div>
@@ -146,7 +148,7 @@
             
             <div class="col s12">
                 <br/>
-                <button id="submit_create_evt" class="btn waves-effect waves-light user_color" type="submit" name="submit">
+                <button id="submit_create_evt" class="btn waves-effect waves-light main_color" type="submit" name="submit">
                     {{ button }}<i class="material-icons right">send</i>
                 </button>
             </div>

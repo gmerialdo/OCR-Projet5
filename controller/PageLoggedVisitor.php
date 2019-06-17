@@ -74,7 +74,7 @@ class PageLoggedVisitor extends PageVisitor
         global $session;
         if (!$this->postEmpty() && (!empty($session->get("user_name")))){
             foreach($_POST as $key => $value) {
-                $data[$key] = $this->getPostSanitizeInt($key);
+                $data[$key] = $this->getPostSanitizeFloat($key);
             }
             $data["evt_account_id"] = $session->get("evt_account_id");
             // if not enough tickets left

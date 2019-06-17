@@ -34,11 +34,16 @@ class Page
 
     //to return the html for the page
     public function getHtmlPage(){
-        global $path;
+        global $path, $session;
         //function getPage will return an array with $pageTitle and $content
         $getPage = $this->getPage();
+        $user_or_admin_style = "style_user.css";
+        if ($session->get('admin_mode')){
+            $user_or_admin_style = "style_admin.css";
+        }
         return view::makeHtml([
             "{{ pageTitle }}" => $getPage[0],
+            "{{ user_or_admin_style }}" => $user_or_admin_style,
             "{{ navBar }}" => $this->addNavbar(),
             "{{ content }}" => $getPage[1],
             "{{ footer }}" => file_get_contents("template/footer.html"),
@@ -218,8 +223,8 @@ class Page
             </script>
             <?php
             $data["email"] = $email;
-            $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-            $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+            $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
             $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
             $new_account = new Account("create", $data);
             if ($new_account->getVarAccount("_valid") == false){
@@ -280,7 +285,11 @@ class Page
     }
 
     public function getPostSanitizeInt($key){
-        return filter_input(INPUT_POST, $key, FILTER_VALIDATE_INT);
+        return filter_input(INPUT_POST, $key, FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    public function getPostSanitizeFloat($key){
+        return filter_input(INPUT_POST, $key, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION);
     }
 
 }

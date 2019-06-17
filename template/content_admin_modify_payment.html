@@ -29,7 +29,7 @@
         <div class="row">
             <form class="col s12 modify_payment_form" method="post" action="{{ path }}/admin/modify_payment/{{ ticket_id }}">
                 <div class="input-field col s5 offset-s1 m3 offset-m3 off l1 offset-l5">
-                    Payment in $<input placeholder="Total" id="total_paid" type="number" min="0" max="10000" step="0.5" class="validate" name="total_paid" value="{{ total_paid }}" required>
+                    Payment in $<input placeholder="Total" id="total_paid" type="number" min="0" max="10000" step="0.01" class="validate" name="total_paid" value="{{ total_paid }}" required>
                     <label for="total_paid"></label>
                 </div>
                 <div class="input-field col s5 m3 l1">
@@ -39,7 +39,7 @@
 
                 <div class="col s12">
                     <br/>
-                    <button id="submit_modify_payment" class="btn waves-effect waves-light user_color" type="submit" name="submit">
+                    <button id="submit_modify_payment" class="btn waves-effect waves-light main_color" type="submit" name="submit">
                         Send<i class="material-icons right">send</i>
                     </button>
                 </div>

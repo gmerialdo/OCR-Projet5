@@ -8,7 +8,7 @@ class PageAdmin extends Page
     public function __construct($url){
         $url = array_slice($url, 1);
         Page::__construct($url);
-        $this->_defaultPage = "dashboard";/////////TO CHANGE
+        $this->_defaultPage = "dashboard";
     }
 
     //adds a complement before using parent::getPage() to securize all the admin interface: only connect if logged!
@@ -81,10 +81,10 @@ class PageAdmin extends Page
             if ($this->postEmptyKey("public")){$public = 1;} else {$public = $this->getPostSanitizeInt("public");}
             if ($this->postEmptyKey("members_only")){$members_only = 0; $price_adult=null; $price_child=null;} else {$members_only = 1;}
             if ($this->postEmptyKey("max_tickets")){$max_tickets = null;} else {$max_tickets = $this->getPostSanitizeInt("max_tickets");}
-            if ($this->postEmptyKey("price_adult_mb")){$price_adult_mb = null;} else {$price_adult_mb = $this->getPostSanitizeInt("price_adult_mb");}
-            if ($this->postEmptyKey("price_adult")){$price_adult = null;} else {$price_adult =$this->getPostSanitizeInt("price_adult");}
-            if ($this->postEmptyKey("price_child_mb")){$price_child_mb = null;} else {$price_child_mb = $this->getPostSanitizeInt("price_child_mb");}
-            if ($this->postEmptyKey("price_child")){$price_child = null;} else {$price_child = $this->getPostSanitizeInt("price_child");}
+            if ($this->postEmptyKey("price_adult_mb")){$price_adult_mb = null;} else {$price_adult_mb = $this->getPostSanitizeFloat("price_adult_mb");}
+            if ($this->postEmptyKey("price_adult")){$price_adult = null;} else {$price_adult =$this->getPostSanitizeFloat("price_adult");}
+            if ($this->postEmptyKey("price_child_mb")){$price_child_mb = null;} else {$price_child_mb = $this->getPostSanitizeFloat("price_child_mb");}
+            if ($this->postEmptyKey("price_child")){$price_child = null;} else {$price_child = $this->getPostSanitizeFloat("price_child");}
             if ($this->postEmptyKey("enable_booking")){$enable_booking = 0;} else {$enable_booking = 1;}
             //check if date is correct
             if ($start_datetime > $finish_datetime){
@@ -254,10 +254,10 @@ class PageAdmin extends Page
                 $data["{{ active_event }}"] = "1";
                 $data["{{ create_evt_error_msg }}"] = "";
                 $data["{{ title }}"] = "Create a new event";
-                $data["{{ action }}"] = "create_event";
+                $data["{{ action }}"] = "save_event";
                 $data["{{ button }}"] = "Create the event";
                 $content = View::makeHtml($data, "content_admin_create_event.html");
-                return ["Create event", $content];
+                return ["Duplicate event", $content];
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -475,7 +475,7 @@ class PageAdmin extends Page
         else {
             if (!$this->postEmpty()){
                 foreach($_POST as $key => $value) {
-                    $data[$key] = $this->getPostSanitizeInt($key);
+                    $data[$key] = $this->getPostSanitizeFloat($key);
                 }
                 $data["id"] = $this->_url[1];
                 if (isset($data["total_paid"])){
@@ -539,7 +539,7 @@ class PageAdmin extends Page
                 $ticket = new Ticket("read", ["id" => $this->_url[1]]);
                 $payment_datetime = $this-> getPost("payment_datetime");
                 if ($payment_datetime == null){ header('Location: ../display_error/admin');}
-                $total_paid = FILTER_INPUT(INPUT_POST, "total_paid", FILTER_VALIDATE_INT);
+                $total_paid = FILTER_INPUT(INPUT_POST, "total_paid", FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION);
                 $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [$payment_datetime, $total_paid]);
                 if ($update){
                     ?>
