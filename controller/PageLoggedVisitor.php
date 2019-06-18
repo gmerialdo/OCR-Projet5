@@ -33,12 +33,9 @@ class PageLoggedVisitor extends PageVisitor
             //if user has already tickets booked for this event
             require_once "controller/Ticket.php";
             if (Ticket::alreadyBookedTickets($this->_url[1])){
-                ?>
-                <script>
-                    alert("You already booked tickets for this event.");
-                    window.location.href="../my_tickets";
-                </script>
-                <?php
+                $msg = "You already booked tickets for this event.";
+                $link = "../my_tickets";
+                $this->alertRedirect($msg, $link);
             }
             else {
                 require_once "controller/Event.php";
@@ -71,11 +68,9 @@ class PageLoggedVisitor extends PageVisitor
     }
 
     public function save_tickets(){
-        global $session;
-        if (!$this->postEmpty() && (!empty($session->get("user_name")))){
-            foreach($_POST as $key => $value) {
-                $data[$key] = $this->getPostSanitizeFloat($key);
-            }
+        global $session, $safeData;
+        if (!$safeData->postEmpty() && (!empty($session->get("user_name")))){
+            $data = $safeData->_post;
             $data["evt_account_id"] = $session->get("evt_account_id");
             // if not enough tickets left
             $nb_tickets_wanted = 0;
@@ -85,36 +80,24 @@ class PageLoggedVisitor extends PageVisitor
             if (isset($data["nb_tickets_child"])) $nb_tickets_wanted += $data["nb_tickets_child"];
             if (isset($data["nb_tickets_all"])) $nb_tickets_wanted += $data["nb_tickets_all"];
             if ($nb_tickets_wanted == 0){
-                ?>
-                <script>
-                    var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
-                    alert("No tickets selected. Please indicate the number of tickets you want to book.";
-                    window.location.href=link;
-                </script>
-                <?php
+                $msg = "No tickets selected. Please indicate the number of tickets you want to book.";
+                $link = "../logged/book_tickets/".$data["event_id"];
+                $this->alertRedirect($msg, $link);
             }
             else {
                 if (!empty($data["nb_available_tickets"])){
                     if ($data["nb_available_tickets"] < $nb_tickets_wanted){
-                        echo "data=".$data["nb_available_tickets"];
-                        ?>
-                        <script>
-                            var link = '<?php echo "../logged/book_tickets/".$data["event_id"];?>';
-                            alert("Not enough tickets available.");
-                            window.location.href=link;
-                        </script>
-                        <?php
+                        $msg = "Not enough tickets available.";
+                        $link = "../logged/book_tickets/".$data["event_id"];
+                        $this->alertRedirect($msg, $link);
                     }
                 }
                 require_once "controller/Ticket.php";
                 $new_ticket = new Ticket("create", $data);
                 if ($new_ticket){
-                    ?>
-                    <script>
-                        alert("Your tickets are booked!");
-                        window.location.href="../logged/my_tickets";
-                    </script>
-                    <?php
+                        $msg = "Your tickets are booked!";
+                        $link = "../logged/my_tickets";
+                        $this->alertRedirect($msg, $link);
                 }
                 else {
                     header('Location: ../display_error');
@@ -156,6 +139,7 @@ class PageLoggedVisitor extends PageVisitor
                 $each_ticket = new Ticket("read", ["id" => $row["ticket_id"]]);
                 $data = $each_ticket->getTicketData();
                 $data["{{ evt_name }}"] = $row["name"];
+                $data["{{ evt_date }}"] = date("D, M jS Y", strtotime($row["start_datetime"]));
                 $my_tickets .= View::makeHtml($data,"elt_each_ticket.html");
             }
         }
@@ -169,33 +153,27 @@ class PageLoggedVisitor extends PageVisitor
     /*-------------------------------------------MANAGE ACCOUNT SETTINGS--------------------------------------------*/
 
     public function account_settings(){
-        global $session;
-        if (!$this->postEmpty()){
-            $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+        global $session, $safeData;
+        if (!$safeData->postEmpty()){
+            $password = $safeData->_post["password"];
             $account = new Account("read", ["id" => $session->get("evt_account_id")]);
             $hash = hash("sha256", $password);
             if ($hash == $account->getVarAccount("_password")){
-                $new_pw = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);;
+                $new_pw = $safeData->_post["new_password"];
                 $update = $account->updateAccountInDB(["password" => hash("sha256", $new_pw)]);
                 if ($update){
-                    ?>
-                    <script>
-                        alert("Your password has been updated.");
-                        window.location.href="see_all_events";
-                    </script>
-                    <?php
+                    $msg = "Your password has been updated.";
+                    $link = "see_all_events";
+                    $this->alertRedirect($msg, $link);
                 }
                 else {
                     header('Location: ../display_error');
                 }
             }
             else {
-                ?>
-                <script>
-                    alert("Wrong password.");
-                    window.location.href="account_settings";
-                </script>
-                <?php
+                $msg = "Wrong password.";
+                $link = "account_settings";
+                $this->alertRedirect($msg, $link);
             }
         }
         else {

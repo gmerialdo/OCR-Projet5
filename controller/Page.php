@@ -138,9 +138,9 @@ class Page
 
     //function that checks if username and pw are ok and logs in if yes
     public function checklogin(){
-        global $session;
-        if (!$this->postEmpty()){
-            $user_name = filter_input(INPUT_POST, "user_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+        global $session, $safeData;
+        if (!$safeData->postEmpty()){
+            $user_name = $safeData->_post["user_name"];
             ?>
             <!--keep user name in localStorage-->
             <script>
@@ -149,27 +149,17 @@ class Page
                 window.localStorage.setItem('user_name', keep_user_name);
             </script>
             <?php
-            $password = filter_input(INPUT_POST, "password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $password = $safeData->_post["password"];
             $account = new Account("login", ["user_name" => $user_name, "password" => $password]);
             if ($account->getVarAccount("_valid")){
-                ?>
-                <script>
-                    <?php
-                    if (isset($this->_url[1])){
-                        ?>
-                        var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
-                        <?php
-                    }
-                    else {
-                        ?>
-                        var link = '<?php echo "logged/see_all_events";?>';
-                        <?php
-                    }
-                    ?>
-                    alert("You successfully logged in!");
-                    window.location.href=link;
-                </script>
-                <?php
+                $msg = "You successfully logged in!";
+                if (isset($this->_url[1])){
+                    $link = "../logged/book_tickets/".$this->_url[1];
+                }
+                else {
+                    $link = "see_all_events";
+                }
+                $this->alertRedirect($msg, $link);
             }
             else {
                 return $this->login("error");
@@ -193,7 +183,7 @@ class Page
     //to display sign in page
     public function signin(){
         if ($this->_rights == "logged_visitor" OR $this->_rights == "admin"){
-            return $this->see_all_events();/////////////////////////////////////////////////// faut-il mettre autre chose si admin????????
+            header('Location: see_all_events');
         }
         else {
             if (isset($this->_url[1])) {
@@ -211,9 +201,9 @@ class Page
 
     //funcion that creates an account and logs into session if it worked
     public function create_account(){
-        global $session;
-        if (!$this->postEmpty() && (empty($session->get('user_name')))){
-            $email = filter_input(INPUT_POST, "new_email", FILTER_VALIDATE_EMAIL);
+        global $session, $safeData;
+        if (!$safeData->postEmpty() && (empty($session->get('user_name')))){
+            $email = $safeData->_post["new_email"];
             ?>
             <!--keep email in localStorage-->
             <script>
@@ -223,9 +213,9 @@ class Page
             </script>
             <?php
             $data["email"] = $email;
-            $data["first_name"] = filter_input(INPUT_POST, "new_first_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            $data["last_name"] = filter_input(INPUT_POST, "new_last_name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            $data["password"] = filter_input(INPUT_POST, "new_password", FILTER_SANITIZE_SPECIAL_CHARS,FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $data["first_name"] = $safeData->_post["new_first_name"];
+            $data["last_name"] = $safeData->_post["new_last_name"];
+            $data["password"] = $safeData->_post["new_password"];
             $new_account = new Account("create", $data);
             if ($new_account->getVarAccount("_valid") == false){
                 return $this->login("existing_email");
@@ -234,29 +224,25 @@ class Page
                 header('Location: ../signin');
             }
             else {
-                ?>
-                <script>
-                    <?php
-                    if (isset($this->_url[1])){
-                        ?>
-                        var link = '<?php echo "../logged/book_tickets/".$this->_url[1];?>';
-                        <?php
-                    }
-                    else {
-                        ?>
-                        var link = '<?php echo "see_all_events";?>';
-                        <?php
-                    }
-                    ?>
-                    alert("You successfully signed in!");
-                    window.location.href=link;
-                </script>
-                <?php
+                $msg = "You successfully signed in!";
+                if (isset($this->_url[1])){
+                    $link = "../logged/book_tickets/".$this->_url[1];
+                }
+                else {
+                    $link = "see_all_events";
+                }
+                $this->alertRedirect($msg, $link);
             }
         }
         else {
             header('Location: ');
         }
+    }
+
+    /*-------------------------------------------MANAGING JAVASCRIPT MESSAGES--------------------------------------*/
+
+    public function alertRedirect($msg, $link){
+        echo "<script> alert('$msg'); window.location.href='$link'; </script>";
     }
 
     /*-------------------------------------------MANAGING ERRORS---------------------------------------------------*/
@@ -268,28 +254,6 @@ class Page
         }
         $content = View::makeHtml(["{{ link }}" => "{{ path }}/see_all_events", "{{ link_txt }}" => "Go back to events"], "content_display_error.html");
         return ["Error", $content];
-    }
-
-    /*-------------------------------------------MANAGING POST----------------------------------------------------*/
-
-    public function postEmpty(){
-        return empty($_POST);
-    }
-
-    public function postEmptyKey($key){
-        return empty($_POST[$key]);
-    }
-
-    public function getPost($key){
-        return $_POST[$key];
-    }
-
-    public function getPostSanitizeInt($key){
-        return filter_input(INPUT_POST, $key, FILTER_SANITIZE_NUMBER_INT);
-    }
-
-    public function getPostSanitizeFloat($key){
-        return filter_input(INPUT_POST, $key, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION);
     }
 
 }

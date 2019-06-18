@@ -19,11 +19,48 @@ if (!$envProd){
     error_reporting(E_ALL);
 }
 
+//filters for all post inputs
 $safeData = new Security([
     "post" => [
-        "auteur"      => FILTER_SANITIZE_STRING,
-        "commentaire" => FILTER_SANITIZE_STRING,
-        "id"          => FILTER_SANITIZE_NUMBER_INT,
+        "user_name" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "new_email" => FILTER_SANITIZE_EMAIL,
+        "new_first_name" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "new_last_name" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "password" => ['filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "new_password" => ['filter' => FILTER_SANITIZE_SPECIAL_CHARS, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "name" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "description" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "category" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "active_event" => FILTER_SANITIZE_NUMBER_INT,
+        "event_id" => FILTER_SANITIZE_NUMBER_INT,
+        "location_id" => FILTER_SANITIZE_NUMBER_INT,
+        "image_id" => FILTER_SANITIZE_NUMBER_INT,
+        "type_tickets" => FILTER_SANITIZE_NUMBER_INT,
+        "public" => FILTER_SANITIZE_NUMBER_INT,
+        "members_only" => FILTER_SANITIZE_NUMBER_INT,
+        "enable_booking" => FILTER_SANITIZE_NUMBER_INT,
+        "max_tickets" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_tickets_adult_mb" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_tickets_adult" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_tickets_child_mb" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_tickets_child" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_tickets_all" => FILTER_SANITIZE_NUMBER_INT,
+        "nb_available_tickets" => FILTER_SANITIZE_NUMBER_INT,
+        "price_adult_mb" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_adult" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_child_mb" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_child" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_adult_mb_booked" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_adult_booked" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_child_mb_booked" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "price_child_booked" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "donation" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "total_paid" => ['filter' => FILTER_SANITIZE_NUMBER_FLOAT, 'flags' => FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION],
+        "payment_datetime" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "start_date" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "start_time" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "finish_date" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW],
+        "finish_time" => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_STRIP_LOW]
     ]
 ]);
 

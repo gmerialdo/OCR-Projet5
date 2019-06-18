@@ -62,30 +62,31 @@ class PageAdmin extends Page
     }
 
     public function save_event(){
-        if (!$this->postEmpty()){
-            $name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+        global $safeData;
+        if (!$safeData->postEmpty()){
+            $name = $safeData->_post["name"];
             $name = ucfirst($name);
-            $description = filter_input(INPUT_POST, "description", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+            $description = $safeData->_post["description"];
             $description = ucfirst($description);
-            $location_id = $this->getPostSanitizeInt("location_id");
-            $image_id = $this->getPostSanitizeInt("image_id");
-            $category = filter_input(INPUT_POST, "category", FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-            if ($this->postEmptyKey("active_event")){$active_event = 0;} else {$active_event = 1;}
-            $start_date = $this->getPost("start_date");
-            $start_time = $this->getPost("start_time");
-            $finish_date = $this->getPost("finish_date");
-            $finish_time = $this->getPost("finish_time");
+            $location_id = $safeData->_post["location_id"];
+            $image_id = $safeData->_post["image_id"];
+            $category = $safeData->_post["category"];
+            if (empty($safeData->_post["active_event"])){$active_event = 0;} else {$active_event = 1;}
+            $start_date = $safeData->_post["start_date"];
+            $start_time = $safeData->_post["start_time"];
+            $finish_date = $safeData->_post["finish_date"];
+            $finish_time = $safeData->_post["finish_time"];
             $start_datetime = date("Y-m-d H:i:s", strtotime($start_date." ".$start_time));
             $finish_datetime = date("Y-m-d H:i:s", strtotime($finish_date." ".$finish_time));
-            if ($this->postEmptyKey("type_tickets")){$type_tickets = 0;} else {$type_tickets = $this->getPostSanitizeInt("type_tickets");}
-            if ($this->postEmptyKey("public")){$public = 1;} else {$public = $this->getPostSanitizeInt("public");}
-            if ($this->postEmptyKey("members_only")){$members_only = 0; $price_adult=null; $price_child=null;} else {$members_only = 1;}
-            if ($this->postEmptyKey("max_tickets")){$max_tickets = null;} else {$max_tickets = $this->getPostSanitizeInt("max_tickets");}
-            if ($this->postEmptyKey("price_adult_mb")){$price_adult_mb = null;} else {$price_adult_mb = $this->getPostSanitizeFloat("price_adult_mb");}
-            if ($this->postEmptyKey("price_adult")){$price_adult = null;} else {$price_adult =$this->getPostSanitizeFloat("price_adult");}
-            if ($this->postEmptyKey("price_child_mb")){$price_child_mb = null;} else {$price_child_mb = $this->getPostSanitizeFloat("price_child_mb");}
-            if ($this->postEmptyKey("price_child")){$price_child = null;} else {$price_child = $this->getPostSanitizeFloat("price_child");}
-            if ($this->postEmptyKey("enable_booking")){$enable_booking = 0;} else {$enable_booking = 1;}
+            if (empty($safeData->_post["type_tickets"])){$type_tickets = 0;} else {$type_tickets = $safeData->_post["type_tickets"];}
+            if (empty($safeData->_post["public"])){$public = 1;} else {$public = $safeData->_post["public"];}
+            if (empty($safeData->_post["members_only"])){$members_only = 0; $price_adult=null; $price_child=null;} else {$members_only = 1;}
+            if (empty($safeData->_post["max_tickets"])){$max_tickets = null;} else {$max_tickets = $safeData->_post["max_tickets"];}
+            if (empty($safeData->_post["price_adult_mb"])){$price_adult_mb = null;} else {$price_adult_mb = $safeData->_post["price_adult_mb"];}
+            if (empty($safeData->_post["price_adult"])){$price_adult = null;} else {$price_adult =$safeData->_post["price_adult"];}
+            if (empty($safeData->_post["price_child_mb"])){$price_child_mb = null;} else {$price_child_mb = $safeData->_post["price_child_mb"];}
+            if (empty($safeData->_post["price_child"])){$price_child = null;} else {$price_child = $safeData->_post["price_child"];}
+            if (empty($safeData->_post["enable_booking"])){$enable_booking = 0;} else {$enable_booking = 1;}
             //check if date is correct
             if ($start_datetime > $finish_datetime){
                 $args = [
@@ -128,12 +129,9 @@ class PageAdmin extends Page
             if (isset($this->_url[1])){
                 $event = new Event("update", ["id" => $this->_url[1], "data" => $data]);
                 if ($event){
-                    ?>
-                    <script>
-                        alert("Your changes have been updated.");
-                        window.location.href="../manage_events";
-                    </script>
-                    <?php
+                    $msg = "Your changes have been updated.";
+                    $link = "../manage_events";
+                    $this->alertRedirect($msg, $link);
                 }
                 else {header('Location: ../../display_error/admin');}
             }
@@ -141,12 +139,9 @@ class PageAdmin extends Page
             else {
                 $new_event = new Event("create", $data);
                 if ($new_event){
-                    ?>
-                    <script>
-                        alert("The event has been created.");
-                        window.location.href="manage_events";
-                    </script>
-                    <?php
+                    $msg = "The event has been created.";
+                    $link = "../manage_events";
+                    $this->alertRedirect($msg, $link);
                 }
                 else { header('Location: ../display_error/admin');}
             }
@@ -235,12 +230,9 @@ class PageAdmin extends Page
             else {
                 $event = new Event("delete", ["id" => $this->_url[1]]);
                 if ($event){
-                    ?>
-                    <script>
-                        alert("The event has been deleted.");
-                        window.location.href="../manage_events";
-                    </script>
-                    <?php
+                    $msg = "The event has been deleted.";
+                    $link = "../manage_events";
+                    $this->alertRedirect($msg, $link);
                 }
                 else {header('Location: ../../display_error/admin');}
             }
@@ -316,12 +308,9 @@ class PageAdmin extends Page
         else {
             $account = new Account("update", ["id" => $this->_url[1], "managing_rights" => 1]);
             if ($account){
-                ?>
-                <script>
-                    alert("Your changes have been updated");
-                    window.location.href="../manage_accounts";
-                </script>
-                <?php
+                $msg = "Your changes have been updated.";
+                $link = "../manage_accounts";
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -334,12 +323,9 @@ class PageAdmin extends Page
         else {
           $account = new Account("update", ["id" => $this->_url[1], "managing_rights" => 0]);
             if ($account){
-                ?>
-                <script>
-                    alert("Your changes have been updated.");
-                    window.location.href="../manage_accounts";
-                </script>
-                <?php
+                $msg = "Your changes have been updated.";
+                $link = "../manage_accounts";
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -352,12 +338,9 @@ class PageAdmin extends Page
         else {
           $account = new Account("update", ["id" => $this->_url[1], "active_account" => 1]);
             if ($account){
-                ?>
-                <script>
-                    alert("Your changes have been updated.");
-                    window.location.href="../manage_accounts";
-                </script>
-                <?php
+                $msg = "Your changes have been updated.";
+                $link = "../manage_accounts";
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -370,12 +353,9 @@ class PageAdmin extends Page
         else {
           $account = new Account("update", ["id" => $this->_url[1], "active_account" => 0]);
             if ($account){
-                ?>
-                <script>
-                    alert("Your changes have been updated.");
-                    window.location.href="../manage_accounts";
-                </script>
-                <?php
+                $msg = "Your changes have been updated.";
+                $link = "../manage_accounts";
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -479,10 +459,9 @@ class PageAdmin extends Page
             header('Location: manage_tickets');
         }
         else {
-            if (!$this->postEmpty()){
-                foreach($_POST as $key => $value) {
-                    $data[$key] = $this->getPostSanitizeFloat($key);
-                }
+            global $safeData;
+            if (!$safeData->postEmpty()){
+                $data = $safeData->_post;
                 $data["id"] = $this->_url[1];
                 if (isset($data["total_paid"])){
                     require_once "controller/Ticket.php";
@@ -497,37 +476,25 @@ class PageAdmin extends Page
                 if (isset($data["nb_tickets_child"])) $nb_tickets_wanted += $data["nb_tickets_child"];
                 if (isset($data["nb_tickets_all"])) $nb_tickets_wanted += $data["nb_tickets_all"];
                 if ($nb_tickets_wanted == 0){
-                    ?>
-                    <script>
-                        var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
-                        alert("No tickets selected. Please indicate the number of tickets you want to book.");
-                        window.location.href=link;
-                    </script>
-                    <?php
+                    $msg = "No tickets selected. Please indicate the number of tickets you want to book.";
+                    $link = "../admin/modify_tickets/".$this->_url[1];
+                    $this->alertRedirect($msg, $link);
                 }
                 else {
                     if (!empty($data["nb_available_tickets"])){
                         if ($data["nb_available_tickets"] < $nb_tickets_wanted){
-                            ?>
-                            <script>
-                                var link = '<?php echo "../admin/modify_tickets/".$this->_url[1];?>';
-                                alert("Not enough tickets available.");
-                                window.location.href=link;
-                            </script>
-                            <?php
+                            $msg = "Not enough tickets available.";
+                            $link = "../admin/modify_tickets/".$this->_url[1];
+                            $this->alertRedirect($msg, $link);
                         }
                     }
                     require_once "controller/Ticket.php";
                     $ticket = new Ticket("update", $data);
                     if ($ticket){
                         $event_id = $data["event_id"];
-                        ?>
-                        <script>
-                            var link = '<?php echo "../../admin/see_tickets/".$event_id;?>';
-                            alert("Your changes have been updated.");
-                            window.location.href=link;
-                        </script>
-                        <?php
+                        $msg = "Your changes have been updated.";
+                        $link = "../../admin/see_tickets/".$event_id;
+                        $this->alertRedirect($msg, $link);
                     }
                     else {header('Location: ../../display_error/admin');}
                 }
@@ -540,21 +507,18 @@ class PageAdmin extends Page
             header('Location: manage_tickets');
         }
         else {
-            if (!$this->postEmpty()){
+            global $safeData;
+            if (!$safeData->postEmpty()){
                 require_once "controller/Ticket.php";
                 $ticket = new Ticket("read", ["id" => $this->_url[1]]);
-                $payment_datetime = $this-> getPost("payment_datetime");
+                $payment_datetime = $safeData->_post["payment_datetime"];
                 if ($payment_datetime == null){ header('Location: ../display_error/admin');}
-                $total_paid = FILTER_INPUT(INPUT_POST, "total_paid", FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_THOUSAND | FILTER_FLAG_ALLOW_FRACTION);
+                $total_paid = $safeData->_post["total_paid"];
                 $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [$payment_datetime, $total_paid]);
                 if ($update){
-                    ?>
-                    <script>
-                        var link = '<?php echo "../modify_payment/".$this->_url[1];?>';
-                        alert("Your changes have been updated.");
-                        window.location.href=link;
-                    </script>
-                    <?php
+                    $msg = "Your changes have been updated.";
+                    $link = "../modify_payment/".$this->_url[1];
+                    $this->alertRedirect($msg, $link);
                 }
                 else {header('Location: ../../display_error/admin');}
             }
@@ -584,15 +548,10 @@ class PageAdmin extends Page
             $ticket = new Ticket("read", ["id" => $this->_url[1]]);
             $update = $ticket->updateInDB(["payment_datetime", "total_paid"], [null, null]);
             if ($update){
-                if (!isset($this->_url[2])){$msg = "../modify_payment/".$this->_url[1];}
-                else {$msg = "../../".$this->_url[2];}
-                ?>
-                <script>
-                    var link = '<?php echo $msg;?>';
-                    alert("The payment has been cancelled.");
-                    window.location.href=link;
-                </script>
-                <?php
+                $msg = "The payment has been cancelled.";
+                if (!isset($this->_url[2])){$link = "../modify_payment/".$this->_url[1];}
+                else {$link = "../../".$this->_url[2];}
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
@@ -608,13 +567,9 @@ class PageAdmin extends Page
             $event_id = $ticket->getVarTicket("_event_id");
             $cancelled = $ticket->updateInDB(["cancelled_time"], [date("Y-m-d H:i:s")]);
             if ($cancelled){
-                ?>
-                <script>
-                    var link = '<?php echo "../see_tickets/".$event_id;?>';
-                    alert("Those tickets have been cancelled.");
-                    window.location.href=link;
-                </script>
-                <?php
+                $msg = "Those tickets have been cancelled.";
+                $link = "../see_tickets/".$event_id;
+                $this->alertRedirect($msg, $link);
             }
             else {header('Location: ../../display_error/admin');}
         }
