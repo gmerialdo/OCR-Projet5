@@ -21,7 +21,7 @@
             <div class="switch">
                 <label>
                     Inactive
-                    <input id="active_event" type="checkbox" name="active_event">
+                    <input id="active_event" type="checkbox" name="active_event" value="1">
                     <span class="lever"></span>
                     Active
                 </label>
@@ -57,19 +57,24 @@
             </div>
             
             <div class="input-field col s12 m4 offset-m2 l2 offset-l2">
-                <input type="text" id ="start_date" placeholder="Event starts on:" class="datepicker" value="{{ start_date }}" name="start_date" required>
+                <input type="text" id ="start_date" placeholder="Event starts on:" class="datepicker" value="{{ start_date_format }}" name="start_date" required><em class="tiny_text">(YYYY-MM-DD)</em>
+                <label for="category">Starting date:</label>
             </div>
             
             <div class="input-field col s12 m4 l2">
-                <input type="text" class="timepicker" id ="start_time" placeholder="Starting time:" class="datepicker" value="{{ start_time }}" name="start_time" required>
+                <input type="text" class="timepicker" id ="start_time" placeholder="Starting time:" class="datepicker" value="{{ start_time }}" name="start_time" required><em class="tiny_text">(hh:mm)</em>
+                <label for="category">Starting time:</label>
+
             </div>
             
             <div class="input-field col m4 offset-m2 s12 l2">
-                <input type="text" id ="finish_date" placeholder="Event ends on:" class="datepicker" value="{{ finish_date }}" name="finish_date" required>
+                <input type="text" id ="finish_date" placeholder="Event ends on:" class="datepicker" value="{{ finish_date_format }}" name="finish_date" required><em class="tiny_text">(YYYY-MM-DD)</em>
+                <label for="category">Ending date:</label>
             </div>
             
             <div class="input-field col m4 s12 l2">
-                <input type="text" class="timepicker" id ="finish_time" placeholder="Ending time:" class="datepicker" value="{{ finish_time }}" name="finish_time" required>
+                <input type="text" class="timepicker" id ="finish_time" placeholder="Ending time:" class="datepicker" value="{{ finish_time }}" name="finish_time" required><em class="tiny_text">(hh:mm)</em>
+                <label for="category">Ending time:</label>
             </div>
             <div class="col s12 create_evt_error_msg red-text">{{ create_evt_error_msg }}</div>
             
@@ -93,7 +98,7 @@
                 <label>Select the public for this event:</label>
                 <p>
                     <label>
-                        <input type="checkbox" name="members_only" id="members_only"/>
+                        <input type="checkbox" name="members_only" id="members_only" value="1"/>
                         <span>Members only</span>
                     </label>
                 </p>  
@@ -102,7 +107,7 @@
             <div class="switch col s12 m8 offset-m2 l8 offset-l2">
                 <label>
                     Disable booking
-                    <input type="checkbox" name="enable_booking" id="enable_booking" checked>
+                    <input type="checkbox" name="enable_booking" id="enable_booking" value="1">
                     <span class="lever"></span>
                     Enable booking
                 </label>
@@ -166,7 +171,7 @@
             var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: "yyyy-mm-dd"})
         }});
         var elemsTimepicker = document.querySelectorAll(".timepicker");
-        var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true, defaultTime: 12:00});
+        var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true, defaultTime: "12:00"});
     });
     function setSelectedIndex(s, i){
         s.options[i].selected = true;

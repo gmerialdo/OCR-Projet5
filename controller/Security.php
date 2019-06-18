@@ -18,7 +18,6 @@ class Security
         $all_dates = ["payment_datetime", "start_date", "finish_date"]; // add here every date input name!
         foreach ($all_dates as $value) {
             if (!empty($this->_post[$value])){
-                echo $this->_post[$value];
                 $this->_post[$value] = $this->sanitizeDate($this->_post[$value]);
             }
         }

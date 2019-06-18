@@ -85,6 +85,7 @@ class Ticket
         $total = "";
         $status = "";
         $status_cancelled = "";
+        $payment_date="";
         if ($this->_nb_tickets_all != null){
             $tickets .= "Tickets : ".$this->_nb_tickets_all."<br/>";
             if ($this->_donation != 0){
@@ -131,6 +132,7 @@ class Ticket
             "{{ donation }}" => $this->_donation,
             "{{ total_to_pay }}" => $this->_total_to_pay,
             "{{ payment_datetime }}" => $this->_payment_datetime,
+            "{{ payment_date }}" => $payment_date,
             "{{ total_paid }}" => $this->_total_paid,
             "{{ cancelled }}" => "Cancelled on ".$this->_cancelled_time,
             "{{ status_cancelled }}" => $status_cancelled

@@ -42,8 +42,10 @@ class PageAdmin extends Page
             "{{ active_event }}" => 1,
             "{{ start_date }}" => "",
             "{{ start_time }}" => "",
+            "{{ start_date_format }}" => "",
             "{{ finish_date }}" => "",
             "{{ finish_time }}" => "",
+            "{{ finish_date_format }}" => "",
             "{{ type_tickets }}" => 0,
             "{{ public }}" => 1,
             "{{ members_only }}" => 0,
@@ -71,22 +73,24 @@ class PageAdmin extends Page
             $location_id = $safeData->_post["location_id"];
             $image_id = $safeData->_post["image_id"];
             $category = $safeData->_post["category"];
-            if (empty($safeData->_post["active_event"])){$active_event = 0;} else {$active_event = 1;}
             $start_date = $safeData->_post["start_date"];
             $start_time = $safeData->_post["start_time"];
             $finish_date = $safeData->_post["finish_date"];
             $finish_time = $safeData->_post["finish_time"];
             $start_datetime = date("Y-m-d H:i:s", strtotime($start_date." ".$start_time));
             $finish_datetime = date("Y-m-d H:i:s", strtotime($finish_date." ".$finish_time));
+            if (empty($safeData->_post["active_event"])){$active_event = 0;} else {$active_event = 1;}
             if (empty($safeData->_post["type_tickets"])){$type_tickets = 0;} else {$type_tickets = $safeData->_post["type_tickets"];}
             if (empty($safeData->_post["public"])){$public = 1;} else {$public = $safeData->_post["public"];}
-            if (empty($safeData->_post["members_only"])){$members_only = 0; $price_adult=null; $price_child=null;} else {$members_only = 1;}
-            if (empty($safeData->_post["max_tickets"])){$max_tickets = null;} else {$max_tickets = $safeData->_post["max_tickets"];}
-            if (empty($safeData->_post["price_adult_mb"])){$price_adult_mb = null;} else {$price_adult_mb = $safeData->_post["price_adult_mb"];}
-            if (empty($safeData->_post["price_adult"])){$price_adult = null;} else {$price_adult =$safeData->_post["price_adult"];}
-            if (empty($safeData->_post["price_child_mb"])){$price_child_mb = null;} else {$price_child_mb = $safeData->_post["price_child_mb"];}
-            if (empty($safeData->_post["price_child"])){$price_child = null;} else {$price_child = $safeData->_post["price_child"];}
+            if (empty($safeData->_post["members_only"])){$members_only = 0; $price_adult=NULL; $price_child=NULL;} else {$members_only = 1;}
+            if (empty($safeData->_post["max_tickets"])){$max_tickets = 0;} else {$max_tickets = $safeData->_post["max_tickets"];}
+            if (empty($safeData->_post["price_adult_mb"])){$price_adult_mb = NULL;} else {$price_adult_mb = $safeData->_post["price_adult_mb"];}
+            if (empty($safeData->_post["price_adult"])){$price_adult = NULL;} else {$price_adult =$safeData->_post["price_adult"];}
+            if (empty($safeData->_post["price_child_mb"])){$price_child_mb = NULL;} else {$price_child_mb = $safeData->_post["price_child_mb"];}
+            if (empty($safeData->_post["price_child"])){$price_child = NULL; } else {$price_child = $safeData->_post["price_child"];}
             if (empty($safeData->_post["enable_booking"])){$enable_booking = 0;} else {$enable_booking = 1;}
+            if ($public == 2){$price_child=NULL; $price_child_mb=NULL;}
+            if ($public == 3){$price_adult=NULL; $price_adult_mb=NULL;}
             //check if date is correct
             if ($start_datetime > $finish_datetime){
                 $args = [
@@ -125,6 +129,7 @@ class PageAdmin extends Page
                 return ["Event", $content];
             }
             $data = [$name, $description, $location_id, $image_id, $category, $active_event, $start_datetime, $finish_datetime, $max_tickets, $type_tickets, $public, $members_only, $price_adult_mb, $price_adult, $price_child_mb, $price_child, $enable_booking];
+            //print_r($data);
             //if modifying event
             if (isset($this->_url[1])){
                 $event = new Event("update", ["id" => $this->_url[1], "data" => $data]);
@@ -481,7 +486,7 @@ class PageAdmin extends Page
                     $this->alertRedirect($msg, $link);
                 }
                 else {
-                    if (!empty($data["nb_available_tickets"])){
+                    if (isset($data["nb_available_tickets"])){
                         if ($data["nb_available_tickets"] < $nb_tickets_wanted){
                             $msg = "Not enough tickets available.";
                             $link = "../admin/modify_tickets/".$this->_url[1];

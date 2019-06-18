@@ -28,13 +28,13 @@
         
         <div class="row">
             <form class="col s12 modify_payment_form" method="post" action="{{ path }}/admin/modify_payment/{{ ticket_id }}">
-                <div class="input-field col s5 offset-s1 m3 offset-m3 off l1 offset-l5">
-                    Payment in $<input placeholder="Total" id="total_paid" type="number" min="0" max="10000" step="0.01" class="validate" name="total_paid" value="{{ total_paid }}" required>
-                    <label for="total_paid"></label>
+                <div class="input-field col s5 offset-s1 m4 offset-m2 off l2 offset-l4">
+                    <input placeholder="Total" id="total_paid" type="number" min="0" max="10000" step="0.01" class="validate" name="total_paid" value="{{ total_paid }}" required><em class="tiny_text">(in $)</em>
+                    <label for="total_paid">Amount paid:</label>
                 </div>
-                <div class="input-field col s5 m3 l1">
-                    Payment date:
-                    <input type="text" id ="payment_datetime" placeholder="Date" class="datepicker" value="{{ payment_datetime }}" name="payment_datetime" required>
+                <div class="input-field col s5 m4 l2">
+                    <input type="text" id ="payment_datetime" placeholder="Date" class="datepicker" value="{{ payment_date }}" name="payment_datetime" required><em class="tiny_text">(YYYY-MM-DD)</em>
+                    <label for="total_paid">Payment date:</label>
                 </div>
 
                 <div class="col s12">
