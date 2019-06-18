@@ -3,31 +3,143 @@
 class Event
 {
 
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_event_id;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_name;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_description;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_location_id;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_image_id;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_category;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_active_event;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_start_datetime;
-    private $_start_weekday;
-    private $_start_date;
-    private $_start_time;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_finish_datetime;
-    private $_finish_weekday;
-    private $_finish_date;
-    private $_finish_time;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_max_tickets;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_type_tickets;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_public;
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_members_only;
+
+
+    /**
+     * @var int $_event_id, string $_name, string $_description, int $_location_id, int $_image_id, string $_category, boolean $_active_event, datetime $_start_datetime, datetime $_finish_datetime, int $_max_tickets, int $_type_tickets, int $_public, boolean $_members_only, decimal $_price_adult_mb, decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_price_adult_mb;
+
+    /**
+     * @var decimal $_price_adult, decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_price_adult;
+
+    /**
+     * @var  decimal $_price_child_mb, decimal $_price_child, boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_price_child_mb;
+
+
+    /**
+     * @var decimal $_price_child: data for the event in database (table evt_events)
+     */
     private $_price_child;
+
+
+    /**
+     * @var  boolean $_enable_booking: data for the event in database (table evt_events)
+     */
     private $_enable_booking;
+
+    /**
+     * @var string $_start_weekday: format %W for the starting date of the event
+     * @example 'Thursday'
+     */
+    private $_start_weekday;
+
+    /**
+     * @var string finish_weekday: format %W for the ending date of the event
+     * @example 'Thursday'
+     */
+    private $_finish_weekday;
+
+    /**
+     * @var string $_start_date: format %b %D, %Y for the starting date of the event
+     * @example 'Jul 18th, 2019'
+     */
+    private $_start_date;
+
+    /**
+     * @var string string finish_date: format %b %D, %Y for the ending date of the event
+     * @example 'Jul 18th, 2019'
+     */
+    private $_finish_date;
+
+    /**
+     * @var string $_start_time: format %l:%i%p for the starting date of the event
+     * @example '6:00AM'
+     */
+    private $_start_time;
+
+    /**
+     * @var string finish_date: format %b %D, %Y for the  ending date of the event
+     * @example 'Jul 18th, 2019'
+     */
+    private $_finish_time;
+
+    /**
+     * @var int $_nb_booked_tickets: number of all booked tickets for this event
+     */
     private $_nb_booked_tickets;
+
+    /**
+     * @var int $_available_tickets: (only if max_tickets is defined) number of available tickets left calculated with the booked tickets
+     */
     private $_nb_available_tickets;
 
     CONST FIELDS_TO_SET = ['name','description','location_id','image_id','category','active_event','start_datetime','finish_datetime','max_tickets','type_tickets','public','members_only','price_adult_mb','price_adult','price_child_mb','price_child','enable_booking'];
