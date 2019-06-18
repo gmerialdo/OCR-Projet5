@@ -166,7 +166,7 @@
             var instance1Datepicker = M.Datepicker.init(elemsDatepicker[1], {autoClose: true, minDate: d, firstDay: 1, format: "yyyy-mm-dd"})
         }});
         var elemsTimepicker = document.querySelectorAll(".timepicker");
-        var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true});
+        var instancesTimepicker = M.Timepicker.init(elemsTimepicker, {autoClose: true, defaultTime: 12:00});
     });
     function setSelectedIndex(s, i){
         s.options[i].selected = true;

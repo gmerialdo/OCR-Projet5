@@ -1,16 +1,15 @@
 <?php
 
-//session_start();
-
 require_once "controller/Session.php";
-require_once "conf.php";
+require_once "controller/Security.php";
+require_once "controller/Page.php";
 require_once "model/Model.php";
 require_once "view/View.php";
-require_once "controller/Page.php";
+require_once "conf.php";
 
 Model::init();
 
-global $session, $envProd, $uri_Start;
+global $envProd, $uri_Start;
 $session = new Session();
 
 // show errors if not in envProd
@@ -20,24 +19,27 @@ if (!$envProd){
     error_reporting(E_ALL);
 }
 
-// get a securized instance of url
-$url = explode ( "/", filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW));
-// remove first empty entry
-$url = array_slice($url, $uri_Start);
+$safeData = new Security([
+    "post" => [
+        "auteur"      => FILTER_SANITIZE_STRING,
+        "commentaire" => FILTER_SANITIZE_STRING,
+        "id"          => FILTER_SANITIZE_NUMBER_INT,
+    ]
+]);
 
 // decide if it's visitor mode or admin mode and create page
-switch ($url[0]){
+switch ($safeData->_url[0]){
     case 'admin':
         require_once "controller/PageAdmin.php";
-        $page = new PageAdmin($url);
+        $page = new PageAdmin($safeData->_url);
         break;
     case 'logged':
         require_once "controller/PageLoggedVisitor.php";
-        $page = new PageLoggedVisitor($url);
+        $page = new PageLoggedVisitor($safeData->_url);
         break;
     default:
         require_once "controller/PageVisitor.php";
-        $page = new PageVisitor($url);
+        $page = new PageVisitor($safeData->_url);
         break;
 }
 

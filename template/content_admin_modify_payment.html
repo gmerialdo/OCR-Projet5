@@ -50,7 +50,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    var today = new Date();
     var elemsDatepicker = document.querySelectorAll(".datepicker");
-    var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, firstDay: 1, format: "yyyy-mm-dd"});
+    var instance0Datepicker = M.Datepicker.init(elemsDatepicker[0], {autoClose: true, firstDay: 1, defaultDate: today, format: "yyyy-mm-dd"});
 });
 </script>

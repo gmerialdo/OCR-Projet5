@@ -198,8 +198,14 @@ class PageAdmin extends Page
             foreach ($data["data"] as $row){
                 $admin_each_event = new Event("read", ["id" => $row["event_id"]]);
                 $args = $admin_each_event->getEventData();
-                if ($modify == true){$args["{{ modify }}"] = View::makeHtml($args, "elt_admin_each_event_modify.html");}
-                else {$args["{{ modify }}"] = "";}
+                if ($modify == true){
+                    $args["{{ modify }}"] = View::makeHtml($args, "elt_admin_each_event_modify.html");
+                    $args["{{ delete }}"] = View::makeHtml($args, "elt_admin_each_event_delete.html");
+                }
+                else {
+                    $args["{{ modify }}"] = "";
+                    $args["{{ delete }}"] = "";
+                }
                 $events .= View::makeHtml($args, "elt_admin_each_event.html");
             }
         }
