@@ -34,7 +34,7 @@ class Event
     private $_category;
 
     /**
-     * @var int $_active_event: data for the event in database (table evt_events) - 0 for inactive (draft), 1 for active, 2 for deleted (trash)
+     * @var int $_active_event: data for the event in database (table evt_events) - 0 for inactive (draft), 1 for active, 2 for deleted
      */
     private $_active_event;
 
