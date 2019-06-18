@@ -1,9 +1,14 @@
-URL du site:  
+URL du site: http://gmt.yo.fr/OCR-Projet5
 
 Identifiants admin:
-	-
+	-user_name: gmtorrenti 
+	-password: aaaaaa
 
-Page GitHub: 
+Identifiants user with no admin rights:
+	-user_name: test
+	-password: aaaaaa 
+
+Page GitHub: https://github.com/gmerialdo/OCR-Projet5
 
 
 
