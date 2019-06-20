@@ -63,23 +63,33 @@ class PageVisitor extends Page
     }
 
     public function see_event(){
-        $event = new Event("read", ["id" => $this->_url[1]]);
-        $eventData = $event->getEventData();
-        if ($event->getVarEvent("_type_tickets") != 0){
-            if ($event->getVarEvent("_nb_available_tickets") === 0 ){
-                 $eventData["{{ book_tickets }}"] = "Event full! No more tickets available.";
+        if (isset($this->_url[1])){
+            $event = new Event("read", ["id" => $this->_url[1]]);
+            if ($event){
+                $eventData = $event->getEventData();
+                if ($event->getVarEvent("_type_tickets") != 0){
+                    if ($event->getVarEvent("_nb_available_tickets") === 0 ){
+                         $eventData["{{ book_tickets }}"] = "Event full! No more tickets available.";
+                    }
+                    else {
+                        $eventData["{{ book_tickets }}"] = View::makeHtml(["{{ event_id }}" => $this->_url[1]],"elt_book_tickets_btn.html");
+                    }
+                    if ($event->getVarEvent("_enable_booking")==0){$eventData["{{ book_tickets }}"] = "Booking is not available right now.";}
+                }
+                else {
+                    $eventData["{{ book_tickets }}"] = "No reservation needed.";
+                }
+
+                $content = View::makeHtml($eventData, "content_see_event.html");
+                return [$event->getVarEvent("_name"), $content];
             }
             else {
-                $eventData["{{ book_tickets }}"] = View::makeHtml(["{{ event_id }}" => $this->_url[1]],"elt_book_tickets_btn.html");
+                header('Location: display_error');
             }
-            if ($event->getVarEvent("_enable_booking")==0){$eventData["{{ book_tickets }}"] = "Booking is not available right now.";}
         }
         else {
-            $eventData["{{ book_tickets }}"] = "No reservation needed.";
+            header('Location: see_all_events');
         }
-
-        $content = View::makeHtml($eventData, "content_see_event.html");
-        return [$event->getVarEvent("_name"), $content];
     }
 
 }
