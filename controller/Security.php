@@ -40,6 +40,8 @@ class Security
     }
 
     public function sanitizeTime($time){
+        //transform am/pm time in 24h time
+        $time = date("G:i", strtotime($time));
         $time = explode(":", $time);
         if (count($time)>3) return false;
         for ($i=0; $i < count($time); $i++) {

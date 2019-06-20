@@ -169,7 +169,7 @@ class Page
             header('Location: ');
         }
         else {
-            return $this->login("error");;
+            return $this->login("error");
         }
     }
 
