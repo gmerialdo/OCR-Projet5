@@ -4,6 +4,8 @@ class Account
 {
 
     private $_valid;
+
+    //table evt_accounts fields
     private $_evt_account_id;
     private $_email;
     private $_user_name;

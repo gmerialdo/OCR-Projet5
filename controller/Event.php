@@ -3,140 +3,34 @@
 class Event
 {
 
-    /**
-     * @var int $_event_id: data for the event in database (table evt_events) - autoincremented
-     */
+    //table evt_events fields
     private $_event_id;
-
-    /**
-     * @var string $_name: data for the event in database (table evt_events)
-     */
     private $_name;
-
-    /**
-     * @var string $_description: data for the event in database (table evt_events)
-     */
     private $_description;
-
-    /**
-     * @var int $_location_id: data for the event in database (table evt_events) - corresponds to the location with that id in table evt_location
-     */
     private $_location_id;
-
-    /**
-     * @var int $_image_id: data for the event in database (table evt_events) - corresponds to the image with that id in table evt_images
-     */
     private $_image_id;
-
-    /**
-     * @var string $_category: data for the event in database (table evt_events)
-     */
     private $_category;
-
-    /**
-     * @var int $_active_event: data for the event in database (table evt_events) - 0 for inactive (draft), 1 for active, 2 for deleted
-     */
     private $_active_event;
-
-    /**
-     * @var datetime $_start_datetime: data for the event in database (table evt_events)
-     */
     private $_start_datetime;
-
-    /**
-     * @var datetime $_finish_datetime: data for the event in database (table evt_events)
-     */
     private $_finish_datetime;
-
-    /**
-     * @var int $_max_tickets: data for the event in database (table evt_events) - can be null
-     */
     private $_max_tickets;
-
-    /**
-     * @var  int $_type_tickets: data for the event in database (table evt_events) - 0 for no booking, 1 for free tickets, 2 for paid tickets, 3 for free tickets with donation welcome
-     */
     private $_type_tickets;
-
-    /**
-     * @var int $_public: data for the event in database (table evt_events) - 1 for all, 2 for adults only, 3 for children only
-     */
     private $_public;
-
-    /**
-     * @var int $_members_only: data for the event in database (table evt_events) - 0 for no specification, 1 for members only
-     */
     private $_members_only;
-
-    /**
-     * @var decimal $_price_adult_mb: data for the event in database (table evt_events) - price for adult member
-     */
     private $_price_adult_mb;
-
-    /**
-     * @var decimal $_price_adult: data for the event in database (table evt_events) - price for adult
-     */
     private $_price_adult;
-
-    /**
-     * @var  decimal $_price_child_mb: data for the event in database (table evt_events) - price for child member
-     */
     private $_price_child_mb;
-
-    /**
-     * @var decimal $_price_child: data for the event in database (table evt_events) - price for child
-     */
     private $_price_child;
-
-    /**
-     * @var int $_enable_booking: data for the event in database (table evt_events) - 0 for booking disabled, 1 for booking enabled
-     */
     private $_enable_booking;
 
-    /**
-     * @var string $_start_weekday: format %W for the starting date of the event
-     * @example 'Thursday'
-     */
+    //other attributes
     private $_start_weekday;
-
-    /**
-     * @var string finish_weekday: format %W for the ending date of the event
-     * @example 'Thursday'
-     */
     private $_finish_weekday;
-
-    /**
-     * @var string $_start_date: format %b %D, %Y for the starting date of the event
-     * @example 'Jul 18th, 2019'
-     */
     private $_start_date;
-
-    /**
-     * @var string string finish_date: format %b %D, %Y for the ending date of the event
-     * @example 'Jul 18th, 2019'
-     */
     private $_finish_date;
-
-    /**
-     * @var string $_start_time: format %l:%i%p for the starting date of the event
-     * @example '6:00AM'
-     */
     private $_start_time;
-
-    /**
-     * @var string finish_date: format %b %D, %Y for the  ending date of the event
-     * @example 'Jul 18th, 2019'
-     */
     private $_finish_time;
-
-    /**
-     * @var int $_nb_booked_tickets: number of all booked tickets for this event
-     */
     private $_nb_booked_tickets;
-
-    /**
-     * @var int $_available_tickets: number of available tickets left calculated with the booked tickets (only if max_tickets is defined)
-     */
     private $_nb_available_tickets;
 
     CONST FIELDS_TO_SET = ['name','description','location_id','image_id','category','active_event','start_datetime','finish_datetime','max_tickets','type_tickets','public','members_only','price_adult_mb','price_adult','price_child_mb','price_child','enable_booking'];
@@ -294,13 +188,22 @@ class Event
                 }
                 else {
                     $prices ="";
-                    if ($this->_price_child) $prices .= "Child : $".$this->_price_child." ";
-                    if (!$inline){$prices .= "<br/>";}
-                    if ($this->_price_child_mb) $prices .= "Child (member): $".$this->_price_child_mb." ";
-                    if (!$inline){$prices .= "<br/>";}
-                    if ($this->_price_adult) $prices .= "Adult : $".$this->_price_adult." ";
-                    if (!$inline){$prices .= "<br/>";}
-                    if ($this->_price_adult_mb) $prices .= "Adult (member): $".$this->_price_adult_mb." ";
+                    if ($this->_price_child){
+                        $prices .= "Child : $".$this->_price_child." ";
+                        if (!$inline){$prices .= "<br/>";}
+                    }
+                    if ($this->_price_child_mb) {
+                        $prices .= "Child (member): $".$this->_price_child_mb." ";
+                        if (!$inline){$prices .= "<br/>";}
+                    }
+                    if ($this->_price_adult) {
+                        $prices .= "Adult : $".$this->_price_adult." ";
+                        if (!$inline){$prices .= "<br/>";}
+                    }
+
+                    if ($this->_price_adult_mb) {
+                        $prices .= "Adult (member): $".$this->_price_adult_mb." ";
+                    }
                     return $prices;
                     break;
                 }

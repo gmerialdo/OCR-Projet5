@@ -2,6 +2,7 @@
 
 class Image {
 
+    //table evt_images fields
     private $_image_id;
     //private $_private;
     //private $_orga_id;

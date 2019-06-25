@@ -3,6 +3,7 @@
 class Ticket
 {
 
+    //table evt_accounts fields
     private $_ticket_id;
     private $_event_id;
     private $_evt_account_id;
@@ -21,6 +22,8 @@ class Ticket
     private $_payment_datetime;
     private $_total_paid;
     private $_cancelled_time;
+
+    //other attribute
     private $_total_nb_tickets;
 
     public function __construct($todo, $args){

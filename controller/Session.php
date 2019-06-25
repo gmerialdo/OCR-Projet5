@@ -3,6 +3,7 @@
 class Session
 {
 
+    //table evt_sessions fields
     private $_data = [];
     private $_sessionId;
     private $_uuid;  //length : 23

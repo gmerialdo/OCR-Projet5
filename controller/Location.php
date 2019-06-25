@@ -2,6 +2,7 @@
 
 class Location {
 
+    //table evt_locations fields
     private $_location_id;
     private $_name;
     private $_address;
