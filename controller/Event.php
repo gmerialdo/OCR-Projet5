@@ -5,7 +5,7 @@ class Event
 
     //table evt_events fields
     private $_event_id;
-    private $_name;
+    private $_name = null;
     private $_description;
     private $_location_id;
     private $_image_id;

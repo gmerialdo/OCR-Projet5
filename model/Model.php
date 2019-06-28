@@ -9,7 +9,10 @@ class Model {
         global $envProd, $my_db;
         self::$_db = new PDO('mysql:host='.$my_db["host"].';dbname='.$my_db["database"].';charset=utf8', $my_db["user"], $my_db["password"]);
         self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (!$envProd) self::$_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        if (!$envProd){
+            self::$_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
         unset($my_db);
     }
 

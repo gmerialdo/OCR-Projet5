@@ -40,29 +40,34 @@ class PageLoggedVisitor extends PageVisitor
             else {
                 require_once "controller/Event.php";
                 $event = new Event("read", ["id" => $this->_url[1]]);
-                $tickets_choice = $event->setTicketChoice();
-                if (null !== $event->getVarEvent("_nb_available_tickets")){
-                    $nb_available_tickets = $event->getVarEvent("_nb_available_tickets");
+                if($event->getVarEvent("_name") != null){
+                    $tickets_choice = $event->setTicketChoice();
+                    if (null !== $event->getVarEvent("_nb_available_tickets")){
+                        $nb_available_tickets = $event->getVarEvent("_nb_available_tickets");
+                    }
+                    else {
+                        $nb_available_tickets = "";
+                    }
+                    $content = View::makeHtml([
+                        "{{ event_id }}" => $event->getVarEvent("_event_id"),
+                        "{{ event_name }}" => $event->getVarEvent("_name"),
+                        "{{ tickets_choice }}" => $tickets_choice,
+                        "{{ action }}" => "logged/save_tickets",
+                        "{{ title }}" => "Book your tickets",
+                        "{{ btn_action }}" => "Book tickets",
+                        "{{ nb_available_tickets }}" => $nb_available_tickets,
+                        "{{ nb_tickets_adult_mb }}" => 0,
+                        "{{ nb_tickets_adult }}" => 0,
+                        "{{ nb_tickets_culid_mb }}" => 0,
+                        "{{ nb_tickets_child }}" => 0,
+                        "{{ nb_tickets_all }}" => 0,
+                        "{{ donation }}" => ""
+                    ], "content_book_tickets.html");
+                    return ["Book tickets", $content];
                 }
                 else {
-                    $nb_available_tickets = "";
+                    header('Location: ../../display_error');
                 }
-                $content = View::makeHtml([
-                    "{{ event_id }}" => $event->getVarEvent("_event_id"),
-                    "{{ event_name }}" => $event->getVarEvent("_name"),
-                    "{{ tickets_choice }}" => $tickets_choice,
-                    "{{ action }}" => "logged/save_tickets",
-                    "{{ title }}" => "Book your tickets",
-                    "{{ btn_action }}" => "Book tickets",
-                    "{{ nb_available_tickets }}" => $nb_available_tickets,
-                    "{{ nb_tickets_adult_mb }}" => 0,
-                    "{{ nb_tickets_adult }}" => 0,
-                    "{{ nb_tickets_culid_mb }}" => 0,
-                    "{{ nb_tickets_child }}" => 0,
-                    "{{ nb_tickets_all }}" => 0,
-                    "{{ donation }}" => ""
-                ], "content_book_tickets.html");
-                return ["Book tickets", $content];
             }
         }
     }
@@ -94,7 +99,7 @@ class PageLoggedVisitor extends PageVisitor
                 }
                 require_once "controller/Ticket.php";
                 $new_ticket = new Ticket("create", $data);
-                if ($new_ticket){
+                if ($new_ticket->getVarTicket("_event_id") != null){
                         $msg = "Your tickets are booked!";
                         $link = "../logged/my_tickets";
                         $this->alertRedirect($msg, $link);
@@ -105,7 +110,7 @@ class PageLoggedVisitor extends PageVisitor
             }
         }
         else {
-            header('Location: see_all_events');
+            header('Location: ..');
         }
     }
 

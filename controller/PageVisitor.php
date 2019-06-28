@@ -65,7 +65,7 @@ class PageVisitor extends Page
     public function see_event(){
         if (isset($this->_url[1])){
             $event = new Event("read", ["id" => $this->_url[1]]);
-            if ($event){
+            if ($event->getVarEvent("_name") != null){
                 $eventData = $event->getEventData();
                 if ($event->getVarEvent("_type_tickets") != 0){
                     if ($event->getVarEvent("_nb_available_tickets") === 0 ){
@@ -84,7 +84,7 @@ class PageVisitor extends Page
                 return [$event->getVarEvent("_name"), $content];
             }
             else {
-                header('Location: display_error');
+                header('Location: ../display_error');
             }
         }
         else {

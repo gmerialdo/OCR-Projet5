@@ -213,14 +213,22 @@ class PageAdmin extends Page
     }
 
     public function modify_event(){
-        $event = new Event("read", ["id" => $this->_url[1]]);
-        $data = $event->getEventData();
-        $data["{{ create_evt_error_msg }}"] = "";
-        $data["{{ title }}"] = "Modify the event";
-        $data["{{ action }}"] = "save_event/".$this->_url[1];
-        $data["{{ button }}"] = "Modify the event";
-        $content = View::makeHtml($data, "content_admin_create_event.html");
-        return ["Create event", $content];
+        if (!isset($this->_url[1])){
+            header('Location: manage_events');
+        }
+        else{
+            $event = new Event("read", ["id" => $this->_url[1]]);
+            if ($event->getVarEvent("_name") != null){
+                $data = $event->getEventData();
+                $data["{{ create_evt_error_msg }}"] = "";
+                $data["{{ title }}"] = "Modify the event";
+                $data["{{ action }}"] = "save_event/".$this->_url[1];
+                $data["{{ button }}"] = "Modify the event";
+                $content = View::makeHtml($data, "content_admin_create_event.html");
+                return ["Create event", $content];
+            }
+            else {header('Location: ../../display_error/admin');}
+        }
     }
 
     public function delete_event(){
@@ -250,7 +258,7 @@ class PageAdmin extends Page
         }
         else {
             $event = new Event("read", ["id" => $this->_url[1]]);
-            if ($event){
+            if ($event->getVarEvent("_name") != null){
                 $data = $event->getEventData();
                 $data["{{ name }}"] = "Copy of ".$data["{{ name }}"];
                 $data["{{ enable_booking }}"] = "1";
