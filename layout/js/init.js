@@ -1,3 +1,21 @@
+var req = new XMLHttpRequest();
+var url = "http://api.openweathermap.org/data/2.5/weather?id=5318313&units=imperial&APPID=02c6420ad9018146b58d47aa57470283";
+req.open("GET", url);
+req.addEventListener("load", function () {
+    if (req.status >= 200 && req.status < 400) {
+        var temp = JSON.parse(req.responseText);
+        document.getElementById("meteo").innerHTML = "Temperature <br/> in Tucson =" + temp.main.temp + "°F";
+    } 
+    else {
+        console.error(req.status + " " + req.statusText + " " + url);
+    }
+});
+req.addEventListener("error", function () {
+    console.error("Erreur réseau avec l'URL " + url);
+});
+req.send(null);
+
+
 document.addEventListener("DOMContentLoaded", function() {
     var elemsDropdown = document.querySelectorAll(".dropdown-trigger");
     var instancesDropdown = M.Dropdown.init(elemsDropdown, {constrainWidth: false, coverTrigger: false, hover:true});

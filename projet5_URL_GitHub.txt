@@ -5,10 +5,12 @@ Identifiants admin:
 	-password: aaaaaa
 
 Identifiants user with no admin rights:
-	-user_name: test
+	-user_name: test@gmail.com
 	-password: aaaaaa 
 
 Page GitHub: https://github.com/gmerialdo/OCR-Projet5
+
+Lien Codacy: https://app.codacy.com/project/gmerialdo/OCR-Projet5/dashboard?bid=13047651&bid=13047651
 
 
 
